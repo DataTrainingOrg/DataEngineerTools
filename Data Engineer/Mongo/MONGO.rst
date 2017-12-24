@@ -17,7 +17,7 @@ Concepts basiques
 * Document : un document est un objet JSON stocké sous la forme de plusieurs clés:valeurs. C'est l'équivalent d'une ligne dans une table SQL.
 * Champ : Un champ est l'équivalent d'une colonne en SQL. Il permet de faire des requêtes.
 
-.. code-block:: json 
+.. code-block:: json
     {
         _id: ObjectId(7df78ad8902c)
         title: 'Student', 

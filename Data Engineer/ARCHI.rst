@@ -48,7 +48,7 @@ Les deux les plus utilisés sont :
 
 Exemple d'Architecture
 ----------------------
-.. image:: ../architecture_globale.png
+.. image:: ../images/architecture_globale.png
    :height: 100px
    :width: 200 px
    :scale: 50 %
