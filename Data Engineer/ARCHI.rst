@@ -12,11 +12,11 @@ Récupération des données
 Pour la récupération des données n'importe quelle technologie peut être utilisée. Il suffit de pouvoir faire des requêtes 
 HTTP et de pouvoir le parser. Tous les langages de programmation possèdent des API pour faire ces transformations.
 En python de nombreuses librairies ont été développée dans ce but et nous en aborderons plusieurs dans ce cours :
+
 * Requests (+ requests_cache qui fait gagner un temps précieux lors des développements)
 * BeautifulSoup (permet de créer un objet python à partir de code HTML pour faciliter l'extraction)
 * Readability (permet de récupérer le texte pertinent d'une page web)
 * Scrapy (Framework de Spider permettant de gérer le Crawling et le Scraping de site web très efficacement)
-
 
 Stockage
 --------
@@ -26,6 +26,7 @@ souhaitable de bien définir les besoins et le format des données pour utiliser
 Dans le contexte du web, les bases noSQL sont très recherchées et demandées du à leur structure très flexible et optimisée
 pour le stockage de données hétérogènes.
 Quelques examples de bases de données : 
+
 * MySQL (Base de données relationnelles, stockage sous forme de tableau, optimale pour le stockage de chiffres) ;
 * PostGreSQL (Deuxième base de données relationnelles, avec une surcouche d'optimisation pour les données géolocalisées) ;
 * Cassandra (Base de données noSQL developpée pour garantir une scalabilité et intégrité d'un grand nombre de données) ;
@@ -41,6 +42,7 @@ s'averera trop lente et peu efficace. Il existe des outils permettant de distrib
 Pour se faire, une queue de messages est créée qui permet d'envoyer les instructions à différents programmes devant les
 éxécuter. 
 Les deux les plus utilisés sont :
+
 * RabbitMQ : développé initialement pour l'internet des objets et l'échange de données entre objets connectés.
 * Kafka : développé par les équipes de LinkedIn pour faire du streaming de données et partager les données avec différentes
 interfaces.
