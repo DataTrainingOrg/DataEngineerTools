@@ -44,12 +44,11 @@ Pour se faire, une queue de messages est créée qui permet d'envoyer les instru
 Les deux les plus utilisés sont :
 
 * RabbitMQ : développé initialement pour l'internet des objets et l'échange de données entre objets connectés.
-* Kafka : développé par les équipes de LinkedIn pour faire du streaming de données et partager les données avec différentes
-interfaces.
+* Kafka : développé par les équipes de LinkedIn pour faire du streaming de données et partager les données avec différentes interfaces.
 
 Exemple d'Architecture
 ----------------------
-.. image:: architecture_globale.png
+.. image:: ../architecture_globale.png
    :height: 100px
    :width: 200 px
    :scale: 50 %
