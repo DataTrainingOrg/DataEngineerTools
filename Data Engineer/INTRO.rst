@@ -36,13 +36,13 @@ Les bonnes pratiques
 
 On peut comprendre très rapidemement si les sites ont envie qu'on puisse accéder à leurs données. 
 
-### Robots.txt
+Robots.txt
+^^^^^^^^^^
+
 Le robots.txt est édité par les webmasters des sites pour "contrôler".
 Différentes politiques sont mises en place par les sites en fonction des problématiques métiers. 
 
-### Surcharge du serveur
+Surcharge du serveur
+^^^^^^^^^^^^^^^^^^^^
+
 La plupart des sites importants ont des infrastructures qui tiennent la charge et qui peuvent être utilisées et appelées
-
-# Scrapy
-
-# Mongo
