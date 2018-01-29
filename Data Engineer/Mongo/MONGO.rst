@@ -158,13 +158,16 @@ Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir a
     use <YOUR_DB_NAME>
     show collections
     db.<YOUR_COLLECTION_NAME>.insert({
-        _id: ObjectId(7df78ad8902c),
         firstname : "Thomas",
         lastname : "Shelby",
-        position : "Directeur",
-        gender : "Homme",
+        position : "CEO",
+        gender : "Male",
         age : 35,
-        company : "Peaky Blinders"})
+        description : "Thomas 'Tommy' Michael Shelby M.P. OBE, is the leader of the Birmingham criminal gang Peaky Blinders and the patriarch of the Shelby Family. His experiences during and after the First World War have left him disillusioned and determined to move his family up in the world.",
+        nicknames : ["Tom", "Tommy", "Thomas"],
+        company : "Peaky Blinders",
+        episodes : [1,2,4,5,6]
+        })
         
 Pour des soucis de performances, si un grand nombre de document doivent être insérés très rapidement sans surcharger les appels réseaux il est possible de passer une liste d'objets à la fonction insert
 
@@ -175,39 +178,54 @@ Pour des soucis de performances, si un grand nombre de document doivent être in
     {
         firstname : "Arthur",
         lastname : "Shelby",
-        position : "Associé",
-        gender : "Homme",
+        position : "Associate",
+        gender : "Male",
         age : 38,
+        description : "Arthur Shelby Jr. is the eldest of the Shelby siblings and the tough member of Peaky Blinders, the Deputy Vice President Shelby Company Limited. He's also a member of the ICA.",
         company : "Peaky Blinders",
+        episodes : [1,4,6]
         
     },{
         firstname : "John",
         lastname : "Shelby",
-        position : "Associé",
-        gender : "Homme",
+        position : "Associate",
+        gender : "Male",
         age : 30,
-        company : "Peaky Blinders"
+        description : "John Michael Shelby, also called Johnny or John Boy, was the third of Shelby siblings and a member of the Peaky Blinders.",
+        nicknames : ["Johnny", "John Boy"],
+        company : "Peaky Blinders",
+        episodes : [4,5,6]
     },{
         firstname : "Ada",
-        lastname : "Shelby",   
-        gender : "Femme"
+        lastname : "Thorne",   
+        position : "HR",
+        gender : "Female",
         age : 28,
-        company : "Peaky Blinders"
+        description : "Ada Thorne is the fourth and only female of the Shelby sibling. She's the Head of Acquisitions of the Shelby Company Limited.",
+        nicknames : ["Ada Shelby"],
+        company : "Peaky Blinders",
+        episodes : [1,2,6]
     },{
         firstname : "Michael",
         lastname : "Gray",
-        position : "Comptable",
-        gender : "Homme",
+        position : "Accounting",
+        gender : "Male",
         age : 21,
-        company : "Peaky Blinders"
+        description : "Michael Gray is the son of Polly Shelby, his father is dead, and cousin of the Shelby siblings. He is the Chief Accountant in the Shelby Company Limited.",
+        nicknames : ["Henry Johnson", "Jobbie Muncher", "Mickey"],
+        company : "Peaky Blinders",
+        episodes : [5,6]
     },{
         firstname : "Polly",
         lastname : "Gray",
-        gender : "Femme",
+        gender : "Female",
         age : 45,
-        position : "Directrice Financière",
-        company : "Peaky Blinders"
-    })
+        position : "CFO",
+        description : "Elizabeth Polly Gray (née Shelby) is the matriarch of the Shelby Family, aunt of the Shelby siblings, the treasurer of the Birmingham criminal gang, the Peaky Blinders, a certified accountant and company treasurer of Shelby Company Limited. ",
+        nicknames : ["Aunt Polly", "Polly Gray", "Elizabeth Gray", "Polly Shelby", "Pol"],
+        company : "Peaky Blinders",
+        episodes : [1,2,5,6]
+    }])
         
 
 Requêter
@@ -216,7 +234,7 @@ Afin de récupérer les documents stockés dans une collection, un set de foncti
 
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find()
+    db.<YOUR_COLLECTION_NAME>.find().pretty()
     
 Il est possible de récupérer qu'un seul élément.
 
@@ -228,7 +246,7 @@ Il est possible de faire des requêtes plus complexes.
 
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"})
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).pretty()
     
 Les différentes opérations mathématiques sont implémentées. 
 
@@ -246,9 +264,60 @@ OR $or et AND $and permettent de faire des requêtes complexes sur une collectio
 
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find($and:[{"age":{$gte: 28}}, "lastname":"Shelby", {"age":{$lt:40}}])
+    db.<YOUR_COLLECTION_NAME>.find({$and:[{"age":{$gte: 28, $lt:40}}, {"lastname":"Shelby"}]})
     
 Pour des raisons de performances il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés. On peut aussi demander de limiter le nombre de documents.
+
+Requêtes complexes
+''''''''''''''''''
+
+Les objets Mongo peuvent être assez complexes et les requêtes doivent pouvoir matcher des documents:
+
+- Les requêtes sur les sous-objets:
+
+Pour faire une requêtes sur un objet complet il faut redéfinir l'objet.
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find( { size: { h: 14, w: 21, uom: "cm" } } ) #TODO: Dot it
+    
+Pour faire une requête sur uniquement un champs de l'objet  :
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find( { "size.uom": "in" } ) #TODO : Do it 
+    
+Pour requêter les valeurs d'une liste : 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find( { nicknames:  ["Henry Johnson", "Jobbie Muncher", "Mickey"] } )
+
+Le champ nicknames doit matcher parfaitement la liste donnée en argument en contenu et en ordre. Si maintenant on veut récupérer tous les documents avec "Mickey" et "Jobbie Muncher", peu importe l'ordre d'apparition et peu importe les autres éléments du tableau.
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find( { nicknames:  {$all :["Mickey", "Jobbie Muncher"] } } )
+    
+On peut vouloir maintenant vouloir récupérer tous les éléments comptenant "Mickey" dans les surnoms.
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find( { nicknames: "Mickey" } )
+    
+En général, une requête sur un champ d'un tableau se construit de la même manière qu'une requête sur un champ 'basique'
+
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find( { <array field>: { <operator1>: <value1>, ... } })
+
+
+
+
+
+Limitation, Projection et Tris
+''''''''''''''''''''''''''''''
 
 .. code-block:: bash
 
@@ -261,20 +330,20 @@ Pour des raisons de performances il peut être intéressant de limiter les accè
 
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).limit(3)
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).limit(2)
     
 Il est aussi possible de passer directement au Nième document avec la fonction skip
 
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).limit(3).skip(2)
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).skip(2)
     
 On peut trier les résultats récupérés. 
 
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).sort({"age":-1})
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).sort({"age":1})
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"firstname":1}).sort({"age":-1})
+    db.<YOUR_COLLECTION_NAME>.find({}, {"firstname":1}).sort({"age":1})
 
 
 Indexation
@@ -293,13 +362,22 @@ Dans l'ordre croissant,
 .. code-block:: bash
 
      db.<YOUR_COLLECTION_NAME>.createIndex( { age: 1 } )
+     db.<YOUR_COLLECTION_NAME>.getIndexes()
 
 Dans l'ordre décroissant, 
 
 .. code-block:: bash
 
      db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1 } )
+     db.<YOUR_COLLECTION_NAME>.getIndexes()
+     
+Pour supprimer tous les index : 
 
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.dropIndexes()
+    db.<YOUR_COLLECTION_NAME>.getIndexes()
+    
 
 Indexation composée
 '''''''''''''''''''
@@ -309,23 +387,72 @@ L'indexation composée permet de créé un index basé sur deux champs différen
 
 .. code-block:: bash
 
-     db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1, name : 1 } )
+    db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1, firstname : 1 } )
+    db.<YOUR_COLLECTION_NAME>.getIndexes()
+
+Indexation spéciales
+''''''''''''''''''''
+
+- Text : permet de faire de la recherche naturelle de queries dans du texte. Cette index peut devenir très rapidement très important et prendre beaucoup de place mémoire. Il contient un index par mot contenu dans l'ensemble des documents. Il peut aussi être très lent à créer.
+- Multiclés : permet de créer un index sur les éléments d'objets stockés dans des listes ou arrays.
+- 2D, 2DSphère, geoHaystack : permet de créer des index sur des données géospaciales.
+- Hash : permet de stocker les valeurs des champs sous forme de hash.
+
+Tous ces mécanismes d'indexation permettent d'accélérer les performances de requêtes. Mais ils peuvent avoir des effets négatifs: 
+
+- Chaque index doit avoir un minimum de 8kB et peut prendre beaucoup de place sur le disque et dans la mémoire RAM.
+- Ils sont gourmands pour insertions pour les opérations d'écriture puisqu'il doit insérer le nouveau document dans l'index en plus de l'insertion du document dans la collection.
+
+Exemple : 
+
+Pour créer un index sur le texte de la description des personnages : 
 
 
+.. code-block:: bash
 
+    db.<YOUR_COLLECTION_NAME>.createIndex( { description: "text" } )
+    db.<YOUR_COLLECTION_NAME>.getIndexes()
+    
+Uniquement après que cet index de texte ait été créé on peut utiliser la méthode find avec l'argument $text pour faire une requête dans le texte.
 
+.. code-block:: bash
 
+    db.<YOUR_COLLECTION_NAME>.find( { $text: { $search: "female" } } ).pretty()
     
     
-    
+Exercice : 
 
+Supprimez tous les index créé et réessayez de faire la recherche. 
 
-
-
-    
 
 Mettre à jour
 *************
+La mise à jour des documents et une opération très courante dans les bases de données. MongoDB implémente trois fonction différentes permettant de mettre à jour un ou plusieurs documents à la fois.
+
+
+- Mettre à jour un seul document : 
+
+.. code-block:: bash
+
+     db.<YOUR_COLLECTION_NAME>.updateOne(<filter>, <update>, <options>)
+     
+ Cette fonction va mettre à jour le premier élément renvoyer par la requête du filtre. 
+
+- Mettre à jour une liste de documents : 
+
+.. code-block:: bash
+
+     db.<YOUR_COLLECTION_NAME>.updateMany(<filter>, <update>, <options>)
+     
+Cette fonction va mettre à jour tous les documents concernée par la requête.
+
+- Remplacer un document : 
+
+.. code-block:: bash
+
+     db.<YOUR_COLLECTION_NAME>.replaceOne(<filter>, <update>, <options>)
+
+
 
 Supprimer 
 *********
