@@ -58,14 +58,203 @@ Dans le cas ou aucun identifiant n'est précisé MongoDB se charge d'en ajouter 
 * Les 2 suivants l'identifiant du processus 
 * Les 3 derniers sont une valeur incrémentale
 
+Les types de données
+^^^^^^^^^^^^^^^^^^^^
+
+Une base de données MongoDB permet de stocker un grand volume de données hétérogènes sans imposer un modèle de données fixe pour tous les documents. Il est conseillé comme vu plus haut de bien définir la structure globale pour garder une cohérence tout au long des développements.
+
+- Integer : entier relatif stocker sur 32 ou 64 bits. 
+- Double : nombre décimal 
+- String : chaine de caractère (encodée en utf-8)
+- Booléen : True ou False 
+- Object : sous-objets stocké au format JSON 
+- Date : date au format UNIX 
+- Array : stocker une liste d'élément au format atomique ou d'objets 
+
+D'autres types sont disponibles et vous pouvez les trouver  # TODO: Ajouter lien
+
 Installation
 ------------
+
+L'installation peut se faire de plusieurs manières.
+- Directement depuis les sources et ppa. Liens vers le tutorial https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+- Ou en instanciant un conteneur Docker. L'avantage de Docker est qu'il n'installe aucune dépendance sur votre machine et laisse son environnement propre. Lien vers le tutorial : https://hub.docker.com/_/mongo/
+
+Le port par défaut de mongo est le 27017.
+
+Connexion
+---------
+Pour se connecter à une base mongo deux solutions sont possibles. En ligne de commande ou via un gestionnaire de BDD comme Robo3T https://robomongo.org/ . Dans les deux cas, la syntaxe mongo est utilisée pour effectuer des requêtes. L'avantage de Robo3T est qu'il possède une interface permettant de visualiser très simplement les données.
 
 Création d'un modèle de données
 -------------------------------
 
 La création d'un modèle de données clair et adapté est une tâche importante et primordiale. 
 Ce modèle de données doit être réfléchie à court et long terme et doit prendre en compte la capacité de stockage et les besoins métiers.
+
+
+# MERGE HERE 
+
+Database
+^^^^^^^^
+
+Après votre connexion vous (si vous en avez le droit) vous pouvez afficher toutes les databases disponibles sur la base. 
+
+.. highlight::
+    show dbs
+    
+Pour supprimer définitivement une database: 
+
+.. highlight::
+    db.dropDatabase()
+    show dbs
+    
+Comme vous pouvez le deviner cette commande est à utiliser avec précautions.
+
+Collections
+^^^^^^^^^^^
+
+Les colections correspondent aux tables en SQL. Elles sont des sous-ensembles de database. Pour créer une collection il faut auparavant s'être référencé sur une database.
+
+.. highlight::
+    show dbs
+    use <YOUR_DB_NAME>
+    db.createCollection(<YOUR_COLLECTION_NAME>)
+    show collections
+    
+Comme pour les databases on peut vouloir supprimer définitivement une collection.
+
+.. highlight::
+    db.<YOUR_COLLECTION_NAME>.drop()
+    show collections
+    
+ 
+Documents
+^^^^^^^^^
+
+Insertion
+*********
+
+Un document est un sous-ensemble d'une collection qui est elle même une sous-partie d'une database. Pour insérer un document il faut donc se référencer sur une database et sur la collection souhaitée.
+
+.. highlight::
+    use <YOUR_DB_NAME>
+    show collections
+    db.<YOUR_COLLECTION_NAME>.insert({
+        firstname : "Thomas",
+        lastname : "Shelby",
+        position : "director",
+        company : "Peaky Blinders"})
+        
+Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir avec les règles définies précédement. Une bonne pratique est de trouver une règle permettant de retrouver facilement et efficacement un document sans avoir à faire une requête complexe et obliger la base à rechercher dans ses champs. Une technique est de prendre le hash d'une combinaison des champs qui permet de créer une clé unique SHA128(firstname+lastname+position) par exemple.
+
+.. highlight::
+    use <YOUR_DB_NAME>
+    show collections
+    db.<YOUR_COLLECTION_NAME>.insert({
+        _id: ObjectId(7df78ad8902c),
+        firstname : "Thomas",
+        lastname : "Shelby",
+        position : "Directeur",
+        gender : "Homme",
+        age : 35,
+        company : "Peaky Blinders"})
+        
+Pour des soucis de performances, si un grand nombre de document doivent être insérés très rapidement sans surcharger les appels réseaux il est possible de passer une liste d'objets à la fonction insert
+
+
+.. highlight::
+    db.<YOUR_COLLECTION_NAME>.insert([
+    {
+        firstname : "Arthur",
+        lastname : "Shelby",
+        position : "Associé",
+        gender : "Homme",
+        age : 38,
+        company : "Peaky Blinders",
+        
+    },{
+        firstname : "John",
+        lastname : "Shelby",
+        position : "Associé",
+        gender : "Homme",
+        age : 30,
+        company : "Peaky Blinders"
+    },{
+        firstname : "Ada",
+        lastname : "Shelby",   
+        gender : "Femme"
+        age : 28,
+        company : "Peaky Blinders"
+    },{
+        firstname : "Michael",
+        lastname : "Gray",
+        position : "Comptable",
+        gender : "Homme",
+        age : 21,
+        company : "Peaky Blinders"
+    },{
+        firstname : "Polly",
+        lastname : "Gray",
+        gender : "Femme",
+        age : 45,
+        position : "Directrice Financière",
+        company : "Peaky Blinders"
+    })
+        
+
+Requêter
+********
+Afin de récupérer les documents stockés dans une collection, un set de fonctions de requêtes sont disponibles.
+
+.. highlight::
+    db.<YOUR_COLLECTION_NAME>.find()
+    
+Il est possible de récupérer qu'un seul élément.
+
+.. highlight::
+    db.<YOUR_COLLECTION_NAME>.findOne()
+    
+Il est possible de faire des requêtes plus complexes. 
+
+.. highlight::
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"})
+    
+Les différentes opérations mathématiques sont implémentées. 
+
+- Egalité :  {key:value}
+- Différence :  {key: {$ne:value}}
+- Plus (Grand|Petit) que :  les opérateurs sont $lt (lower than) ; $lte (lower than equals) ; $gt (greater than) ; $gte (greater than equals) : {key: {<OPERATEUR>:value}}
+
+.. highlight::
+    db.<YOUR_COLLECTION_NAME>.find({"age":{$gte :30}})
+
+Les opérations logiques sont aussi disponibles.
+
+OR $or et AND $and permettent de faire des requêtes complexes sur une collection. 
+
+.. highlight::
+    db.<YOUR_COLLECTION_NAME>.find($and:[{"age":{$gte: 28}}, "lastname":"Shelby", {"age":{$lt:40}}])
+
+
+
+
+
+
+
+    
+
+Mettre à jour
+*************
+
+Supprimer 
+*********
+
+
+
+    
+
+
 
 
 
