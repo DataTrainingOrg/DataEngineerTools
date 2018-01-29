@@ -100,12 +100,14 @@ Database
 
 Après votre connexion vous (si vous en avez le droit) vous pouvez afficher toutes les databases disponibles sur la base. 
 
-.. highlight::
+.. code-block:: bash
+
     show dbs
     
 Pour supprimer définitivement une database: 
 
-.. highlight::
+.. code-block:: bash
+
     db.dropDatabase()
     show dbs
     
@@ -116,7 +118,8 @@ Collections
 
 Les colections correspondent aux tables en SQL. Elles sont des sous-ensembles de database. Pour créer une collection il faut auparavant s'être référencé sur une database.
 
-.. highlight::
+.. code-block:: bash
+
     show dbs
     use <YOUR_DB_NAME>
     db.createCollection(<YOUR_COLLECTION_NAME>)
@@ -124,7 +127,8 @@ Les colections correspondent aux tables en SQL. Elles sont des sous-ensembles de
     
 Comme pour les databases on peut vouloir supprimer définitivement une collection.
 
-.. highlight::
+.. code-block:: bash
+
     db.<YOUR_COLLECTION_NAME>.drop()
     show collections
     
@@ -137,7 +141,8 @@ Insertion
 
 Un document est un sous-ensemble d'une collection qui est elle même une sous-partie d'une database. Pour insérer un document il faut donc se référencer sur une database et sur la collection souhaitée.
 
-.. highlight::
+.. code-block:: bash
+
     use <YOUR_DB_NAME>
     show collections
     db.<YOUR_COLLECTION_NAME>.insert({
@@ -148,7 +153,8 @@ Un document est un sous-ensemble d'une collection qui est elle même une sous-pa
         
 Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir avec les règles définies précédement. Une bonne pratique est de trouver une règle permettant de retrouver facilement et efficacement un document sans avoir à faire une requête complexe et obliger la base à rechercher dans ses champs. Une technique est de prendre le hash d'une combinaison des champs qui permet de créer une clé unique SHA128(firstname+lastname+position) par exemple.
 
-.. highlight::
+.. code-block:: bash
+
     use <YOUR_DB_NAME>
     show collections
     db.<YOUR_COLLECTION_NAME>.insert({
@@ -163,7 +169,8 @@ Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir a
 Pour des soucis de performances, si un grand nombre de document doivent être insérés très rapidement sans surcharger les appels réseaux il est possible de passer une liste d'objets à la fonction insert
 
 
-.. highlight::
+.. code-block:: bash
+
     db.<YOUR_COLLECTION_NAME>.insert([
     {
         firstname : "Arthur",
