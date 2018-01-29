@@ -214,17 +214,20 @@ Requêter
 ********
 Afin de récupérer les documents stockés dans une collection, un set de fonctions de requêtes sont disponibles.
 
-.. highlight::
+.. code-block:: bash
+
     db.<YOUR_COLLECTION_NAME>.find()
     
 Il est possible de récupérer qu'un seul élément.
 
-.. highlight::
+.. code-block:: bash
+
     db.<YOUR_COLLECTION_NAME>.findOne()
     
 Il est possible de faire des requêtes plus complexes. 
 
-.. highlight::
+.. code-block:: bash
+
     db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"})
     
 Les différentes opérations mathématiques sont implémentées. 
@@ -233,18 +236,88 @@ Les différentes opérations mathématiques sont implémentées.
 - Différence :  {key: {$ne:value}}
 - Plus (Grand|Petit) que :  les opérateurs sont $lt (lower than) ; $lte (lower than equals) ; $gt (greater than) ; $gte (greater than equals) : {key: {<OPERATEUR>:value}}
 
-.. highlight::
+.. code-block:: bash
+
     db.<YOUR_COLLECTION_NAME>.find({"age":{$gte :30}})
 
 Les opérations logiques sont aussi disponibles.
 
 OR $or et AND $and permettent de faire des requêtes complexes sur une collection. 
 
-.. highlight::
+.. code-block:: bash
+
     db.<YOUR_COLLECTION_NAME>.find($and:[{"age":{$gte: 28}}, "lastname":"Shelby", {"age":{$lt:40}}])
+    
+Pour des raisons de performances il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés. On peut aussi demander de limiter le nombre de documents.
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find(QUERY, PROJECTION)
+    
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"position":1})
+    
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).limit(3)
+    
+Il est aussi possible de passer directement au Nième document avec la fonction skip
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).limit(3).skip(2)
+    
+On peut trier les résultats récupérés. 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).sort({"age":-1})
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).sort({"age":1})
+
+
+Indexation
+**********
+
+L'indexation permet d'accélérer les performances sur les requêtes. Si aucun n'index n'est mis en place, MongoDB doit effectuer un scan de tous les documents pour trouver ceux qui sont pertinents. L'index permet de stocker les valeurs d'un champs dans de façon triée pour limiter le nombre de document à parcourir pour effectuer une requête. 
+
+# TODO : Récupérer la photo https://docs.mongodb.com/manual/indexes/
+
+Indexation simple
+'''''''''''''''''
+
+L'indexation simple permet de créer l'index en fonction d'un seul champ. On spécifie alors l'ordre dans lequel l'index est créé et trié. 
+Dans l'ordre croissant, 
+
+.. code-block:: bash
+
+     db.<YOUR_COLLECTION_NAME>.createIndex( { age: 1 } )
+
+Dans l'ordre décroissant, 
+
+.. code-block:: bash
+
+     db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1 } )
+
+
+Indexation composée
+'''''''''''''''''''
+
+L'indexation composée permet de créé un index basé sur deux champs différents. L'ordre des champs spécifié dans la création d'un index est important.On peut trier dans l'ordre croissant le premier champs et dans l'ordre décroissant le deuxième champs. 
+
+
+.. code-block:: bash
+
+     db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1, name : 1 } )
 
 
 
+
+
+    
+    
+    
 
 
 
