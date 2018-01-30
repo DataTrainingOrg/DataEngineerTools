@@ -645,6 +645,12 @@ C'est un peu différent pour la méthode find(). Cela créé, pour des raison de
     
     cursor.next()
     
+.. code-block:: Python 
+    
+    for document in cursor : 
+        print(document)
+        
+    
     
 Exercice : 
 
