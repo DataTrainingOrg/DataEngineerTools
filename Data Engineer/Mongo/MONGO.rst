@@ -612,27 +612,54 @@ Et de les sélectionner :
 
 .. code-block:: Python
 
-    db_pkb = client.pkb
-    db_pkb = client["pkb"]
+    db = client.<YOUR_DATABASE_NAME>
+    db = client["<YOUR_DATABASE_NAME>"]
     
 Pour lister les différentes collections présentes sur une database.
 
 .. code-block:: Python
 
-    db_pkb.collection_names()
+    db.collection_names()
 
 Il en va de même pour sélectionner une collection : 
 
 .. code-block:: Python
 
-    collection_family = db_pkb.family or db_pkb["family"]
+    collection = db.<YOUR_COLLECTION_NAME> or db_pkb["<YOUR_COLLECTION_NAME>"]
+    
+Pour récupérer un document : 
+
+.. code-block:: Python 
+
+    collection.find_one()
+    
+C'est un peu différent pour la méthode find(). Cela créé, pour des raison de performances un curseur PyMongo. En effet, les données seront récupérées uniquement si elles sont utilisées. C'est intéressant pour des collections très volumineuses.
+
+.. code-block:: Python 
+
+    cursor = collection.find()
+    type(cursor)
+
+.. code-block:: Python 
+    
+    cursor.next()
     
     
-    
-    
+Exercice : 
+
+Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets KickStarter. Intégrer les données directement avec L'API Python dans une base de données Mongo. Il conviendra de bien spécifier l'ID du document.
+- Récupérer les 5 projets ayant reçu le plus de promesse de dons.
+- Compter le nombre de projets ayant atteint leur but.
+- Compter le nombre de projets pour chaque catégories.
+- Compter le nombre de projets francais ayant été instancié avant 2016.
+- Récupérer les projets américains ayant demandé plus de 200 000 dollars.
+- Compter le nombre de projet ayant "Sport" dans elru nom
 
 
-
-
-
-
+Intégrer le fichier `USvideos.csv`. Qui représente un ensemble de 8000 vidéos Youtube. Merger le fichier `US_category_id.json` pour récupérer le nom des catégories. Il conviendra de bien spécifier l'ID du document.
+- Récupérer toutes les vidéos de la chaîne Apple.
+- Compter le nombre de catégories différentes 
+- Si vous ne l'avais pas déjà fait, découper les tags en listes et mettre à jour les tags de chacun des documents avec une requête update. 
+- Récupérer les vidéos les plus vues.
+- Compter le nombre de vue moyen en fonction de la catégorie. 
+- Récupérer les chaines Youtube avec la plus grande moyenne de likes.
