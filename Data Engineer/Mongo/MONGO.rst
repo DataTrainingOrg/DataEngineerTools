@@ -648,7 +648,7 @@ C'est un peu différent pour la méthode find(). Cela créé, pour des raison de
     
 Exercice : 
 
-Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets KickStarter. Intégrer les données directement avec L'API Python dans une base de données Mongo. Il conviendra de bien spécifier l'ID du document.
+Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets KickStarter. Intégrer les données directement avec L'API Python dans une base de données Mongo. Il conviendra de bien spécifier l'ID du document. Pensez aussi à bien formatter le type des données pour profiter des méthodes implémentées par Mongo. L'ensemble de données n'est pas forcément nécessaire, c'est à vous de créer votre modèle de données.   
 
 - Récupérer les 5 projets ayant reçu le plus de promesse de dons.
 - Compter le nombre de projets ayant atteint leur but.
