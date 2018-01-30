@@ -242,7 +242,7 @@ Il est possible de récupérer qu'un seul élément.
 
     db.<YOUR_COLLECTION_NAME>.findOne()
     
-Il est possible de faire des requêtes plus complexes. 
+Il est possible de faire des requêtes plus complexes. - 
 
 .. code-block:: bash
 
@@ -304,7 +304,7 @@ On peut vouloir maintenant vouloir récupérer tous les éléments comptenant "M
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find( { nicknames: "Mickey" } )
-    
+    - 
 En général, une requête sur un champ d'un tableau se construit de la même manière qu'une requête sur un champ 'basique'
 
 
@@ -336,7 +336,7 @@ Il est aussi possible de passer directement au Nième document avec la fonction 
 
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).skip(2)
+    db.<YOUR_COLLECTION- _NAME>.find({"lastname":"Shelby"}).skip(2)
     
 On peut trier les résultats récupérés. 
 
@@ -526,6 +526,7 @@ On peut vouloir récupérer le nombre de personnage de chaque famille présente 
     db.<YOUR_COLLECTION_NAME>.aggregate([{$group : {_id : "$lastname", charactereNumberByFamily : {$sum : 1}}}])
     
 Vous avez accès à toutes les opérations mathématiques dont vous avez besoin : 
+
 - $sum : fait la somme de 
 - $avg : fait la moyenne 
 - $min : récupère la valeur minimale 
@@ -648,6 +649,7 @@ C'est un peu différent pour la méthode find(). Cela créé, pour des raison de
 Exercice : 
 
 Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets KickStarter. Intégrer les données directement avec L'API Python dans une base de données Mongo. Il conviendra de bien spécifier l'ID du document.
+
 - Récupérer les 5 projets ayant reçu le plus de promesse de dons.
 - Compter le nombre de projets ayant atteint leur but.
 - Compter le nombre de projets pour chaque catégories.
@@ -657,6 +659,7 @@ Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets K
 
 
 Intégrer le fichier `USvideos.csv`. Qui représente un ensemble de 8000 vidéos Youtube. Merger le fichier `US_category_id.json` pour récupérer le nom des catégories. Il conviendra de bien spécifier l'ID du document.
+
 - Récupérer toutes les vidéos de la chaîne Apple.
 - Compter le nombre de catégories différentes 
 - Si vous ne l'avais pas déjà fait, découper les tags en listes et mettre à jour les tags de chacun des documents avec une requête update. 
