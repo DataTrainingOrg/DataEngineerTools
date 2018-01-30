@@ -437,6 +437,11 @@ La mise à jour des documents et une opération très courante dans les bases de
      db.<YOUR_COLLECTION_NAME>.updateOne(<filter>, <update>, <options>)
      
  Cette fonction va mettre à jour le premier élément renvoyer par la requête du filtre. 
+ 
+.. code-block:: bash
+    
+    db.<YOUR_COLLECTION_NAME>.updateOne({"firstname":"Thomas"}, {$set:{maincharacter:true}})
+    db.<YOUR_COLLECTION_NAME>.findOne({"firstname":"Thomas"})
 
 - Mettre à jour une liste de documents : 
 
@@ -446,19 +451,183 @@ La mise à jour des documents et une opération très courante dans les bases de
      
 Cette fonction va mettre à jour tous les documents concernée par la requête.
 
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.updateMany({"lastname":"Shelby"}, {$set:{shelbyFamily:true}})
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).pretty()
+
 - Remplacer un document : 
 
 .. code-block:: bash
 
      db.<YOUR_COLLECTION_NAME>.replaceOne(<filter>, <update>, <options>)
+     
+ 
+ Une  option peut être très intéressante, c'est l'option upsert. Elle permet d'ajouter un document si il n'existe pas déjà directement depuis la fonction update. Par défaut, cette option est à False. 
+ 
+ 
+.. code-block:: bash
 
+    db.<YOUR_COLLECTION_NAME>.update(<filter>, <update>, {upsert: true})
+    
+    
+# TODO: Exercice 
 
 
 Supprimer 
 *********
 
+Pour supprimer des documents, il existe deux méthodes : 
+
+- deleteMany({ <field1>: <value1>, ... }
+- deleteOne({ <field1>: <value1>, ... }
 
 
+Pour supprimer tous les documents de la collection: 
+ 
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.deleteMany({})
+    
+Pour supprimer tous les documents possédant une condition : 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.deleteMany({lastname: "Gray"})
+    
+Pour supprimer un seul document (ou le premier si la condition n'est pas assez restrictive. 
+
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.deleteOne({firstname: "Arthur"})
+
+Quelques choses à savoir : 
+
+La méthode deleteMany applique une fonction à tous les documents. La fonction n'est pas une fonction globale. Toutes les fonctions en mongo sont atomique ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
+La méthode delete ne supprime pas les indexes, même si on supprimer tous les documents de la collection
+
+
+Aggreagation
+************
+
+Les aggrégations permettent de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d'effectuer une opération sur l'ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments GROUP BY.
+
+La syntaxe est très similaire à toutes les autres fonctions Mongo mais la requête va être plus complexe. 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.aggregate(AGGREGATE_OPERATION)
+    
+On peut vouloir récupérer le nombre de personnage de chaque famille présente dans la série : 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.aggregate([{$group : {_id : "$lastname", charactereNumberByFamily : {$sum : 1}}}])
+    
+Vous avez accès à toutes les opérations mathématiques dont vous avez besoin : 
+- $sum : fait la somme de 
+- $avg : fait la moyenne 
+- $min : récupère la valeur minimale 
+- $max : récupère la valeur maximal 
+- $first : récupère le premier élément
+- $last : récupère le denier élément
+
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.aggregate([{$group : {_id : "$lastname", averageAgeByFamily : {$avg : "$age"}}}])
+    db.<YOUR_COLLECTION_NAME>.aggregate([{$group : {_id : "$lastname", minAgeByFamily : {$min : "$age"}}}])
+    db.<YOUR_COLLECTION_NAME>.aggregate([{$group : {_id : "$lastname", lastAgeByFamily : {$last : "$age"}}}])
+    
+On peut ajouter un paramètre à la fonction aggregate pour filtrer les élements à aggréger.
+Si on veut récupérer que les hommes : 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.aggregate([
+        {$match:{gender:"Male"}},
+        {$group : {_id : "$lastname", averageAgeByFamily : {$avg : "$age"}}}
+    ])
+    
+    
+Il est aussi possible d'intégrer directement du code JavaScript dans les requêtes Mongo. Des fonctions de Map->Reduce sont disponibles pour effectuer les fonctions d'aggrégations. Cette phase de Map Reduce se découpe en deux phases : 
+
+- Phase de MAP : Il parcourt tous les élements et extrait les champs voulus.
+- Phase de REDUCE : qui utilise les champs retournés pour effectuer l'opération finale. 
+
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.mapReduce(
+        function(){emit(this.lastname, this.age)},
+        function(key,values){return Array.sum(values)},
+        {query :{gender:"Male"}, out:"sumAge"}
+        )
+ 
+On voit le nombre de d'entrées pour le MAP et le résultas du REDUCE.
+Maintenant pour récupérer les résultats du map->reduce : 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.mapReduce(
+        function(){emit(this.lastname, this.age)},
+        function(key,values){return Array.sum(values)},
+        {query :{gender:"Male"}, out:"sumAge"}
+        )
+        
+        
+API Python
+----------
+
+Il existe une API Python développée pour intéragir avec une base de données MongoDB. Ce package s'appelle pymongo  https://docs.mongodb.com/getting-started/python/client/. Il est important d'avoir des APIs dans les différents langages pour faciliter l'intégration dans des applications. 
+
+Pour installer le package : 
+
+.. code-block:: Python
+
+    pip install pymongo
+    
+Ce package garde très largement la syntaxe mongo shell et permet d'utiliser ces méthodes et items (DataBases, Collections, Documents) en tant qu'objets Python. 
+
+
+.. code-block:: Python
+
+    client = MongoClient()
+    
+Permet de se connecter à une base MongoDB en créant un pointeur client vers cette base. Par défault ce client est paramétré sur le localhost. 
+
+.. code-block:: Python
+
+    client = MongoClient("http://<YOUR_IP_ADDRESS>:<YOUR_PORT_NUMBER>)
+    
+Dans la plupart des cas, le port par défaut est le 27017.
+Il est possible comme depuis le MongoShell de lister les bases de données. 
+
+.. code-block:: Python
+
+    client.database_names()
+    
+Et de les sélectionner : 
+
+.. code-block:: Python
+
+    db_pkb = client.pkb
+    db_pkb = client["pkb"]
+    
+Pour lister les différentes collections présentes sur une database.
+
+.. code-block:: Python
+    db_pkb.collection_names()
+
+Il en va de même pour sélectionner une collection : 
+
+
+.. code-block:: Python
+    collection_family = db_pkb.family or db_pkb["family"]
+    
+    
+    
     
 
 
