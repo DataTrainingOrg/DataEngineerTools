@@ -618,12 +618,13 @@ Et de les sélectionner :
 Pour lister les différentes collections présentes sur une database.
 
 .. code-block:: Python
+
     db_pkb.collection_names()
 
 Il en va de même pour sélectionner une collection : 
 
-
 .. code-block:: Python
+
     collection_family = db_pkb.family or db_pkb["family"]
     
     
