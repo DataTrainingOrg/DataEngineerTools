@@ -94,8 +94,6 @@ La création d'un modèle de données clair et adapté est une tâche importante
 Ce modèle de données doit être réfléchi à court et long terme et doit prendre en compte la capacité de stockage et les besoins métiers.
 
 
-# MERGE HERE 
-
 Database
 ^^^^^^^^
 
