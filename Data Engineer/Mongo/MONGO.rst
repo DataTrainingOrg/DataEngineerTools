@@ -6,8 +6,8 @@ Introduction
 ------------
 
 MongoDB est une base de données opensource codée en C++ basée sur un concept de stockage sous la forme de document au format JSON.
-Le grand avantage de ce système est l'optimisation de la mémoire. Dans une base SQL chaque colonne doit être définie au préalable avec une empreinte mémoire et un type de donnée.
-Dans une base MongoDB si le champs n'est pas présent, il n'apparait pas dans un document alors qu'en SQL la place mémoire est utilisée pour spécifié que la valeur est nulle.
+Le grand avantage de ce système est l'optimisation de la mémoire. Dans une base relationelle chaque colonne doit être définie au préalable avec une empreinte mémoire et un type de donnée.
+Dans une base MongoDB si le champs n'est pas présent, il n'apparait pas dans un document alors qu'en SQL la place mémoire est utilisée pour spécifier que la valeur est nulle.
 
 Les avantages
 ^^^^^^^^^^^^^
