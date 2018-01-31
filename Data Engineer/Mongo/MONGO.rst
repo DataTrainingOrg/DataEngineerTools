@@ -5,7 +5,7 @@ MongoDB
 Introduction
 ------------
 
-MongoDB est une base de données opensource codée en C++ basée sur un concept de stockage sous la forme de document au format JSON.
+MongoDB est une base de données opensource codée en C++ basée sur un concept de stockage sous la forme de documents au format JSON.
 Le grand avantage de ce système est l'optimisation de la mémoire. Dans une base relationelle chaque colonne doit être définie au préalable avec une empreinte mémoire et un type de donnée.
 Dans une base MongoDB si le champs n'est pas présent, il n'apparait pas dans un document alors qu'en SQL la place mémoire est utilisée pour spécifier que la valeur est nulle.
 
@@ -49,7 +49,7 @@ Concepts basiques
 
 Identifiants
 ^^^^^^^^^^^^
-Tous les documents possèdent un identifiant unique qui permet de retrouver très efficacement un document.
+Tous les documents possèdent un identifiant unique, ce qui permet de retrouver très efficacement un document.
 L'identifiant peut être spécifié lors de l'ajout d'un nouveau document (nom+prenom, adresse email, url, etc).
 Dans le cas ou aucun identifiant n'est précisé MongoDB se charge d'en ajouter un, il est composé d'un nombre de 12 bytes au format hexadécimal : 
 
@@ -67,9 +67,9 @@ Une base de données MongoDB permet de stocker un grand volume de données hét�
 - Double : nombre décimal 
 - String : chaine de caractère (encodée en utf-8)
 - Booléen : True ou False 
-- Object : sous-objets stocké au format JSON 
+- Object : sous-objet stocké au format JSON 
 - Date : date au format UNIX 
-- Array : stocker une liste d'élément au format atomique ou d'objets 
+- Array : stocker une liste d'éléments au format atomique ou d'objets 
 
 D'autres types sont disponibles et vous pouvez les trouver  # TODO: Ajouter lien
 
@@ -90,7 +90,7 @@ Création d'un modèle de données
 -------------------------------
 
 La création d'un modèle de données clair et adapté est une tâche importante et primordiale. 
-Ce modèle de données doit être réfléchie à court et long terme et doit prendre en compte la capacité de stockage et les besoins métiers.
+Ce modèle de données doit être réfléchi à court et long terme et doit prendre en compte la capacité de stockage et les besoins métiers.
 
 
 # MERGE HERE 
@@ -116,7 +116,7 @@ Comme vous pouvez le deviner cette commande est à utiliser avec précautions.
 Collections
 ^^^^^^^^^^^
 
-Les colections correspondent aux tables en SQL. Elles sont des sous-ensembles de database. Pour créer une collection il faut auparavant s'être référencé sur une database.
+Les collections correspondent aux tables en SQL. Elles sont des sous-ensembles de database. Pour créer une collection il faut auparavant s'être référencé sur une database.
 
 .. code-block:: bash
 
@@ -139,7 +139,7 @@ Documents
 Insertion
 *********
 
-Un document est un sous-ensemble d'une collection qui est elle même une sous-partie d'une database. Pour insérer un document il faut donc se référencer sur une database et sur la collection souhaitée.
+Un document est un sous-ensemble d'une collection qui est lui même une sous-partie d'une database. Pour insérer un document il faut donc se référencer sur une database et sur la collection souhaitée.
 
 .. code-block:: bash
 
@@ -169,7 +169,7 @@ Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir a
         episodes : [1,2,4,5,6]
         })
         
-Pour des soucis de performances, si un grand nombre de document doivent être insérés très rapidement sans surcharger les appels réseaux il est possible de passer une liste d'objets à la fonction insert
+Pour des soucis de performances, si un grand nombre de documents doivent être insérés très rapidement sans surcharger les appels réseaux il est possible de passer une liste d'objets à la fonction insert.
 
 
 .. code-block:: bash
@@ -275,7 +275,7 @@ Les objets Mongo peuvent être assez complexes et les requêtes doivent pouvoir 
 
 - Les requêtes sur les sous-objets:
 
-Pour faire une requêtes sur un objet complet il faut redéfinir l'objet.
+Pour faire une requête sur un objet complet il faut redéfinir l'objet.
 
 .. code-block:: bash
 
@@ -422,7 +422,7 @@ Uniquement après que cet index de texte ait été créé on peut utiliser la m�
     
 Exercice : 
 
-Supprimez tous les index créé et réessayez de faire la recherche. 
+Supprimez tous les index créés et réessayez de faire la recherche. 
 
 
 Mettre à jour
@@ -504,8 +504,8 @@ Pour supprimer un seul document (ou le premier si la condition n'est pas assez r
 
 Quelques choses à savoir : 
 
-La méthode deleteMany applique une fonction à tous les documents. La fonction n'est pas une fonction globale. Toutes les fonctions en mongo sont atomique ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
-La méthode delete ne supprime pas les indexes, même si on supprimer tous les documents de la collection
+La méthode deleteMany applique une fonction à tous les documents. La fonction n'est pas une fonction globale. Toutes les fonctions en mongo sont atomiques ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
+La méthode delete ne supprime pas les indexes, même si on supprime tous les documents de la collection.
 
 
 Aggreagation
