@@ -11,11 +11,11 @@ Dans une base MongoDB si le champs n'est pas présent, il n'apparait pas dans un
 
 Les avantages
 ^^^^^^^^^^^^^
-* Optimisé pour le multi machine et réplication de données.
-* Pas besoin de jointures
-* Un index est créé sur chaque clé pour une rapidité de requêtes
-* Un langage de requêtage aussi puissant que le SQL
-* Optimisation de la mémoire 
+* Optimisé pour le multi-machines et la réplication de données ;
+* Pas besoin de jointures entre les tables compte tenu du modèle de données sous forme de documents ;
+* Un index est créé sur chaque clé pour une rapidité de requêtes ;
+* Un langage de requêtage aussi puissant que le SQL ;
+* Optimisation de la mémoire .
 
 Concepts basiques
 -----------------
