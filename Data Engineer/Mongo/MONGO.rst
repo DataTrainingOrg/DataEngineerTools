@@ -661,7 +661,7 @@ Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets K
 - Compter le nombre de projets pour chaque catégories.
 - Compter le nombre de projets francais ayant été instancié avant 2016.
 - Récupérer les projets américains ayant demandé plus de 200 000 dollars.
-- Compter le nombre de projet ayant "Sport" dans elru nom
+- Compter le nombre de projet ayant "Sport" dans leur nom
 
 
 Intégrer le fichier `USvideos.csv`. Qui représente un ensemble de 8000 vidéos Youtube. Merger le fichier `US_category_id.json` pour récupérer le nom des catégories. Il conviendra de bien spécifier l'ID du document.
