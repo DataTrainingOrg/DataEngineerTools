@@ -1,0 +1,611 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MongoDB &#8212; documentation Mongo 0.1</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="mongodb">
+<h1>MongoDB<a class="headerlink" href="#mongodb" title="Lien permanent vers ce titre">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Lien permanent vers ce titre">¶</a></h2>
+<p>MongoDB est une base de données opensource codée en C++ basée sur un concept de stockage sous la forme de documents au format JSON.
+Le grand avantage de ce système est l’optimisation de la mémoire. Dans une base relationelle chaque colonne doit être définie au préalable avec une empreinte mémoire et un type de donnée.
+Dans une base MongoDB si le champs n’est pas présent, il n’apparait pas dans un document alors qu’en SQL la place mémoire est utilisée pour spécifier que la valeur est nulle.</p>
+<div class="section" id="les-avantages">
+<h3>Les avantages<a class="headerlink" href="#les-avantages" title="Lien permanent vers ce titre">¶</a></h3>
+<ul class="simple">
+<li>Optimisé pour le multi-machines et la réplication de données ;</li>
+<li>Pas besoin de jointures entre les tables compte tenu du modèle de données sous forme de documents ;</li>
+<li>Un index est créé sur chaque clé pour une rapidité de requêtes ;</li>
+<li>Un langage de requêtage aussi puissant que le SQL ;</li>
+<li>Optimisation de la mémoire .</li>
+</ul>
+</div>
+</div>
+<div class="section" id="concepts-basiques">
+<h2>Concepts basiques<a class="headerlink" href="#concepts-basiques" title="Lien permanent vers ce titre">¶</a></h2>
+<ul class="simple">
+<li>Database : une database est un regroupement de collections. Chaque Database possède sont propre système de fichiers et sa propre authentification. Elle a le même rôle qu’une database en MySQL.</li>
+<li>Collection : une collection est un regroupement de documents. C’est une table en MySQL, la principale différence est qu’elle ne définie pas un schéma de données fixe. Les documents présents dans une collection n’ont pas forcément tous les mêmes champs.</li>
+<li>Document : un document est un objet JSON stocké sous la forme de plusieurs clés:valeurs. C’est l’équivalent d’une ligne dans une table SQL.</li>
+<li>Champ : Un champ est l’équivalent d’une colonne en SQL. Il permet de faire des requêtes.</li>
+</ul>
+<div class="section" id="identifiants">
+<h3>Identifiants<a class="headerlink" href="#identifiants" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Tous les documents possèdent un identifiant unique, ce qui permet de retrouver très efficacement un document.
+L’identifiant peut être spécifié lors de l’ajout d’un nouveau document (nom+prenom, adresse email, url, etc).
+Dans le cas ou aucun identifiant n’est précisé MongoDB se charge d’en ajouter un, il est composé d’un nombre de 12 bytes au format hexadécimal :</p>
+<ul class="simple">
+<li>Les 4 premiers bytes sont le timestamp de l’ajout du document</li>
+<li>Les 3 suivants correspondent à l’identifiant de la machine</li>
+<li>Les 2 suivants l’identifiant du processus</li>
+<li>Les 3 derniers sont une valeur incrémentale</li>
+</ul>
+</div>
+<div class="section" id="les-types-de-donnees">
+<h3>Les types de données<a class="headerlink" href="#les-types-de-donnees" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Une base de données MongoDB permet de stocker un grand volume de données hétérogènes sans imposer un modèle de données fixe pour tous les documents. Il est conseillé comme vu plus haut de bien définir la structure globale pour garder une cohérence tout au long des développements.</p>
+<ul class="simple">
+<li>Integer : entier relatif stocker sur 32 ou 64 bits.</li>
+<li>Double : nombre décimal</li>
+<li>String : chaine de caractère (encodée en utf-8)</li>
+<li>Booléen : True ou False</li>
+<li>Object : sous-objet stocké au format JSON</li>
+<li>Date : date au format UNIX</li>
+<li>Array : stocker une liste d’éléments au format atomique ou d’objets</li>
+</ul>
+<p>D’autres types sont disponibles et vous pouvez les trouver  # TODO: Ajouter lien</p>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Lien permanent vers ce titre">¶</a></h2>
+<p>L’installation peut se faire de plusieurs manières.
+- Directement depuis les sources et ppa. Liens vers le tutorial <a class="reference external" href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/">https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/</a>
+- Ou en instanciant un conteneur Docker. L’avantage de Docker est qu’il n’installe aucune dépendance sur votre machine et laisse son environnement propre. Lien vers le tutorial : <a class="reference external" href="https://hub.docker.com/_/mongo/">https://hub.docker.com/_/mongo/</a></p>
+<p>Le port par défaut de mongo est le 27017.</p>
+</div>
+<div class="section" id="connexion">
+<h2>Connexion<a class="headerlink" href="#connexion" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Pour se connecter à une base mongo deux solutions sont possibles. En ligne de commande ou via un gestionnaire de BDD comme Robo3T <a class="reference external" href="https://robomongo.org/">https://robomongo.org/</a> . Dans les deux cas, la syntaxe mongo est utilisée pour effectuer des requêtes. L’avantage de Robo3T est qu’il possède une interface permettant de visualiser très simplement les données.</p>
+</div>
+<div class="section" id="creation-d-un-modele-de-donnees">
+<h2>Création d’un modèle de données<a class="headerlink" href="#creation-d-un-modele-de-donnees" title="Lien permanent vers ce titre">¶</a></h2>
+<p>La création d’un modèle de données clair et adapté est une tâche importante et primordiale.
+Ce modèle de données doit être réfléchi à court et long terme et doit prendre en compte la capacité de stockage et les besoins métiers.</p>
+<p># MERGE HERE</p>
+<div class="section" id="database">
+<h3>Database<a class="headerlink" href="#database" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Après votre connexion vous (si vous en avez le droit) vous pouvez afficher toutes les databases disponibles sur la base.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>show dbs
+</pre></div>
+</div>
+<p>Pour supprimer définitivement une database:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.dropDatabase<span class="o">()</span>
+show dbs
+</pre></div>
+</div>
+<p>Comme vous pouvez le deviner cette commande est à utiliser avec précautions.</p>
+</div>
+<div class="section" id="collections">
+<h3>Collections<a class="headerlink" href="#collections" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Les collections correspondent aux tables en SQL. Elles sont des sous-ensembles de database. Pour créer une collection il faut auparavant s’être référencé sur une database.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>show dbs
+use &lt;YOUR_DB_NAME&gt;
+db.createCollection<span class="o">(</span>&lt;YOUR_COLLECTION_NAME&gt;<span class="o">)</span>
+show collections
+</pre></div>
+</div>
+<p>Comme pour les databases on peut vouloir supprimer définitivement une collection.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.drop<span class="o">()</span>
+show collections
+</pre></div>
+</div>
+</div>
+<div class="section" id="documents">
+<h3>Documents<a class="headerlink" href="#documents" title="Lien permanent vers ce titre">¶</a></h3>
+<div class="section" id="insertion">
+<h4>Insertion<a class="headerlink" href="#insertion" title="Lien permanent vers ce titre">¶</a></h4>
+<p>Un document est un sous-ensemble d’une collection qui est lui même une sous-partie d’une database. Pour insérer un document il faut donc se référencer sur une database et sur la collection souhaitée.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>use &lt;YOUR_DB_NAME&gt;
+show collections
+db.&lt;YOUR_COLLECTION_NAME&gt;.insert<span class="o">({</span>
+    firstname : <span class="s2">&quot;Thomas&quot;</span>,
+    lastname : <span class="s2">&quot;Shelby&quot;</span>,
+    position : <span class="s2">&quot;director&quot;</span>,
+    company : <span class="s2">&quot;Peaky Blinders&quot;</span><span class="o">})</span>
+</pre></div>
+</div>
+<p>Si vous ne précisez pas d’identifiant unique, MongoDB se charge de le remplir avec les règles définies précédement. Une bonne pratique est de trouver une règle permettant de retrouver facilement et efficacement un document sans avoir à faire une requête complexe et obliger la base à rechercher dans ses champs. Une technique est de prendre le hash d’une combinaison des champs qui permet de créer une clé unique SHA128(firstname+lastname+position) par exemple.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>use &lt;YOUR_DB_NAME&gt;
+show collections
+db.&lt;YOUR_COLLECTION_NAME&gt;.insert<span class="o">({</span>
+    firstname : <span class="s2">&quot;Thomas&quot;</span>,
+    lastname : <span class="s2">&quot;Shelby&quot;</span>,
+    position : <span class="s2">&quot;CEO&quot;</span>,
+    gender : <span class="s2">&quot;Male&quot;</span>,
+    age : <span class="m">35</span>,
+    description : <span class="s2">&quot;Thomas &#39;Tommy&#39; Michael Shelby M.P. OBE, is the leader of the Birmingham criminal gang Peaky Blinders and the patriarch of the Shelby Family. His experiences during and after the First World War have left him disillusioned and determined to move his family up in the world.&quot;</span>,
+    nicknames : <span class="o">[</span><span class="s2">&quot;Tom&quot;</span>, <span class="s2">&quot;Tommy&quot;</span>, <span class="s2">&quot;Thomas&quot;</span><span class="o">]</span>,
+    company : <span class="s2">&quot;Peaky Blinders&quot;</span>,
+    episodes : <span class="o">[</span><span class="m">1</span>,2,4,5,6<span class="o">]</span>
+    <span class="o">})</span>
+</pre></div>
+</div>
+<p>Pour des soucis de performances, si un grand nombre de documents doivent être insérés très rapidement sans surcharger les appels réseaux il est possible de passer une liste d’objets à la fonction insert.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.insert<span class="o">([</span>
+<span class="o">{</span>
+    firstname : <span class="s2">&quot;Arthur&quot;</span>,
+    lastname : <span class="s2">&quot;Shelby&quot;</span>,
+    position : <span class="s2">&quot;Associate&quot;</span>,
+    gender : <span class="s2">&quot;Male&quot;</span>,
+    age : <span class="m">38</span>,
+    description : <span class="s2">&quot;Arthur Shelby Jr. is the eldest of the Shelby siblings and the tough member of Peaky Blinders, the Deputy Vice President Shelby Company Limited. He&#39;s also a member of the ICA.&quot;</span>,
+    company : <span class="s2">&quot;Peaky Blinders&quot;</span>,
+    episodes : <span class="o">[</span><span class="m">1</span>,4,6<span class="o">]</span>
+
+<span class="o">}</span>,<span class="o">{</span>
+    firstname : <span class="s2">&quot;John&quot;</span>,
+    lastname : <span class="s2">&quot;Shelby&quot;</span>,
+    position : <span class="s2">&quot;Associate&quot;</span>,
+    gender : <span class="s2">&quot;Male&quot;</span>,
+    age : <span class="m">30</span>,
+    description : <span class="s2">&quot;John Michael Shelby, also called Johnny or John Boy, was the third of Shelby siblings and a member of the Peaky Blinders.&quot;</span>,
+    nicknames : <span class="o">[</span><span class="s2">&quot;Johnny&quot;</span>, <span class="s2">&quot;John Boy&quot;</span><span class="o">]</span>,
+    company : <span class="s2">&quot;Peaky Blinders&quot;</span>,
+    episodes : <span class="o">[</span><span class="m">4</span>,5,6<span class="o">]</span>
+<span class="o">}</span>,<span class="o">{</span>
+    firstname : <span class="s2">&quot;Ada&quot;</span>,
+    lastname : <span class="s2">&quot;Thorne&quot;</span>,
+    position : <span class="s2">&quot;HR&quot;</span>,
+    gender : <span class="s2">&quot;Female&quot;</span>,
+    age : <span class="m">28</span>,
+    description : <span class="s2">&quot;Ada Thorne is the fourth and only female of the Shelby sibling. She&#39;s the Head of Acquisitions of the Shelby Company Limited.&quot;</span>,
+    nicknames : <span class="o">[</span><span class="s2">&quot;Ada Shelby&quot;</span><span class="o">]</span>,
+    company : <span class="s2">&quot;Peaky Blinders&quot;</span>,
+    episodes : <span class="o">[</span><span class="m">1</span>,2,6<span class="o">]</span>
+<span class="o">}</span>,<span class="o">{</span>
+    firstname : <span class="s2">&quot;Michael&quot;</span>,
+    lastname : <span class="s2">&quot;Gray&quot;</span>,
+    position : <span class="s2">&quot;Accounting&quot;</span>,
+    gender : <span class="s2">&quot;Male&quot;</span>,
+    age : <span class="m">21</span>,
+    description : <span class="s2">&quot;Michael Gray is the son of Polly Shelby, his father is dead, and cousin of the Shelby siblings. He is the Chief Accountant in the Shelby Company Limited.&quot;</span>,
+    nicknames : <span class="o">[</span><span class="s2">&quot;Henry Johnson&quot;</span>, <span class="s2">&quot;Jobbie Muncher&quot;</span>, <span class="s2">&quot;Mickey&quot;</span><span class="o">]</span>,
+    company : <span class="s2">&quot;Peaky Blinders&quot;</span>,
+    episodes : <span class="o">[</span><span class="m">5</span>,6<span class="o">]</span>
+<span class="o">}</span>,<span class="o">{</span>
+    firstname : <span class="s2">&quot;Polly&quot;</span>,
+    lastname : <span class="s2">&quot;Gray&quot;</span>,
+    gender : <span class="s2">&quot;Female&quot;</span>,
+    age : <span class="m">45</span>,
+    position : <span class="s2">&quot;CFO&quot;</span>,
+    description : <span class="s2">&quot;Elizabeth Polly Gray (née Shelby) is the matriarch of the Shelby Family, aunt of the Shelby siblings, the treasurer of the Birmingham criminal gang, the Peaky Blinders, a certified accountant and company treasurer of Shelby Company Limited. &quot;</span>,
+    nicknames : <span class="o">[</span><span class="s2">&quot;Aunt Polly&quot;</span>, <span class="s2">&quot;Polly Gray&quot;</span>, <span class="s2">&quot;Elizabeth Gray&quot;</span>, <span class="s2">&quot;Polly Shelby&quot;</span>, <span class="s2">&quot;Pol&quot;</span><span class="o">]</span>,
+    company : <span class="s2">&quot;Peaky Blinders&quot;</span>,
+    episodes : <span class="o">[</span><span class="m">1</span>,2,5,6<span class="o">]</span>
+<span class="o">}])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="requeter">
+<h4>Requêter<a class="headerlink" href="#requeter" title="Lien permanent vers ce titre">¶</a></h4>
+<p>Afin de récupérer les documents stockés dans une collection, un set de fonctions de requêtes sont disponibles.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">()</span>.pretty<span class="o">()</span>
+</pre></div>
+</div>
+<p>Il est possible de récupérer qu’un seul élément.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.findOne<span class="o">()</span>
+</pre></div>
+</div>
+<p>Il est possible de faire des requêtes plus complexes. -</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">})</span>.pretty<span class="o">()</span>
+</pre></div>
+</div>
+<p>Les différentes opérations mathématiques sont implémentées.</p>
+<ul class="simple">
+<li>Egalité :  {key:value}</li>
+<li>Différence :  {key: {$ne:value}}</li>
+<li>Plus (Grand|Petit) que :  les opérateurs sont $lt (lower than) ; $lte (lower than equals) ; $gt (greater than) ; $gte (greater than equals) : {key: {&lt;OPERATEUR&gt;:value}}</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({</span><span class="s2">&quot;age&quot;</span>:<span class="o">{</span><span class="nv">$gte</span> :30<span class="o">}})</span>
+</pre></div>
+</div>
+<p>Les opérations logiques sont aussi disponibles.</p>
+<p>OR $or et AND $and permettent de faire des requêtes complexes sur une collection.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({</span><span class="nv">$and</span>:<span class="o">[{</span><span class="s2">&quot;age&quot;</span>:<span class="o">{</span><span class="nv">$gte</span>: <span class="m">28</span>, <span class="nv">$lt</span>:40<span class="o">}}</span>, <span class="o">{</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">}]})</span>
+</pre></div>
+</div>
+<p>Pour des raisons de performances il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés. On peut aussi demander de limiter le nombre de documents.</p>
+<div class="section" id="requetes-complexes">
+<h5>Requêtes complexes<a class="headerlink" href="#requetes-complexes" title="Lien permanent vers ce titre">¶</a></h5>
+<p>Les objets Mongo peuvent être assez complexes et les requêtes doivent pouvoir matcher des documents:</p>
+<ul class="simple">
+<li>Les requêtes sur les sous-objets:</li>
+</ul>
+<p>Pour faire une requête sur un objet complet il faut redéfinir l’objet.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span> <span class="o">{</span> size: <span class="o">{</span> h: <span class="m">14</span>, w: <span class="m">21</span>, uom: <span class="s2">&quot;cm&quot;</span> <span class="o">}</span> <span class="o">}</span> <span class="o">)</span> <span class="c1">#TODO: Dot it</span>
+</pre></div>
+</div>
+<p>Pour faire une requête sur uniquement un champs de l’objet  :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span> <span class="o">{</span> <span class="s2">&quot;size.uom&quot;</span>: <span class="s2">&quot;in&quot;</span> <span class="o">}</span> <span class="o">)</span> <span class="c1">#TODO : Do it</span>
+</pre></div>
+</div>
+<p>Pour requêter les valeurs d’une liste :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span> <span class="o">{</span> nicknames:  <span class="o">[</span><span class="s2">&quot;Henry Johnson&quot;</span>, <span class="s2">&quot;Jobbie Muncher&quot;</span>, <span class="s2">&quot;Mickey&quot;</span><span class="o">]</span> <span class="o">}</span> <span class="o">)</span>
+</pre></div>
+</div>
+<p>Le champ nicknames doit matcher parfaitement la liste donnée en argument en contenu et en ordre. Si maintenant on veut récupérer tous les documents avec «&nbsp;Mickey&nbsp;» et «&nbsp;Jobbie Muncher&nbsp;», peu importe l’ordre d’apparition et peu importe les autres éléments du tableau.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span> <span class="o">{</span> nicknames:  <span class="o">{</span><span class="nv">$all</span> :<span class="o">[</span><span class="s2">&quot;Mickey&quot;</span>, <span class="s2">&quot;Jobbie Muncher&quot;</span><span class="o">]</span> <span class="o">}</span> <span class="o">}</span> <span class="o">)</span>
+</pre></div>
+</div>
+<p>On peut vouloir maintenant vouloir récupérer tous les éléments comptenant «&nbsp;Mickey&nbsp;» dans les surnoms.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span> <span class="o">{</span> nicknames: <span class="s2">&quot;Mickey&quot;</span> <span class="o">}</span> <span class="o">)</span>
+-
+</pre></div>
+</div>
+<p>En général, une requête sur un champ d’un tableau se construit de la même manière qu’une requête sur un champ “basique”</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span> <span class="o">{</span> &lt;array field&gt;: <span class="o">{</span> &lt;operator1&gt;: &lt;value1&gt;, ... <span class="o">}</span> <span class="o">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="limitation-projection-et-tris">
+<h5>Limitation, Projection et Tris<a class="headerlink" href="#limitation-projection-et-tris" title="Lien permanent vers ce titre">¶</a></h5>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span>QUERY, PROJECTION<span class="o">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">}</span>, <span class="o">{</span><span class="s2">&quot;position&quot;</span>:1<span class="o">})</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">})</span>.limit<span class="o">(</span><span class="m">2</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>Il est aussi possible de passer directement au Nième document avec la fonction skip</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION- _NAME&gt;.find<span class="o">({</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">})</span>.skip<span class="o">(</span><span class="m">2</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>On peut trier les résultats récupérés.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">}</span>, <span class="o">{</span><span class="s2">&quot;firstname&quot;</span>:1<span class="o">})</span>.sort<span class="o">({</span><span class="s2">&quot;age&quot;</span>:-1<span class="o">})</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({}</span>, <span class="o">{</span><span class="s2">&quot;firstname&quot;</span>:1<span class="o">})</span>.sort<span class="o">({</span><span class="s2">&quot;age&quot;</span>:1<span class="o">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="indexation">
+<h4>Indexation<a class="headerlink" href="#indexation" title="Lien permanent vers ce titre">¶</a></h4>
+<p>L’indexation permet d’accélérer les performances sur les requêtes. Si aucun n’index n’est mis en place, MongoDB doit effectuer un scan de tous les documents pour trouver ceux qui sont pertinents. L’index permet de stocker les valeurs d’un champs dans de façon triée pour limiter le nombre de document à parcourir pour effectuer une requête.</p>
+<p># TODO : Récupérer la photo <a class="reference external" href="https://docs.mongodb.com/manual/indexes/">https://docs.mongodb.com/manual/indexes/</a></p>
+<div class="section" id="indexation-simple">
+<h5>Indexation simple<a class="headerlink" href="#indexation-simple" title="Lien permanent vers ce titre">¶</a></h5>
+<p>L’indexation simple permet de créer l’index en fonction d’un seul champ. On spécifie alors l’ordre dans lequel l’index est créé et trié.
+Dans l’ordre croissant,</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.createIndex<span class="o">(</span> <span class="o">{</span> age: <span class="m">1</span> <span class="o">}</span> <span class="o">)</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.getIndexes<span class="o">()</span>
+</pre></div>
+</div>
+<p>Dans l’ordre décroissant,</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.createIndex<span class="o">(</span> <span class="o">{</span> age: -1 <span class="o">}</span> <span class="o">)</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.getIndexes<span class="o">()</span>
+</pre></div>
+</div>
+<p>Pour supprimer tous les index :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.dropIndexes<span class="o">()</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.getIndexes<span class="o">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexation-composee">
+<h5>Indexation composée<a class="headerlink" href="#indexation-composee" title="Lien permanent vers ce titre">¶</a></h5>
+<p>L’indexation composée permet de créé un index basé sur deux champs différents. L’ordre des champs spécifié dans la création d’un index est important.On peut trier dans l’ordre croissant le premier champs et dans l’ordre décroissant le deuxième champs.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.createIndex<span class="o">(</span> <span class="o">{</span> age: -1, firstname : <span class="m">1</span> <span class="o">}</span> <span class="o">)</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.getIndexes<span class="o">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexation-speciales">
+<h5>Indexation spéciales<a class="headerlink" href="#indexation-speciales" title="Lien permanent vers ce titre">¶</a></h5>
+<ul class="simple">
+<li>Text : permet de faire de la recherche naturelle de queries dans du texte. Cette index peut devenir très rapidement très important et prendre beaucoup de place mémoire. Il contient un index par mot contenu dans l’ensemble des documents. Il peut aussi être très lent à créer.</li>
+<li>Multiclés : permet de créer un index sur les éléments d’objets stockés dans des listes ou arrays.</li>
+<li>2D, 2DSphère, geoHaystack : permet de créer des index sur des données géospaciales.</li>
+<li>Hash : permet de stocker les valeurs des champs sous forme de hash.</li>
+</ul>
+<p>Tous ces mécanismes d’indexation permettent d’accélérer les performances de requêtes. Mais ils peuvent avoir des effets négatifs:</p>
+<ul class="simple">
+<li>Chaque index doit avoir un minimum de 8kB et peut prendre beaucoup de place sur le disque et dans la mémoire RAM.</li>
+<li>Ils sont gourmands pour insertions pour les opérations d’écriture puisqu’il doit insérer le nouveau document dans l’index en plus de l’insertion du document dans la collection.</li>
+</ul>
+<p>Exemple :</p>
+<p>Pour créer un index sur le texte de la description des personnages :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.createIndex<span class="o">(</span> <span class="o">{</span> description: <span class="s2">&quot;text&quot;</span> <span class="o">}</span> <span class="o">)</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.getIndexes<span class="o">()</span>
+</pre></div>
+</div>
+<p>Uniquement après que cet index de texte ait été créé on peut utiliser la méthode find avec l’argument $text pour faire une requête dans le texte.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">(</span> <span class="o">{</span> <span class="nv">$text</span>: <span class="o">{</span> <span class="nv">$search</span>: <span class="s2">&quot;female&quot;</span> <span class="o">}</span> <span class="o">}</span> <span class="o">)</span>.pretty<span class="o">()</span>
+</pre></div>
+</div>
+<p>Exercice :</p>
+<p>Supprimez tous les index créés et réessayez de faire la recherche.</p>
+</div>
+</div>
+<div class="section" id="mettre-a-jour">
+<h4>Mettre à jour<a class="headerlink" href="#mettre-a-jour" title="Lien permanent vers ce titre">¶</a></h4>
+<p>La mise à jour des documents et une opération très courante dans les bases de données. MongoDB implémente trois fonction différentes permettant de mettre à jour un ou plusieurs documents à la fois.</p>
+<ul class="simple">
+<li>Mettre à jour un seul document :</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>    db.&lt;YOUR_COLLECTION_NAME&gt;.updateOne<span class="o">(</span>&lt;filter&gt;, &lt;update&gt;, &lt;options&gt;<span class="o">)</span>
+
+Cette fonction va mettre à jour le premier élément renvoyer par la requête du filtre.
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.updateOne<span class="o">({</span><span class="s2">&quot;firstname&quot;</span>:<span class="s2">&quot;Thomas&quot;</span><span class="o">}</span>, <span class="o">{</span><span class="nv">$set</span>:<span class="o">{</span>maincharacter:true<span class="o">}})</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.findOne<span class="o">({</span><span class="s2">&quot;firstname&quot;</span>:<span class="s2">&quot;Thomas&quot;</span><span class="o">})</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Mettre à jour une liste de documents :</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.updateMany<span class="o">(</span>&lt;filter&gt;, &lt;update&gt;, &lt;options&gt;<span class="o">)</span>
+</pre></div>
+</div>
+<p>Cette fonction va mettre à jour tous les documents concernée par la requête.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.updateMany<span class="o">({</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">}</span>, <span class="o">{</span><span class="nv">$set</span>:<span class="o">{</span>shelbyFamily:true<span class="o">}})</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.find<span class="o">({</span><span class="s2">&quot;lastname&quot;</span>:<span class="s2">&quot;Shelby&quot;</span><span class="o">})</span>.pretty<span class="o">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Remplacer un document :</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>    db.&lt;YOUR_COLLECTION_NAME&gt;.replaceOne<span class="o">(</span>&lt;filter&gt;, &lt;update&gt;, &lt;options&gt;<span class="o">)</span>
+
+
+Une  option peut être très intéressante, c<span class="s1">&#39;est l&#39;</span>option upsert. Elle permet d<span class="s1">&#39;ajouter un document si il n&#39;</span>existe pas déjà directement depuis la fonction update. Par défaut, cette option est à False.
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.update<span class="o">(</span>&lt;filter&gt;, &lt;update&gt;, <span class="o">{</span>upsert: true<span class="o">})</span>
+</pre></div>
+</div>
+<p># TODO: Exercice</p>
+</div>
+<div class="section" id="supprimer">
+<h4>Supprimer<a class="headerlink" href="#supprimer" title="Lien permanent vers ce titre">¶</a></h4>
+<p>Pour supprimer des documents, il existe deux méthodes :</p>
+<ul class="simple">
+<li>deleteMany({ &lt;field1&gt;: &lt;value1&gt;, … }</li>
+<li>deleteOne({ &lt;field1&gt;: &lt;value1&gt;, … }</li>
+</ul>
+<p>Pour supprimer tous les documents de la collection:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.deleteMany<span class="o">({})</span>
+</pre></div>
+</div>
+<p>Pour supprimer tous les documents possédant une condition :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.deleteMany<span class="o">({</span>lastname: <span class="s2">&quot;Gray&quot;</span><span class="o">})</span>
+</pre></div>
+</div>
+<p>Pour supprimer un seul document (ou le premier si la condition n’est pas assez restrictive.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.deleteOne<span class="o">({</span>firstname: <span class="s2">&quot;Arthur&quot;</span><span class="o">})</span>
+</pre></div>
+</div>
+<p>Quelques choses à savoir :</p>
+<p>La méthode deleteMany applique une fonction à tous les documents. La fonction n’est pas une fonction globale. Toutes les fonctions en mongo sont atomiques ce qui veut dire qu’elles s’appliquent à chaque document indépendament les uns des autres.
+La méthode delete ne supprime pas les indexes, même si on supprime tous les documents de la collection.</p>
+</div>
+<div class="section" id="aggreagation">
+<h4>Aggreagation<a class="headerlink" href="#aggreagation" title="Lien permanent vers ce titre">¶</a></h4>
+<p>Les aggrégations permettent de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d’effectuer une opération sur l’ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments GROUP BY.</p>
+<p>La syntaxe est très similaire à toutes les autres fonctions Mongo mais la requête va être plus complexe.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.aggregate<span class="o">(</span>AGGREGATE_OPERATION<span class="o">)</span>
+</pre></div>
+</div>
+<p>On peut vouloir récupérer le nombre de personnage de chaque famille présente dans la série :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.aggregate<span class="o">([{</span><span class="nv">$group</span> : <span class="o">{</span>_id : <span class="s2">&quot;</span><span class="nv">$lastname</span><span class="s2">&quot;</span>, charactereNumberByFamily : <span class="o">{</span><span class="nv">$sum</span> : <span class="m">1</span><span class="o">}}}])</span>
+</pre></div>
+</div>
+<p>Vous avez accès à toutes les opérations mathématiques dont vous avez besoin :</p>
+<ul class="simple">
+<li>$sum : fait la somme de</li>
+<li>$avg : fait la moyenne</li>
+<li>$min : récupère la valeur minimale</li>
+<li>$max : récupère la valeur maximal</li>
+<li>$first : récupère le premier élément</li>
+<li>$last : récupère le denier élément</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.aggregate<span class="o">([{</span><span class="nv">$group</span> : <span class="o">{</span>_id : <span class="s2">&quot;</span><span class="nv">$lastname</span><span class="s2">&quot;</span>, averageAgeByFamily : <span class="o">{</span><span class="nv">$avg</span> : <span class="s2">&quot;</span><span class="nv">$age</span><span class="s2">&quot;</span><span class="o">}}}])</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.aggregate<span class="o">([{</span><span class="nv">$group</span> : <span class="o">{</span>_id : <span class="s2">&quot;</span><span class="nv">$lastname</span><span class="s2">&quot;</span>, minAgeByFamily : <span class="o">{</span><span class="nv">$min</span> : <span class="s2">&quot;</span><span class="nv">$age</span><span class="s2">&quot;</span><span class="o">}}}])</span>
+db.&lt;YOUR_COLLECTION_NAME&gt;.aggregate<span class="o">([{</span><span class="nv">$group</span> : <span class="o">{</span>_id : <span class="s2">&quot;</span><span class="nv">$lastname</span><span class="s2">&quot;</span>, lastAgeByFamily : <span class="o">{</span><span class="nv">$last</span> : <span class="s2">&quot;</span><span class="nv">$age</span><span class="s2">&quot;</span><span class="o">}}}])</span>
+</pre></div>
+</div>
+<p>On peut ajouter un paramètre à la fonction aggregate pour filtrer les élements à aggréger.
+Si on veut récupérer que les hommes :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.aggregate<span class="o">([</span>
+    <span class="o">{</span><span class="nv">$match</span>:<span class="o">{</span>gender:<span class="s2">&quot;Male&quot;</span><span class="o">}}</span>,
+    <span class="o">{</span><span class="nv">$group</span> : <span class="o">{</span>_id : <span class="s2">&quot;</span><span class="nv">$lastname</span><span class="s2">&quot;</span>, averageAgeByFamily : <span class="o">{</span><span class="nv">$avg</span> : <span class="s2">&quot;</span><span class="nv">$age</span><span class="s2">&quot;</span><span class="o">}}}</span>
+<span class="o">])</span>
+</pre></div>
+</div>
+<p>Il est aussi possible d’intégrer directement du code JavaScript dans les requêtes Mongo. Des fonctions de Map-&gt;Reduce sont disponibles pour effectuer les fonctions d’aggrégations. Cette phase de Map Reduce se découpe en deux phases :</p>
+<ul class="simple">
+<li>Phase de MAP : Il parcourt tous les élements et extrait les champs voulus.</li>
+<li>Phase de REDUCE : qui utilise les champs retournés pour effectuer l’opération finale.</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.mapReduce<span class="o">(</span>
+    <span class="k">function</span><span class="o">(){</span>emit<span class="o">(</span>this.lastname, this.age<span class="o">)}</span>,
+    <span class="k">function</span><span class="o">(</span>key,values<span class="o">){</span><span class="k">return</span> Array.sum<span class="o">(</span>values<span class="o">)}</span>,
+    <span class="o">{</span>query :<span class="o">{</span>gender:<span class="s2">&quot;Male&quot;</span><span class="o">}</span>, out:<span class="s2">&quot;sumAge&quot;</span><span class="o">}</span>
+    <span class="o">)</span>
+</pre></div>
+</div>
+<p>On voit le nombre de d’entrées pour le MAP et le résultas du REDUCE.
+Maintenant pour récupérer les résultats du map-&gt;reduce :</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>db.&lt;YOUR_COLLECTION_NAME&gt;.mapReduce<span class="o">(</span>
+    <span class="k">function</span><span class="o">(){</span>emit<span class="o">(</span>this.lastname, this.age<span class="o">)}</span>,
+    <span class="k">function</span><span class="o">(</span>key,values<span class="o">){</span><span class="k">return</span> Array.sum<span class="o">(</span>values<span class="o">)}</span>,
+    <span class="o">{</span>query :<span class="o">{</span>gender:<span class="s2">&quot;Male&quot;</span><span class="o">}</span>, out:<span class="s2">&quot;sumAge&quot;</span><span class="o">}</span>
+    <span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="api-python">
+<h2>API Python<a class="headerlink" href="#api-python" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Il existe une API Python développée pour intéragir avec une base de données MongoDB. Ce package s’appelle pymongo  <a class="reference external" href="https://docs.mongodb.com/getting-started/python/client/">https://docs.mongodb.com/getting-started/python/client/</a>. Il est important d’avoir des APIs dans les différents langages pour faciliter l’intégration dans des applications.</p>
+<p>Pour installer le package :</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pymongo</span>
+</pre></div>
+</div>
+<p>Ce package garde très largement la syntaxe mongo shell et permet d’utiliser ces méthodes et items (DataBases, Collections, Documents) en tant qu’objets Python.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Permet de se connecter à une base MongoDB en créant un pointeur client vers cette base. Par défault ce client est paramétré sur le localhost.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="s2">&quot;http://&lt;YOUR_IP_ADDRESS&gt;:&lt;YOUR_PORT_NUMBER&gt;)</span>
+</pre></div>
+</div>
+<p>Dans la plupart des cas, le port par défaut est le 27017.
+Il est possible comme depuis le MongoShell de lister les bases de données.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">database_names</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Et de les sélectionner :</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="o">.&lt;</span><span class="n">YOUR_DATABASE_NAME</span><span class="o">&gt;</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;&lt;YOUR_DATABASE_NAME&gt;&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Pour lister les différentes collections présentes sur une database.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">db</span><span class="o">.</span><span class="n">collection_names</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Il en va de même pour sélectionner une collection :</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">collection</span> <span class="o">=</span> <span class="n">db</span><span class="o">.&lt;</span><span class="n">YOUR_COLLECTION_NAME</span><span class="o">&gt;</span> <span class="ow">or</span> <span class="n">db_pkb</span><span class="p">[</span><span class="s2">&quot;&lt;YOUR_COLLECTION_NAME&gt;&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Pour récupérer un document :</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>C’est un peu différent pour la méthode find(). Cela créé, pour des raison de performances un curseur PyMongo. En effet, les données seront récupérées uniquement si elles sont utilisées. C’est intéressant pour des collections très volumineuses.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">cursor</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="p">()</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">cursor</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">document</span> <span class="ow">in</span> <span class="n">cursor</span> <span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">document</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Exercice :</p>
+<p>Ouvrir le fichier <cite>ks-projects-201801.csv</cite>, il recense environ 400 000 projets KickStarter. Intégrer les données directement avec L’API Python dans une base de données Mongo. Il conviendra de bien spécifier l’ID du document. Pensez aussi à bien formatter le type des données pour profiter des méthodes implémentées par Mongo. L’ensemble de données n’est pas forcément nécessaire, c’est à vous de créer votre modèle de données.</p>
+<ul class="simple">
+<li>Récupérer les 5 projets ayant reçu le plus de promesse de dons.</li>
+<li>Compter le nombre de projets ayant atteint leur but.</li>
+<li>Compter le nombre de projets pour chaque catégories.</li>
+<li>Compter le nombre de projets francais ayant été instancié avant 2016.</li>
+<li>Récupérer les projets américains ayant demandé plus de 200 000 dollars.</li>
+<li>Compter le nombre de projet ayant «&nbsp;Sport&nbsp;» dans leur nom</li>
+</ul>
+<p>Intégrer le fichier <cite>USvideos.csv</cite>. Qui représente un ensemble de 8000 vidéos Youtube. Merger le fichier <cite>US_category_id.json</cite> pour récupérer le nom des catégories. Il conviendra de bien spécifier l’ID du document.</p>
+<ul class="simple">
+<li>Récupérer toutes les vidéos de la chaîne Apple.</li>
+<li>Compter le nombre de catégories différentes</li>
+<li>Si vous ne l’avais pas déjà fait, découper les tags en listes et mettre à jour les tags de chacun des documents avec une requête update.</li>
+<li>Récupérer les vidéos les plus vues.</li>
+<li>Compter le nombre de vue moyen en fonction de la catégorie.</li>
+<li>Récupérer les chaines Youtube avec la plus grande moyenne de likes.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Mongo</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Raphaël Courivaud.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/MONGO.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
