@@ -63,10 +63,10 @@ pour "contrôler" le comportement des robots sur leur site. Différentes politiq
 en fonction des problématiques métiers. Ce fichier n'empêche absolument pas de récupérer les données mais fait part d'une 
 bonne pratique.
 
-https://www.google.com/robots.txt
-http://www.seloger.com/robots.txt
-https://www.leboncoin.fr/robots.txt
-https://booking.com/robots.txt
+- https://www.google.com/robots.txt
+- http://www.seloger.com/robots.txt
+- https://www.leboncoin.fr/robots.txt
+- https://booking.com/robots.txt
 
 Site Map ou Site Index
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -99,7 +99,7 @@ et facilement via un interpreter Python. De nombreux paramètres sont modifiable
 
 Pour réaliser ces opérations une bonne pratique est d'utiliser l'outil de developpement de Chrome ou Firefox. Je conseil
 du moins celui de Chrome qui est beaucoup plus intuitif et développé. Deux onglets sont important dans notre cas : 
-
+ 
 * La partie code HTML qui permet de récupérer les pointeurs des balises qui encapsulent nos données. 
 * La partie Network qui permet d'analyser tous les appels réseaux réalisés depuis le front. C'est ici que les appels de 
 récupération de données sont effectués. 
@@ -121,7 +121,49 @@ Dans notre cas nous allons utiliser la plupart du temps des GET et potentielleme
 Ces requêtes encapsulent un certain nombre de paramètres qui permettent soient d'identifier une provenance et un utilisateur 
 ou de réaliser différentes actions. 
 
-# TODO: Exercices
+.. code-block:: Python
+
+    url = "http://www.esiee.fr/"
+    response = requests.get(url)
+    response.status_code
+    
+    
+Pour récupérer le texte : 
+
+.. code-block:: Python
+
+    response.text[0:1000]
+    
+Pour récupérer les headers HTTP de la réponse : 
+
+.. code-block:: Python
+    
+    response.headers
+    
+On peut rajouter un user agent et un timeout de 10 secondes: 
+
+.. code-block:: Python
+
+    url = "http://www.esiee.fr/"
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+    response = requests.get(url, headers=headers, timeout = 10)
+    response.content
+
+    
+Exercice 1 :
+
+- Créer une classe Python permettant de faire des requêtes HTTP. 
+- Cette classe doit utiliser toujours le même UserAgent. 
+- Le TimeOut sera spécifié à chaque appelle avec une valeur par défaut.
+- Un mécanisme de retry sera mis en place de façon recursive. 
+
+Exercice 2 : 
+
+- Faire une fonction permettant de supprimer tous les espaces supperflus d'une string
+- Faire une fonction qui prend une string html et renvois une string intelligible (enlever les caractères spéciaux, 
+- Récupérer le domaine en fonction d'un url
+
+
 
 Exploitation du code HTML
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -133,33 +175,65 @@ Pour les webmasters, le blocage le plus souvent mis en place et un blocage sur l
 dans la requête HTTP réalisé par le Navigateur pour envoyer au front des informations basiques :
 * la version du Navigateur,
 * la version de l'OS
-* Le type d # TODO : Gecko moteur de gestion graphique du HTML 
+* Le type de gestionnaire graphique (Gecko)
 * le type de device utilisé
 
-# TODO: Exemple de UserAgent
+Exemple de User Agent 
+.. code-block:: bash
 
-# TODO: Mettre en place quelques exercices de récupération de données
-    * Netoyage de string HTML 
-    * Enlever tous les espaces supperflues 
-    * Récupérer le domaine en fonction d'un url
+    Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0
 
-pip install bs4
+Utilisation de BeautifulSoup :
 
-import requests
-from bs4 import BeautifulSoup
+.. code-block:: bash
+
+    pip install bs4
+
+.. code-block:: Python
+
+    import requests
+    from bs4 import BeautifulSoup  
+    
+Pour transformer une requête (requests) en objets BeautifulSoup : 
+
+.. code-block:: Python
+
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "lxml")    
+    
+Pour trouver tous les liens d'une page on récupère la balise a : 
+
+.. code-block:: Python
+
+    soup.find_all("a")[0:10]
+    
+On peut préciser la classe voulue : 
+
+.. code-block:: Python
+
+    soup.find_all(class_="<CLASS_NAME>")[0:10]
+
 
 Un autre package très utile pour récupérer des données d'un site web est Readability. # TODO: Historique de Readability
 
-pip install python-Readability
+.. code-block:: bash
 
-from readability import Document
-doc = Document(response.text)
-print("Le titre de la page est {}".format(doc.title())
-print("Le texte important de la page est")
-print(doc.summary())
+     pip install python-Readability
+
+.. code-block:: Python
+
+    from readability import Document
+    doc = Document(response.text)
+    print("Le titre de la page est {}".format(doc.title())
+    print("Le texte important de la page est")
+    print(doc.summary())
 
 
-# TODO: Exercices 
+Exercices :
+
+- ajouter une méthode pour récupérer l'objet soup d'un url 
+- Récupérer une liste de User Agent et effectuer une rotation aléatoire sur le UA à utiliser 
+- Utiliser cette classe pour parser une page HTML et récupérer : le titre, tous les H1 (si ils existes), les liens vers les images, les liens sortants vers d'autres sites, et le texte principal.
 
 Parsing d'un sitemaps pour récupérer une listes de liens avec les informations disponibles. -> Stocker dans un dictionnary et un fichier JSON. 
 
@@ -167,29 +241,30 @@ Parsing d'un sitemaps pour récupérer une listes de liens avec les informations
 Exploitation des appels d'API  
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 Losque le front du site récupère des données sur une API géré par le back, un appel d'API est réalisé. Cet appel est recensé 
-dans les appels réseaux. Il est alors possible de re-jouer cet appel pour récupérer à nouveau les données. 
+dans les appels réseaux. Il est alors possible de re-jouer cet appel pour récupérer à nouveau les données. Il est très facile de récupérer ces appels dans l'onglet Network de la console développeur de Chrome ou FireFox. La console vous permet de copier le code CURL pour effectuée et vous pouvez ensuite la transformer en code Python depuis le site https://curl.trillworks.com/.
 
 Souvent les APIs sont bloquées avec certain paramètres. L'API verifie que dans les headers de la requêtes HTTP ces
 paramètres sont présents :
-* un token généré à la volée avec des protocole OAuth (ou moins développés). 
+* un token généré à la volée avec des protocole OAuth2 (ou moins développés). 
 * un referer provenant du site web (la source de la requête), très facile à falsifier.  
 
-# TODO: Exercices 
+Exercices :
 
-Utiliser les informations développées plus haut pour récupérer les premiers résultats d'une recherche d'une requête 
-sur Qwant ou sur Google.
+- Utiliser les informations développées plus haut pour récupérer les premiers résultats d'une recherche d'une requête 
+sur Qwant.
 
 Exercice Final
 --------------
-Utilisez tout ce que vous avez appris pour récupérer des articles de News avec une catégorie. 
+Utilisez tout ce que vous avez appris pour récupérer des articles de News avec une catégorie. Il est souvent intéressant de partir des flux RSS pour commencer : 
+
 Les données doivent comprendre : 
-* Le texte important propre
-* L'url 
-* Le domaine
-* la catégorie
-* Le titre de l'article
-* Le titre de la page
-* (Facultatif) : les images
+ * Le texte important propre
+ * L'url 
+ * Le domaine
+ * la catégorie
+ * Le titre de l'article
+ * Le titre de la page
+ * (Facultatif) : les images
 
 
 
