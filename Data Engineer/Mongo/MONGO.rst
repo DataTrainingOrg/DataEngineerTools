@@ -77,6 +77,7 @@ Installation
 ------------
 
 L'installation peut se faire de plusieurs manières.
+
 - Directement depuis les sources et ppa. Liens vers le tutorial https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
 - Ou en instanciant un conteneur Docker. L'avantage de Docker est qu'il n'installe aucune dépendance sur votre machine et laisse son environnement propre. Lien vers le tutorial : https://hub.docker.com/_/mongo/
 
