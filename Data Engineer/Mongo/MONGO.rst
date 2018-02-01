@@ -5,9 +5,9 @@ MongoDB
 Introduction
 ------------
 
-MongoDB est une base de données opensource codée en C++ basée sur un concept de stockage sous la forme de documents au format JSON.
-Le grand avantage de ce système est l'optimisation de la mémoire. Dans une base relationelle chaque colonne doit être définie au préalable avec une empreinte mémoire et un type de donnée.
-Dans une base MongoDB si le champs n'est pas présent, il n'apparait pas dans un document alors qu'en SQL la place mémoire est utilisée pour spécifier que la valeur est nulle.
+MongoDB est une base de données open source codée en C++ basée sur un concept de stockage sous la forme de documents au format JSON.
+Le grand avantage de ce système est l'optimisation de la mémoire. Dans une base relationelle, chaque colonne doit être définie au préalable avec une empreinte mémoire et un type de donnée.
+Dans une base MongoDB si le champ n'est pas présent, il n'apparait pas dans un document et n'impacte pas la mémoire, alors qu'en SQL la place mémoire est utilisée même si le champ est absent, pour spécifier que la valeur est null.
 
 Les avantages
 ^^^^^^^^^^^^^
@@ -20,9 +20,9 @@ Les avantages
 Concepts basiques
 -----------------
 
-* Database : une database est un regroupement de collections. Chaque Database possède sont propre système de fichiers et sa propre authentification. Elle a le même rôle qu'une database en MySQL.
-* Collection : une collection est un regroupement de documents. C'est une table en MySQL, la principale différence est qu'elle ne définie pas un schéma de données fixe. Les documents présents dans une collection n'ont pas forcément tous les mêmes champs.
-* Document : un document est un objet JSON stocké sous la forme de plusieurs clés:valeurs. C'est l'équivalent d'une ligne dans une table SQL.
+* Database : une database est un regroupement de collections. Chaque database possède son propre système de fichiers et sa propre authentification. Elle a le même rôle qu'une database en MySQL.
+* Collection : une collection est un regroupement de documents. C'est une table en MySQL, la principale différence étant qu'elle ne définit pas un schéma de données fixe. Les documents présents dans une collection n'ont pas forcément tous les mêmes champs.
+* Document : un document est un objet JSON stocké sous la forme de plusieurs paires clé:valeur. C'est l'équivalent d'une ligne dans une table SQL.
 * Champ : Un champ est l'équivalent d'une colonne en SQL. Il permet de faire des requêtes.
 
 .. code-block:: json
@@ -51,7 +51,7 @@ Identifiants
 ^^^^^^^^^^^^
 Tous les documents possèdent un identifiant unique, ce qui permet de retrouver très efficacement un document.
 L'identifiant peut être spécifié lors de l'ajout d'un nouveau document (nom+prenom, adresse email, url, etc).
-Dans le cas ou aucun identifiant n'est précisé MongoDB se charge d'en ajouter un, il est composé d'un nombre de 12 bytes au format hexadécimal : 
+Dans le cas ou aucun identifiant n'est précisé, MongoDB se charge d'en ajouter un. Il est composé d'un nombre stocké sur 12 bytes au format hexadécimal : 
 
 * Les 4 premiers bytes sont le timestamp de l'ajout du document
 * Les 3 suivants correspondent à l'identifiant de la machine
@@ -61,31 +61,31 @@ Dans le cas ou aucun identifiant n'est précisé MongoDB se charge d'en ajouter 
 Les types de données
 ^^^^^^^^^^^^^^^^^^^^
 
-Une base de données MongoDB permet de stocker un grand volume de données hétérogènes sans imposer un modèle de données fixe pour tous les documents. Il est conseillé comme vu plus haut de bien définir la structure globale pour garder une cohérence tout au long des développements.
+Une base de données MongoDB permet de stocker un grand volume de données hétérogènes sans imposer un modèle de données fixe pour tous les documents. Il est conseillé, comme vu plus haut, de bien définir la structure globale pour garder une cohérence tout au long des développements.
 
-- Integer : entier relatif stocker sur 32 ou 64 bits. 
-- Double : nombre décimal 
+- Integer : entier relatif stocké sur 32 ou 64 bits. 
+- Double : nombre décimal stocké sur 64 bits.
 - String : chaine de caractère (encodée en utf-8)
 - Booléen : True ou False 
 - Object : sous-objet stocké au format JSON 
-- Date : date au format UNIX 
+- Date : date au format UNIX (nombre de ms écoulées depuis le 1er janvier 1970) stockée sur 64 bits.
 - Array : stocker une liste d'éléments au format atomique ou d'objets 
 
-D'autres types sont disponibles et vous pouvez les trouver  # TODO: Ajouter lien
+D'autres types sont disponibles et vous pouvez les trouver  # TODO: Ajouter lien (https://docs.mongodb.com/manual/reference/bson-types/)
 
 Installation
 ------------
 
 L'installation peut se faire de plusieurs manières.
 
-- Directement depuis les sources et ppa. Liens vers le tutorial https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+- Directement depuis les sources ou à partir de packages. Liens vers le tutorial https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
 - Ou en instanciant un conteneur Docker. L'avantage de Docker est qu'il n'installe aucune dépendance sur votre machine et laisse son environnement propre. Lien vers le tutorial : https://hub.docker.com/_/mongo/
 
-Le port par défaut de mongo est le 27017.
+Le port par défaut de Mongo est le 27017.
 
 Connexion
 ---------
-Pour se connecter à une base mongo deux solutions sont possibles. En ligne de commande ou via un gestionnaire de BDD comme Robo3T https://robomongo.org/ . Dans les deux cas, la syntaxe mongo est utilisée pour effectuer des requêtes. L'avantage de Robo3T est qu'il possède une interface permettant de visualiser très simplement les données.
+Pour se connecter à une base Mongo deux solutions sont possibles. En ligne de commande ou via un gestionnaire de BDD comme Robo3T https://robomongo.org/ . Dans les deux cas, la syntaxe Mongo est utilisée pour effectuer des requêtes. L'avantage de Robo3T est qu'il possède une interface permettant de visualiser très simplement les données.
 
 Création d'un modèle de données
 -------------------------------
@@ -97,7 +97,7 @@ Ce modèle de données doit être réfléchi à court et long terme et doit pren
 Database
 ^^^^^^^^
 
-Après votre connexion vous (si vous en avez le droit) vous pouvez afficher toutes les databases disponibles sur la base. 
+Après votre connexion (si vous en avez le droit) vous pouvez afficher toutes les databases disponibles sur la base. 
 
 .. code-block:: bash
 
@@ -110,12 +110,12 @@ Pour supprimer définitivement une database:
     db.dropDatabase()
     show dbs
     
-Comme vous pouvez le deviner cette commande est à utiliser avec précautions.
+Comme vous pouvez le deviner cette commande est à utiliser avec précaution.
 
 Collections
 ^^^^^^^^^^^
 
-Les collections correspondent aux tables en SQL. Elles sont des sous-ensembles de database. Pour créer une collection il faut auparavant s'être référencé sur une database.
+Les collections correspondent aux tables en SQL. Elles sont des sous-ensembles d'une database. Pour créer une collection il faut auparavant s'être référencé sur une database.
 
 .. code-block:: bash
 
@@ -168,7 +168,7 @@ Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir a
         episodes : [1,2,4,5,6]
         })
         
-Pour des soucis de performances, si un grand nombre de documents doivent être insérés très rapidement sans surcharger les appels réseaux il est possible de passer une liste d'objets à la fonction insert.
+Pour des soucis de performances, si un grand nombre de documents doivent être insérés très rapidement sans surcharger les appels réseaux, il est possible de passer une liste d'objets à la fonction insert.
 
 
 .. code-block:: bash
@@ -235,13 +235,13 @@ Afin de récupérer les documents stockés dans une collection, un set de foncti
 
     db.<YOUR_COLLECTION_NAME>.find().pretty()
     
-Il est possible de récupérer qu'un seul élément.
+Il est possible de ne récupérer qu'un seul élément.
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.findOne()
     
-Il est possible de faire des requêtes plus complexes. - 
+Il est possible de faire des requêtes plus complexes.
 
 .. code-block:: bash
 
@@ -249,9 +249,9 @@ Il est possible de faire des requêtes plus complexes. -
     
 Les différentes opérations mathématiques sont implémentées. 
 
-- Egalité :  {key:value}
-- Différence :  {key: {$ne:value}}
-- Plus (Grand|Petit) que :  les opérateurs sont $lt (lower than) ; $lte (lower than equals) ; $gt (greater than) ; $gte (greater than equals) : {key: {<OPERATEUR>:value}}
+- Egalité :  `{key:value}`
+- Différence :  `{key: {$ne:value}}`
+- Plus (Grand|Petit) que :  les opérateurs sont `$lt` (lower than) ; `$lte` (lower than equals) ; `$gt` (greater than) ; `$gte` (greater than equals) : `{key: {<OPERATEUR>:value}}`
 
 .. code-block:: bash
 
@@ -259,13 +259,13 @@ Les différentes opérations mathématiques sont implémentées.
 
 Les opérations logiques sont aussi disponibles.
 
-OR $or et AND $and permettent de faire des requêtes complexes sur une collection. 
+OR `$or` et AND `$and` permettent de faire des requêtes complexes sur une collection. 
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find({$and:[{"age":{$gte: 28, $lt:40}}, {"lastname":"Shelby"}]})
     
-Pour des raisons de performances il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés. On peut aussi demander de limiter le nombre de documents.
+Pour des raisons de performances, il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés. On peut aussi demander de limiter le nombre de documents.
 
 Requêtes complexes
 ''''''''''''''''''
@@ -280,7 +280,7 @@ Pour faire une requête sur un objet complet il faut redéfinir l'objet.
 
     db.<YOUR_COLLECTION_NAME>.find( { size: { h: 14, w: 21, uom: "cm" } } ) #TODO: Dot it
     
-Pour faire une requête sur uniquement un champs de l'objet  :
+Pour faire une requête sur uniquement un champ de l'objet  :
 
 .. code-block:: bash
 
@@ -292,7 +292,7 @@ Pour requêter les valeurs d'une liste :
 
     db.<YOUR_COLLECTION_NAME>.find( { nicknames:  ["Henry Johnson", "Jobbie Muncher", "Mickey"] } )
 
-Le champ nicknames doit matcher parfaitement la liste donnée en argument en contenu et en ordre. Si maintenant on veut récupérer tous les documents avec "Mickey" et "Jobbie Muncher", peu importe l'ordre d'apparition et peu importe les autres éléments du tableau.
+Le champ `nicknames` doit matcher parfaitement la liste donnée en argument en contenu et en ordre. Si maintenant on veut récupérer tous les documents avec "Mickey" et "Jobbie Muncher", peu importe l'ordre d'apparition et peu importe les autres éléments du tableau.
 
 .. code-block:: bash
 
@@ -304,7 +304,7 @@ On peut vouloir maintenant vouloir récupérer tous les éléments comptenant "M
 
     db.<YOUR_COLLECTION_NAME>.find( { nicknames: "Mickey" } )
     - 
-En général, une requête sur un champ d'un tableau se construit de la même manière qu'une requête sur un champ 'basique'
+En général, une requête sur un champ d'un tableau se construit de la même manière qu'une requête sur un champ 'basique'.
 
 
 .. code-block:: bash
@@ -326,12 +326,11 @@ Limitation, Projection et Tris
 
     db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"position":1})
     
-
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).limit(2)
     
-Il est aussi possible de passer directement au Nième document avec la fonction skip
+Il est aussi possible de passer directement au Nième document avec la fonction `skip()`.
 
 .. code-block:: bash
 
@@ -348,7 +347,7 @@ On peut trier les résultats récupérés.
 Indexation
 **********
 
-L'indexation permet d'accélérer les performances sur les requêtes. Si aucun n'index n'est mis en place, MongoDB doit effectuer un scan de tous les documents pour trouver ceux qui sont pertinents. L'index permet de stocker les valeurs d'un champs dans de façon triée pour limiter le nombre de document à parcourir pour effectuer une requête. 
+L'indexation permet d'accélérer les performances sur les requêtes. Si aucun index n'est mis en place, MongoDB doit effectuer un scan de tous les documents pour trouver ceux qui sont pertinents. L'index permet de stocker les valeurs d'un champ dans de façon triée pour limiter le nombre de document à parcourir pour effectuer une requête. 
 
 # TODO : Récupérer la photo https://docs.mongodb.com/manual/indexes/
 
@@ -381,26 +380,25 @@ Pour supprimer tous les index :
 Indexation composée
 '''''''''''''''''''
 
-L'indexation composée permet de créé un index basé sur deux champs différents. L'ordre des champs spécifié dans la création d'un index est important.On peut trier dans l'ordre croissant le premier champs et dans l'ordre décroissant le deuxième champs. 
-
+L'indexation composée permet de créér un index basé sur deux champs différents. L'ordre des champs spécifié dans la création d'un index est important.On peut trier dans l'ordre croissant le premier champ et dans l'ordre décroissant le deuxième champ. 
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1, firstname : 1 } )
     db.<YOUR_COLLECTION_NAME>.getIndexes()
 
-Indexation spéciales
-''''''''''''''''''''
+Indexations spéciales
+'''''''''''''''''''''
 
-- Text : permet de faire de la recherche naturelle de queries dans du texte. Cette index peut devenir très rapidement très important et prendre beaucoup de place mémoire. Il contient un index par mot contenu dans l'ensemble des documents. Il peut aussi être très lent à créer.
-- Multiclés : permet de créer un index sur les éléments d'objets stockés dans des listes ou arrays.
-- 2D, 2DSphère, geoHaystack : permet de créer des index sur des données géospaciales.
-- Hash : permet de stocker les valeurs des champs sous forme de hash.
+- Text : permet de faire de la recherche naturelle de *queries* dans du texte. Cet index peut devenir très rapidement très important et prendre beaucoup de place mémoire. Il contient un index par mot contenu dans l'ensemble des documents. Il peut aussi être très lent à créer.
+- Multiclés : permet de créer un index sur les éléments d'objets stockés dans des listes ou *arrays*.
+- 2D, 2DSphere, geoHaystack : permet de créer des index sur des données géospatiales.
+- Hash : permet de stocker les valeurs des champs sous forme de *hash*.
 
-Tous ces mécanismes d'indexation permettent d'accélérer les performances de requêtes. Mais ils peuvent avoir des effets négatifs: 
+Tous ces mécanismes d'indexation permettent d'accélérer les performances des requêtes. Mais ils peuvent avoir des effets négatifs: 
 
-- Chaque index doit avoir un minimum de 8kB et peut prendre beaucoup de place sur le disque et dans la mémoire RAM.
-- Ils sont gourmands pour insertions pour les opérations d'écriture puisqu'il doit insérer le nouveau document dans l'index en plus de l'insertion du document dans la collection.
+- Chaque index doit avoir un minimum de 8 kB et peut prendre beaucoup de place sur le disque et dans la mémoire RAM.
+- ?????? Ils sont gourmands pour insertions pour les opérations d'écriture puisqu'il doit insérer le nouveau document dans l'index en plus de l'insertion du document dans la collection. ?????
 
 Exemple : 
 
@@ -412,7 +410,7 @@ Pour créer un index sur le texte de la description des personnages :
     db.<YOUR_COLLECTION_NAME>.createIndex( { description: "text" } )
     db.<YOUR_COLLECTION_NAME>.getIndexes()
     
-Uniquement après que cet index de texte ait été créé on peut utiliser la méthode find avec l'argument $text pour faire une requête dans le texte.
+Uniquement après que cet index de texte ait été créé, on peut utiliser la méthode `find()` avec l'argument `$text` pour faire une requête dans le texte.
 
 .. code-block:: bash
 
@@ -435,7 +433,7 @@ La mise à jour des documents et une opération très courante dans les bases de
 
      db.<YOUR_COLLECTION_NAME>.updateOne(<filter>, <update>, <options>)
      
- Cette fonction va mettre à jour le premier élément renvoyer par la requête du filtre. 
+ Cette fonction va mettre à jour le premier élément renvoyé par la requête du filtre. 
  
 .. code-block:: bash
     
@@ -448,7 +446,7 @@ La mise à jour des documents et une opération très courante dans les bases de
 
      db.<YOUR_COLLECTION_NAME>.updateMany(<filter>, <update>, <options>)
      
-Cette fonction va mettre à jour tous les documents concernée par la requête.
+Cette fonction va mettre à jour tous les documents concernés par la requête.
 
 .. code-block:: bash
 
@@ -462,7 +460,7 @@ Cette fonction va mettre à jour tous les documents concernée par la requête.
      db.<YOUR_COLLECTION_NAME>.replaceOne(<filter>, <update>, <options>)
      
  
- Une  option peut être très intéressante, c'est l'option upsert. Elle permet d'ajouter un document si il n'existe pas déjà directement depuis la fonction update. Par défaut, cette option est à False. 
+L'option `upsert` peut être très intéressante. Elle permet d'ajouter un document si il n'existe pas déjà directement depuis la fonction `update()`. Par défaut, cette option est `False`. 
  
  
 .. code-block:: bash
@@ -503,14 +501,14 @@ Pour supprimer un seul document (ou le premier si la condition n'est pas assez r
 
 Quelques choses à savoir : 
 
-La méthode deleteMany applique une fonction à tous les documents. La fonction n'est pas une fonction globale. Toutes les fonctions en mongo sont atomiques ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
-La méthode delete ne supprime pas les indexes, même si on supprime tous les documents de la collection.
+La méthode `deleteMany()` applique une fonction à tous les documents. La fonction n'est pas une fonction globale. Toutes les fonctions en Mongo sont atomiques ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
+La méthode `delete()` ne supprime pas les index, même si on supprime tous les documents de la collection.
 
 
-Aggreagation
-************
+Aggregation
+***********
 
-Les aggrégations permettent de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d'effectuer une opération sur l'ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments GROUP BY.
+Les aggrégations permettent de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d'effectuer une opération sur l'ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments `GROUP BY`.
 
 La syntaxe est très similaire à toutes les autres fonctions Mongo mais la requête va être plus complexe. 
 
@@ -518,7 +516,7 @@ La syntaxe est très similaire à toutes les autres fonctions Mongo mais la requ
 
     db.<YOUR_COLLECTION_NAME>.aggregate(AGGREGATE_OPERATION)
     
-On peut vouloir récupérer le nombre de personnage de chaque famille présente dans la série : 
+On peut vouloir récupérer le nombre de personnages de chaque famille présente dans la série : 
 
 .. code-block:: bash
 
@@ -526,13 +524,12 @@ On peut vouloir récupérer le nombre de personnage de chaque famille présente 
     
 Vous avez accès à toutes les opérations mathématiques dont vous avez besoin : 
 
-- $sum : fait la somme de 
-- $avg : fait la moyenne 
-- $min : récupère la valeur minimale 
-- $max : récupère la valeur maximal 
-- $first : récupère le premier élément
-- $last : récupère le denier élément
-
+- `$sum` : fait la somme de 
+- `$avg` : fait la moyenne 
+- `$min` : récupère la valeur minimale 
+- `$max` : récupère la valeur maximale 
+- `$first` : récupère le premier élément
+- `$last` : récupère le dernier élément
 
 .. code-block:: bash
 
@@ -540,8 +537,8 @@ Vous avez accès à toutes les opérations mathématiques dont vous avez besoin 
     db.<YOUR_COLLECTION_NAME>.aggregate([{$group : {_id : "$lastname", minAgeByFamily : {$min : "$age"}}}])
     db.<YOUR_COLLECTION_NAME>.aggregate([{$group : {_id : "$lastname", lastAgeByFamily : {$last : "$age"}}}])
     
-On peut ajouter un paramètre à la fonction aggregate pour filtrer les élements à aggréger.
-Si on veut récupérer que les hommes : 
+On peut ajouter un paramètre à la fonction `aggregate()` pour filtrer les élements à aggréger.
+Si on ne veut récupérer que les hommes : 
 
 .. code-block:: bash
 
@@ -549,13 +546,11 @@ Si on veut récupérer que les hommes :
         {$match:{gender:"Male"}},
         {$group : {_id : "$lastname", averageAgeByFamily : {$avg : "$age"}}}
     ])
-    
-    
-Il est aussi possible d'intégrer directement du code JavaScript dans les requêtes Mongo. Des fonctions de Map->Reduce sont disponibles pour effectuer les fonctions d'aggrégations. Cette phase de Map Reduce se découpe en deux phases : 
+       
+Il est aussi possible d'intégrer directement du code JavaScript dans les requêtes Mongo. Des fonctions de Map->Reduce sont disponibles pour effectuer les fonctions d'aggrégation. L'opération de Map->Reduce se découpe en deux phases : 
 
-- Phase de MAP : Il parcourt tous les élements et extrait les champs voulus.
-- Phase de REDUCE : qui utilise les champs retournés pour effectuer l'opération finale. 
-
+- Phase de MAP : parcourt tous les élements et extrait les champs voulus.
+- Phase de REDUCE : utilise les champs retournés pour effectuer l'opération finale. 
 
 .. code-block:: bash
 
@@ -565,8 +560,8 @@ Il est aussi possible d'intégrer directement du code JavaScript dans les requê
         {query :{gender:"Male"}, out:"sumAge"}
         )
  
-On voit le nombre de d'entrées pour le MAP et le résultas du REDUCE.
-Maintenant pour récupérer les résultats du map->reduce : 
+On voit le nombre de d'entrées pour le MAP et le résultat du REDUCE.
+Maintenant pour récupérer les résultats du Map->Reduce : 
 
 .. code-block:: bash
 
@@ -580,7 +575,7 @@ Maintenant pour récupérer les résultats du map->reduce :
 API Python
 ----------
 
-Il existe une API Python développée pour intéragir avec une base de données MongoDB. Ce package s'appelle pymongo  https://docs.mongodb.com/getting-started/python/client/. Il est important d'avoir des APIs dans les différents langages pour faciliter l'intégration dans des applications. 
+Il existe une API Python développée pour interagir avec une base de données MongoDB. Ce package s'appelle `pymongo`  https://docs.mongodb.com/getting-started/python/client/. Il est important d'avoir des APIs dans les différents langages pour faciliter l'intégration dans les applications. 
 
 Pour installer le package : 
 
@@ -588,7 +583,7 @@ Pour installer le package :
 
     pip install pymongo
     
-Ce package garde très largement la syntaxe mongo shell et permet d'utiliser ces méthodes et items (DataBases, Collections, Documents) en tant qu'objets Python. 
+Ce package garde très largement la syntaxe Mongo shell et permet d'utiliser ces méthodes et items (DataBases, Collections, Documents) en tant qu'objets Python. 
 
 
 .. code-block:: Python
@@ -601,7 +596,7 @@ Permet de se connecter à une base MongoDB en créant un pointeur client vers ce
 
     client = MongoClient("http://<YOUR_IP_ADDRESS>:<YOUR_PORT_NUMBER>)
     
-Dans la plupart des cas, le port par défaut est le 27017.
+Dans la plupart des cas, le port par défaut est le `27017`.
 Il est possible comme depuis le MongoShell de lister les bases de données. 
 
 .. code-block:: Python
@@ -615,7 +610,7 @@ Et de les sélectionner :
     db = client.<YOUR_DATABASE_NAME>
     db = client["<YOUR_DATABASE_NAME>"]
     
-Pour lister les différentes collections présentes sur une database.
+Pour lister les différentes collections présentes sur une database :
 
 .. code-block:: Python
 
@@ -633,7 +628,7 @@ Pour récupérer un document :
 
     collection.find_one()
     
-C'est un peu différent pour la méthode find(). Cela créé, pour des raison de performances un curseur PyMongo. En effet, les données seront récupérées uniquement si elles sont utilisées. C'est intéressant pour des collections très volumineuses.
+C'est un peu différent pour la méthode `find()`. Cela crée, pour des raison de performances, un curseur PyMongo. En effet, les données seront récupérées uniquement si elles sont utilisées. C'est intéressant pour des collections très volumineuses.
 
 .. code-block:: Python 
 
@@ -657,17 +652,17 @@ Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets K
 
 - Récupérer les 5 projets ayant reçu le plus de promesse de dons.
 - Compter le nombre de projets ayant atteint leur but.
-- Compter le nombre de projets pour chaque catégories.
-- Compter le nombre de projets francais ayant été instancié avant 2016.
+- Compter le nombre de projets pour chaque catégorie.
+- Compter le nombre de projets français ayant été instanciés avant 2016.
 - Récupérer les projets américains ayant demandé plus de 200 000 dollars.
 - Compter le nombre de projet ayant "Sport" dans leur nom
 
 
-Intégrer le fichier `USvideos.csv`. Qui représente un ensemble de 8000 vidéos Youtube. Merger le fichier `US_category_id.json` pour récupérer le nom des catégories. Il conviendra de bien spécifier l'ID du document.
+Intégrer le fichier `USvideos.csv` qui représente un ensemble de 8000 vidéos Youtube. Merger le fichier `US_category_id.json` pour récupérer le nom des catégories. Il conviendra de bien spécifier l'ID du document.
 
 - Récupérer toutes les vidéos de la chaîne Apple.
 - Compter le nombre de catégories différentes 
-- Si vous ne l'avais pas déjà fait, découper les tags en listes et mettre à jour les tags de chacun des documents avec une requête update. 
+- Si vous ne l'avez pas déjà fait, découper les tags en listes et mettre à jour les tags de chacun des documents avec une requête update. 
 - Récupérer les vidéos les plus vues.
-- Compter le nombre de vue moyen en fonction de la catégorie. 
+- Compter le nombre moyen de vues en fonction de la catégorie. 
 - Récupérer les chaines Youtube avec la plus grande moyenne de likes.
