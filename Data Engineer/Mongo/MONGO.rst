@@ -79,13 +79,57 @@ Installation
 L'installation peut se faire de plusieurs manières.
 
 - Directement depuis les sources ou à partir de packages. Liens vers le tutorial https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+
+Sur une Debian 9 Stretch:
+
+.. code-block:: bash
+
+    # export http_proxy=http://147.215.1.189:3128
+    # export https_proxy=http://147.215.1.189:3128
+    # apt-get update
+    # apt-get install -y mongodb-org
+
 - Ou en instanciant un conteneur Docker. L'avantage de Docker est qu'il n'installe aucune dépendance sur votre machine et laisse son environnement propre. Lien vers le tutorial : https://hub.docker.com/_/mongo/
+
+Démarrage du service
+
+Vérifier que le service Mongo est démarré
+
+.. code-block:: bash
+
+    # service mongodb status
+    ● mongodb.service - An object/document-oriented database
+       Loaded: loaded (/lib/systemd/system/mongodb.service; enabled; vendor preset: 
+       Active: active (running) since Mon 2018-02-05 13:51:14 CET; 18min ago
+         Docs: man:mongod(1)
+     Main PID: 22845 (mongod)
+        Tasks: 16 (limit: 4915)
+       CGroup: /system.slice/mongodb.service
+               └─22845 /usr/bin/mongod --unixSocketPrefix=/run/mongodb --config /etc
+
+    févr. 05 13:51:14 debian systemd[1]: Started An object/document-oriented databas
+
+Sinon, le démarrer avec
+
+.. code-block:: bash
+
+    # service mongodb start
 
 Le port par défaut de Mongo est le 27017.
 
 Connexion
 ---------
 Pour se connecter à une base Mongo deux solutions sont possibles. En ligne de commande ou via un gestionnaire de BDD comme Robo3T https://robomongo.org/ . Dans les deux cas, la syntaxe Mongo est utilisée pour effectuer des requêtes. L'avantage de Robo3T est qu'il possède une interface permettant de visualiser très simplement les données.
+
+Dans un terminal utilisateur standard, la commande ``mongo`` permet d'obtenir un shell interactif:
+
+.. code-block:: bash
+
+    student@debian:~$ mongo
+    MongoDB shell version: 3.2.11
+    connecting to: test
+    > 
+
 
 Création d'un modèle de données
 -------------------------------
@@ -97,17 +141,18 @@ Ce modèle de données doit être réfléchi à court et long terme et doit pren
 Database
 ^^^^^^^^
 
-Après votre connexion (si vous en avez le droit) vous pouvez afficher toutes les databases disponibles sur la base. 
+A partir du shell Mongo, on peut afficher les databases disponibles. Au démarrage, aucune n'est créée:
 
 .. code-block:: bash
 
-    show dbs
+    > show dbs
+    local  0.000GB
     
 Pour supprimer définitivement une database: 
 
 .. code-block:: bash
 
-    db.dropDatabase()
+    db.dropDatabase
     show dbs
     
 Comme vous pouvez le deviner cette commande est à utiliser avec précaution.
