@@ -49,7 +49,7 @@ Concepts basiques
 
 Identifiants
 ^^^^^^^^^^^^
-Tous les documents possèdent un identifiant unique, ce qui permet de retrouver très efficacement un document.
+Tous les documents possèdent un identifiant unique, ce qui permet de le retrouver très efficacement.
 L'identifiant peut être spécifié lors de l'ajout d'un nouveau document (nom+prenom, adresse email, url, etc).
 Dans le cas ou aucun identifiant n'est précisé, MongoDB se charge d'en ajouter un. Il est composé d'un nombre stocké sur 12 bytes au format hexadécimal : 
 
@@ -115,7 +115,6 @@ Sinon, le démarrer avec
 
     # service mongodb start
 
-Le port par défaut de Mongo est le 27017.
 
 Connexion
 ---------
@@ -130,6 +129,7 @@ Dans un terminal utilisateur standard, la commande ``mongo`` permet d'obtenir un
     connecting to: test
     > 
 
+Le port par défaut de Mongo est le 27017.
 
 Création d'un modèle de données
 -------------------------------
@@ -188,7 +188,7 @@ Documents
 Insertion
 *********
 
-Un document est un sous-ensemble d'une collection qui est lui même une sous-partie d'une database. Pour insérer un document il faut donc se référencer sur une database et sur la collection souhaitée.
+Un document (objet JSON) est un sous-ensemble d'une collection qui est lui même une sous-partie d'une database. Pour insérer un document il faut donc se référencer sur une database et sur la collection souhaitée.
 
 .. code-block:: bash
 
@@ -201,7 +201,7 @@ Un document est un sous-ensemble d'une collection qui est lui même une sous-par
         position : "director",
         company : "Peaky Blinders"})
         
-Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir avec les règles définies précédement. Une bonne pratique est de trouver une règle permettant de retrouver facilement et efficacement un document sans avoir à faire une requête complexe et obliger la base à rechercher dans ses champs. Une technique est de prendre le hash d'une combinaison des champs qui permet de créer une clé unique SHA128(firstname+lastname+position) par exemple.
+Si vous ne précisez pas d'identifiant unique (id du document), MongoDB se charge de le remplir avec les règles définies précédement. Une bonne pratique est de trouver une règle permettant de retrouver facilement et efficacement un document sans avoir à faire une requête complexe et obliger la base à rechercher dans ses champs. Une technique est de prendre le hash d'une combinaison des champs qui permet de créer une clé unique SHA128(firstname+lastname+position) par exemple.
 
 .. code-block:: bash
 
@@ -219,7 +219,7 @@ Si vous ne précisez pas d'identifiant unique, MongoDB se charge de le remplir a
         episodes : [1,2,4,5,6]
         })
         
-Pour des soucis de performances, si un grand nombre de documents doivent être insérés très rapidement sans surcharger les appels réseaux, il est possible de passer une liste d'objets à la fonction insert.
+Pour des soucis de performances, si un grand nombre de documents doivent être insérés très rapidement sans surcharger les appels réseaux, il est possible de passer une liste JSON d'objets à la fonction insert.
 
 
 .. code-block:: bash
@@ -280,29 +280,29 @@ Pour des soucis de performances, si un grand nombre de documents doivent être i
 
 Requêter
 ********
-Afin de récupérer les documents stockés dans une collection, un set de fonctions de requêtes sont disponibles.
+Afin de récupérer les documents stockés dans une collection, des fonctions de requête sont disponibles. La fonction find() permet de récupérer les N premiers documents. Toutes les fonctions de récupérations peuvent être suivie de pretty() qui permet d'afficher plus proprement les résultats.
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find().pretty()
     
-Il est possible de ne récupérer qu'un seul élément.
+Il est possible de ne récupérer qu'un seul élément. Si aucun argument n'est précisé il récupère le premier document.
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.findOne()
     
-Il est possible de faire des requêtes plus complexes.
-
+Il est possible de passer des arguments à la fonction find() ou findOne().
+    
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}).pretty()
     
 Les différentes opérations mathématiques sont implémentées. 
 
-- Egalité :  `{key:value}`
+- Egalité :  `{key:value}` Correspondance clé valeur entre le champ et le la requête. 
 - Différence :  `{key: {$ne:value}}`
-- Plus (Grand|Petit) que :  les opérateurs sont `$lt` (lower than) ; `$lte` (lower than equals) ; `$gt` (greater than) ; `$gte` (greater than equals) : `{key: {<OPERATEUR>:value}}`
+- Plus (Grand|Petit) que :  les opérateurs sont `$lt` (lower than) ; `$lte` (lower than equals) ; `$gt` (greater than) ; `$gte` (greater than equals) : `{key: {<OPERATEUR>:value}}`.
 
 .. code-block:: bash
 
@@ -316,16 +316,15 @@ OR `$or` et AND `$and` permettent de faire des requêtes complexes sur une colle
 
     db.<YOUR_COLLECTION_NAME>.find({$and:[{"age":{$gte: 28, $lt:40}}, {"lastname":"Shelby"}]})
     
-Pour des raisons de performances, il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés. On peut aussi demander de limiter le nombre de documents.
 
 Requêtes complexes
 ''''''''''''''''''
 
-Les objets Mongo peuvent être assez complexes et les requêtes doivent pouvoir matcher des documents:
+Les objets Mongo peuvent être assez complexes et les requêtes doivent pouvoir matcher tous types de documents:
 
 - Les requêtes sur les sous-objets:
 
-Pour faire une requête sur un objet complet il faut redéfinir l'objet.
+Pour faire une requête sur un objet complet il faut redéfinir l'objet dans son intégralité.
 
 .. code-block:: bash
 
@@ -343,39 +342,51 @@ Pour requêter les valeurs d'une liste :
 
     db.<YOUR_COLLECTION_NAME>.find( { nicknames:  ["Henry Johnson", "Jobbie Muncher", "Mickey"] } )
 
-Le champ `nicknames` doit matcher parfaitement la liste donnée en argument en contenu et en ordre. Si maintenant on veut récupérer tous les documents avec "Mickey" et "Jobbie Muncher", peu importe l'ordre d'apparition et peu importe les autres éléments du tableau.
+Le champ `nicknames` doit matcher exactement la liste donnée en argument (en contenu et en ordre). 
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find( { nicknames:  ["Henry Johnson",  "Mickey", "Jobbie Muncher"] } )
+    
+Si maintenant on veut récupérer tous les documents avec "Mickey" et "Jobbie Muncher", peu importe l'ordre d'apparition et peu importe les autres éléments du tableau.
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find( { nicknames:  {$all :["Mickey", "Jobbie Muncher"] } } )
     
-On peut vouloir maintenant vouloir récupérer tous les éléments comptenant "Mickey" dans les surnoms.
+On peut vouloir maintenant récupérer tous les documents comptenant "Mickey" dans les nicknames (listes). 
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find( { nicknames: "Mickey" } )
-    - 
-En général, une requête sur un champ d'un tableau se construit de la même manière qu'une requête sur un champ 'basique'.
+    
+Comme on vient de le voir, une requête sur un champ d'un liste se construit de la même manière qu'une requête sur un champ 'basique'.
 
+La syntaxe générique d'une requête Mongo est la suivante.
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find( { <array field>: { <operator1>: <value1>, ... } })
 
-
-
-
-
 Limitation, Projection et Tris
 ''''''''''''''''''''''''''''''
 
+Pour des raisons de performances, il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés (Projection). On peut aussi demander de limiter le nombre de documents (Limitation).
+
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find(QUERY, PROJECTION)
+    db.<YOUR_COLLECTION_NAME>.find(QUERY, PROJECTION).LIMIT(N_DOCUMENTS)
+
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({$and:[{"age":{$gte: 28, $lt:40}}, {"lastname":"Shelby"}]}, {"firstname":1})
     
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"position":1})
+    
+
     
 .. code-block:: bash
 
