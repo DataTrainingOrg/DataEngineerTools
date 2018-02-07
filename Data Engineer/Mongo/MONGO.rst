@@ -443,7 +443,8 @@ Dans l'ordre croissant,
      db.<YOUR_COLLECTION_NAME>.createIndex( { age: 1 } )
      db.<YOUR_COLLECTION_NAME>.getIndexes()
      
-     #TODO: Ajouter le résultat.
+     
+ #TODO: Ajouter le résultat.
 
 Dans l'ordre décroissant, 
 
@@ -460,7 +461,7 @@ Pour supprimer tous les index :
     db.<YOUR_COLLECTION_NAME>.getIndexes()
     
     
-    # TODO : ajouter exemple avec/sans index
+# TODO : ajouter exemple avec/sans index
     
 Les performances ne sont visibles que pour des collections de taille importante.
     
@@ -475,7 +476,7 @@ L'indexation composée permet de créér un index basé sur deux champs différe
     db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1, firstname : 1 } )
     db.<YOUR_COLLECTION_NAME>.getIndexes()
     
-    # TODO : ajouter le résultat
+# TODO : ajouter le résultat
 
 Indexations spéciales
 '''''''''''''''''''''
@@ -519,18 +520,17 @@ Mettre à jour
 *************
 La mise à jour des documents et une opération très courante dans les bases de données. MongoDB implémente trois fonctions différentes permettant de mettre à jour un ou plusieurs documents à la fois.
 
-
-- Le champ filter est une requête comme on vient de voir précédament ; 
-- Le champ update permet de préciser la requête de mise à jour ;
-- Le champ option permet de donner des arguments à cette opération.
-
 - Mettre à jour un seul document : 
 
 .. code-block:: bash
 
      db.<YOUR_COLLECTION_NAME>.updateOne(<filter>, <update>, <options>)
-     
- Cette fonction va mettre à jour le premier élément renvoyé par la requête du filtre. 
+
+- Le champ `filter` est une requête comme on vient de voir précédemment ; 
+- Le champ `update` permet de préciser la requête de mise à jour ;
+- Le champ `option` permet de donner des arguments à cette opération.
+
+ Cette fonction va mettre à jour le premier élément renvoyé par la requête `filter`. 
  
  Par exemple : 
  
@@ -538,6 +538,8 @@ La mise à jour des documents et une opération très courante dans les bases de
     
     db.<YOUR_COLLECTION_NAME>.updateOne({"firstname":"Thomas"}, {$set:{maincharacter:true}})
     db.<YOUR_COLLECTION_NAME>.findOne({"firstname":"Thomas"})
+    
+ Ici le champ update utilise le selecteur `$set` qui permet de définir les couples clé:valeurs à mettre à jour.
 
 - Mettre à jour une liste de documents : 
 
@@ -545,7 +547,8 @@ La mise à jour des documents et une opération très courante dans les bases de
 
      db.<YOUR_COLLECTION_NAME>.updateMany(<filter>, <update>, <options>)
      
-Cette fonction va mettre à jour tous les documents concernés par la requête.
+Cette fonction va mettre à jour tous les documents concernés par la requête `filter`.
+Dans l'exemple ci-dessous nous allons mettre à jour tous les éléments correspondant à la family Shelby.
 
 .. code-block:: bash
 
@@ -559,7 +562,7 @@ Cette fonction va mettre à jour tous les documents concernés par la requête.
      db.<YOUR_COLLECTION_NAME>.replaceOne(<filter>, <update>, <options>)
      
  
-L'option `upsert` peut être très intéressante. Elle permet d'ajouter un document si il n'existe pas déjà directement depuis la fonction `update()`. Par défaut, cette option est `False`. 
+L'option `upsert` peut être très intéressante. Elle permet d'ajouter un document si il n'existe pas déjà directement depuis la fonction `update()`. Par défaut, cette option est `false`. 
  
  
 .. code-block:: bash
@@ -573,11 +576,10 @@ L'option `upsert` peut être très intéressante. Elle permet d'ajouter un docum
 Supprimer 
 *********
 
-Pour supprimer des documents, il existe deux méthodes : 
+Pour supprimer des documents, comme pour la mise à jour, il existe deux méthodes : 
 
-- deleteMany({ <field1>: <value1>, ... }
-- deleteOne({ <field1>: <value1>, ... }
-
+- `deleteMany({ <field1>: <value1>, ... }`
+- `deleteOne({ <field1>: <value1>, ... }`
 
 Pour supprimer tous les documents de la collection: 
  
@@ -591,8 +593,7 @@ Pour supprimer tous les documents possédant une condition :
 
     db.<YOUR_COLLECTION_NAME>.deleteMany({lastname: "Gray"})
     
-Pour supprimer un seul document (ou le premier si la condition n'est pas assez restrictive. 
-
+Pour supprimer un seul document (ou le premier si la condition n'est pas assez restrictive) :
 
 .. code-block:: bash
 
@@ -600,14 +601,14 @@ Pour supprimer un seul document (ou le premier si la condition n'est pas assez r
 
 Quelques choses à savoir : 
 
-La méthode `deleteMany()` applique une fonction à tous les documents. La fonction n'est pas une fonction globale. Toutes les fonctions en Mongo sont atomiques ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
-La méthode `delete()` ne supprime pas les index, même si on supprime tous les documents de la collection.
+- La méthode `deleteMany()` applique une fonction à tous les documents. Toutes les fonctions en Mongo sont atomiques ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
+- La méthode `delete()` ne supprime pas les index, même si on supprime tous les documents de la collection.
 
 
 Aggregation
 ***********
 
-Les aggrégations permettent de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d'effectuer une opération sur l'ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments `GROUP BY`.
+Une aggrégations permet de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d'effectuer une opération sur l'ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments `GROUP BY`.
 
 La syntaxe est très similaire à toutes les autres fonctions Mongo mais la requête va être plus complexe. 
 
@@ -658,6 +659,8 @@ Il est aussi possible d'intégrer directement du code JavaScript dans les requê
         function(key,values){return Array.sum(values)},
         {query :{gender:"Male"}, out:"sumAge"}
         )
+        
+        
  
 On voit le nombre de d'entrées pour le MAP et le résultat du REDUCE.
 Maintenant pour récupérer les résultats du Map->Reduce : 
@@ -747,7 +750,7 @@ C'est un peu différent pour la méthode `find()`. Cela crée, pour des raison d
     
 Exercice : 
 
-Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 400 000 projets KickStarter. Intégrer les données directement avec L'API Python dans une base de données Mongo. Il conviendra de bien spécifier l'ID du document. Pensez aussi à bien formatter le type des données pour profiter des méthodes implémentées par Mongo. L'ensemble de données n'est pas forcément nécessaire, c'est à vous de créer votre modèle de données.   
+Ouvrir le fichier `ks-projects-201801.csv`, il recense environ 100 000 projets KickStarter. Intégrer les données directement avec L'API Python dans une base de données Mongo. Il conviendra de bien spécifier manuellement l'ID du document. Pensez aussi à bien formatter le type des données pour profiter des méthodes implémentées par Mongo. L'ensemble de données n'est pas forcément nécessaire, c'est à vous de créer votre modèle de données.   
 
 - Récupérer les 5 projets ayant reçu le plus de promesse de dons.
 - Compter le nombre de projets ayant atteint leur but.
