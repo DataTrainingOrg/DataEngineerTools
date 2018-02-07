@@ -193,6 +193,7 @@ Un document est un sous-ensemble d'une collection qui est lui même une sous-par
 .. code-block:: bash
 
     use <YOUR_DB_NAME>
+    db.createCollection(<YOUR_COLLECTION_NAME>)
     show collections
     db.<YOUR_COLLECTION_NAME>.insert({
         firstname : "Thomas",
