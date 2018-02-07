@@ -148,11 +148,16 @@ A partir du shell Mongo, on peut afficher les databases disponibles. Au démarra
     > show dbs
     local  0.000GB
     
+.. code-block:: bash
+
+    use test
+    show dbs
+    
 Pour supprimer définitivement une database: 
 
 .. code-block:: bash
 
-    db.dropDatabase
+    db.dropDatabase()
     show dbs
     
 Comme vous pouvez le deviner cette commande est à utiliser avec précaution.
