@@ -373,20 +373,25 @@ Limitation, Projection et Tris
 
 Pour des raisons de performances, il peut être intéressant de limiter les accès réseaux. Pour cela, on peut sélectionner les champs devant être retournés (Projection). On peut aussi demander de limiter le nombre de documents (Limitation).
 
+La syntaxe est la suivante : 
+
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find(QUERY, PROJECTION).LIMIT(N_DOCUMENTS)
 
+Un exemple de projection en utilisant les requêtes déjà utilisées plus haut.
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"position":1})
+    
+Avec une requête plus complexe et une autre projection.
 
 .. code-block:: bash
 
     db.<YOUR_COLLECTION_NAME>.find({$and:[{"age":{$gte: 28, $lt:40}}, {"lastname":"Shelby"}]}, {"firstname":1})
     
-.. code-block:: bash
-
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"position":1})
-    
-
+Un exemple de limitation : 
     
 .. code-block:: bash
 
@@ -400,16 +405,30 @@ Il est aussi possible de passer directement au Nième document avec la fonction 
     
 On peut trier les résultats récupérés. 
 
+Pour trier dans l'ordre ascendant :
+
 .. code-block:: bash
 
-    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"firstname":1}).sort({"age":-1})
-    db.<YOUR_COLLECTION_NAME>.find({}, {"firstname":1}).sort({"age":1})
+    db.<YOUR_COLLECTION_NAME>.find({"lastname":"Shelby"}, {"firstname":1}).sort({"age":1})
+   
+Pour trier dans l'ordre descendant :
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({}, {"firstname":1}).sort({"age":-1})
+    
+On peut aussi trier selon une clé puis une autre.
+
+
+.. code-block:: bash
+
+    db.<YOUR_COLLECTION_NAME>.find({}, {"firstname":1}).sort({"age":-1}, {"firstname":1})
 
 
 Indexation
 **********
 
-L'indexation permet d'accélérer les performances sur les requêtes. Si aucun index n'est mis en place, MongoDB doit effectuer un scan de tous les documents pour trouver ceux qui sont pertinents. L'index permet de stocker les valeurs d'un champ dans de façon triée pour limiter le nombre de document à parcourir pour effectuer une requête. 
+L'indexation permet d'accélérer les performances sur les requêtes. Si aucun index n'est mis en place, MongoDB doit effectuer un scan de tous les documents pour trouver ceux qui sont pertinents. L'index permet de stocker les valeurs d'un champ de façon triée pour limiter le nombre de document à parcourir pour effectuer une requête. 
 
 # TODO : Récupérer la photo https://docs.mongodb.com/manual/indexes/
 
@@ -423,6 +442,8 @@ Dans l'ordre croissant,
 
      db.<YOUR_COLLECTION_NAME>.createIndex( { age: 1 } )
      db.<YOUR_COLLECTION_NAME>.getIndexes()
+     
+     #TODO: Ajouter le résultat.
 
 Dans l'ordre décroissant, 
 
@@ -438,6 +459,11 @@ Pour supprimer tous les index :
     db.<YOUR_COLLECTION_NAME>.dropIndexes()
     db.<YOUR_COLLECTION_NAME>.getIndexes()
     
+    
+    # TODO : ajouter exemple avec/sans index
+    
+Les performances ne sont visibles que pour des collections de taille importante.
+    
 
 Indexation composée
 '''''''''''''''''''
@@ -448,24 +474,29 @@ L'indexation composée permet de créér un index basé sur deux champs différe
 
     db.<YOUR_COLLECTION_NAME>.createIndex( { age: -1, firstname : 1 } )
     db.<YOUR_COLLECTION_NAME>.getIndexes()
+    
+    # TODO : ajouter le résultat
 
 Indexations spéciales
 '''''''''''''''''''''
 
-- Text : permet de faire de la recherche naturelle de *queries* dans du texte. Cet index peut devenir très rapidement très important et prendre beaucoup de place mémoire. Il contient un index par mot contenu dans l'ensemble des documents. Il peut aussi être très lent à créer.
+Mongo permet plusieurs indexations : 
+
+- Text : permet de faire de la recherche naturelle de *queries* dans du texte. Cet index peut devenir très rapidement très important et prendre beaucoup de place mémoire. Cet index textuel contient un index par mot contenu dans l'ensemble des documents. Il peut aussi être très lent à créer.
 - Multiclés : permet de créer un index sur les éléments d'objets stockés dans des listes ou *arrays*.
 - 2D, 2DSphere, geoHaystack : permet de créer des index sur des données géospatiales.
 - Hash : permet de stocker les valeurs des champs sous forme de *hash*.
 
+Dans ce cours, on se contentera de faire de l'indexation textuelle.
+
 Tous ces mécanismes d'indexation permettent d'accélérer les performances des requêtes. Mais ils peuvent avoir des effets négatifs: 
 
-- Chaque index doit avoir un minimum de 8 kB et peut prendre beaucoup de place sur le disque et dans la mémoire RAM.
-- ?????? Ils sont gourmands pour insertions pour les opérations d'écriture puisqu'il doit insérer le nouveau document dans l'index en plus de l'insertion du document dans la collection. ?????
+- Sur l'occupation mémoire : Chaque index doit avoir un minimum de 8 kB et peut prendre beaucoup de place sur le disque et dans la mémoire RAM.
+- Sur le temps d'éxécution : les opérations d'insertions et d'écritures peuvent être longues puisque mongo doit insérer chaque nouveau document dans l'index en plus de l'insertion dans la collection.
 
 Exemple : 
 
-Pour créer un index sur le texte de la description des personnages : 
-
+Pour créer un index textuel sur la description des personnages : 
 
 .. code-block:: bash
 
@@ -481,13 +512,17 @@ Uniquement après que cet index de texte ait été créé, on peut utiliser la m
     
 Exercice : 
 
-Supprimez tous les index créés et réessayez de faire la recherche. 
+Supprimez tous les index créés et réessayez de faire la même requête. Que se passe-t-il ?
 
 
 Mettre à jour
 *************
-La mise à jour des documents et une opération très courante dans les bases de données. MongoDB implémente trois fonction différentes permettant de mettre à jour un ou plusieurs documents à la fois.
+La mise à jour des documents et une opération très courante dans les bases de données. MongoDB implémente trois fonctions différentes permettant de mettre à jour un ou plusieurs documents à la fois.
 
+
+- Le champ filter est une requête comme on vient de voir précédament ; 
+- Le champ update permet de préciser la requête de mise à jour ;
+- Le champ option permet de donner des arguments à cette opération.
 
 - Mettre à jour un seul document : 
 
@@ -496,6 +531,8 @@ La mise à jour des documents et une opération très courante dans les bases de
      db.<YOUR_COLLECTION_NAME>.updateOne(<filter>, <update>, <options>)
      
  Cette fonction va mettre à jour le premier élément renvoyé par la requête du filtre. 
+ 
+ Par exemple : 
  
 .. code-block:: bash
     
