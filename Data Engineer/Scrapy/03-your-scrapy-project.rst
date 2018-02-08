@@ -58,11 +58,13 @@ Cette commande permet de créer une spider appelée leboncoin pour scraper le do
 Une bonne pratique pour commencer à développer une Spider est de passer par l'interface Shell proposée par Scrapy. Elle permet de récupérer un objet response et de tester les méthodes de récupérations.
  
  
- .. code-block:: bash
+.. code-block:: bash
     
     scrapy shell 'http://leboncoin.fr'
     
 Scrapy lance un kernel Python 
+
+.. code-block:: bash
 
     2018-02-08 11:28:47 [scrapy.utils.log] INFO: Scrapy 1.3.3 started (bot: monprojet)
     2018-02-08 11:28:47 [scrapy.utils.log] INFO: Overridden settings: {'BOT_NAME': 'monprojet', 'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter', 'LOGSTATS_INTERVAL': 0, 'NEWSPIDER_MODULE': 'monprojet.spiders', 'ROBOTSTXT_OBEY': True, 'SPIDER_MODULES': ['monprojet.spiders']}
@@ -187,7 +189,7 @@ On peut maintenant vouloir récupérer un attribut d'un balise. Par exemple, les
      
 Si on veut récupérer la liste des liens de la page on applique la méthode `extract()`
      
- .. code-block:: Python
+.. code-block:: Python
 
     In [18]: response.css('a::attr(href)').extract()
     Out[18]: 
@@ -216,7 +218,7 @@ Les liens dans une page HTML sont souvent codés de manière relative par rappor
 
 Un exemple sur le 4e élément : 
 
- .. code-block:: Python
+.. code-block:: Python
 
     In [22]: response.urljoin(response.css('a::attr(href)').extract()[3])
     Out[22]: 'https://www.leboncoin.fr/'
@@ -225,7 +227,7 @@ Un exemple sur le 4e élément :
 On peut utiliser une liste compréhension pour transformer tous les liens récupérés par la méthode `extract()`.
 
 
- .. code-block:: Python
+.. code-block:: Python
 
     In [23]: [response.urljoin(url) for url in response.css('a::attr(href)').extract()]
     Out[23]: 
@@ -241,15 +243,144 @@ On peut utiliser une liste compréhension pour transformer tous les liens récup
      'https://www.leboncoin.fr/aw?ca=12_s&selected=search',
      'https://www.leboncoin.fr/boutiques/tout_secteur_d_activite/toutes_categories/ile_de_france/',
      'https://www.leboncoin.fr/',...]
-
-
-
-
      
 
+On peut créer des requêtes plus complexes sur des balises imbriquées. Il faut savoir deux choses en css : 
+- Les `.` représentent les classes 
+- Les `#` représentent les id
 
+on utilise ces règles pour créer les requêtes. Par exemple si on veut récupérer toutes les régions disposées à droite. Elles sont situées dans une balise de classe `mapNav` et ensuite dans chaque balise `li`.
+
+.. code-block:: Python
+
+    In [30]: response.css(".mapNav li a::attr(href)").extract()
+    Out[30]: 
+    ['//www.leboncoin.fr/annonces/offres/alsace/',
+     '//www.leboncoin.fr/annonces/offres/aquitaine/',
+     '//www.leboncoin.fr/annonces/offres/auvergne/',
+     '//www.leboncoin.fr/annonces/offres/basse_normandie/',
+     '//www.leboncoin.fr/annonces/offres/bourgogne/',
+     '//www.leboncoin.fr/annonces/offres/bretagne/',
+     '//www.leboncoin.fr/annonces/offres/centre/',
+     '//www.leboncoin.fr/annonces/offres/champagne_ardenne/',...]
     
+On peut maintenant intégrer ces techniques directement dans notre spider.
+
+La fonction `parse`est appelé sur les premiers liens de la liste `start_urls`. 
 
 
+.. code-block:: Python
+
+    def parse(self, response):
+        title = response.css('title::text').extract_first()
+        all_links = [response.urljoin(url) for url in response.css(".mapNav li a::attr(href)").extract()]
+        
+L'avantage d'une spider est qu'elles peut se `balader` sur un site assez facilement. Il suffit de lui indiquer comment faire. 
+
+Pour que la Spider continue dans les liens des différentes régions il faut créer un objet `Request`. Cet objet permet à Scrapy de l'intégrer dans son flux de données et le faire passer à travers les Middlewares définies dans l'architecture de la première partie du cours.
+
+.. code-block:: Python
+
+    import scrapy
+    from scrapy import Request
+
+
+    class LeboncoinSpider(scrapy.Spider):
+        name = "leboncoin"
+        allowed_domains = ["leboncoin.fr"]
+        start_urls = ['http://leboncoin.fr/']
+
+        def parse(self, response):
+            title = response.css('title::text').extract_first()
+            all_links = [response.urljoin(url) for url in response.css(".mapNav li a::attr(href)").extract()]
+            for link in all_links:
+                yield Request(link, callback=self.parse_region)
+
+        def parse_region(self, response):
+            pass
+            
+Ici on définie un nouvel objet Request. On précise la méthode callback qui va être appelé sur la réponse de cette requête après qu'elle soit passé par le processus d'extraction de Scrapy. La méthode `parse_region` prend en argument une response qui sera la response provenant des liens des regions. On peut comme ceci traverser un site en définissant des méthodes différentes en fonction du type de contenu. 
+
+Quand on arrive sur une page région `https://www.leboncoin.fr/annonces/offres/alsace/. On peut vouloir récupérer tous les éléments de la page. Pour cela, on réutilise le scrapy Shell pour commencer le développement de la nouvelle méthod d'extraction. 
+
+.. code-block:: bash
+
+    scrapy shell 'https://www.leboncoin.fr/annonces/offres/alsace/'
     
+Tous les éléments sont stockés dans la balise correspondante à la classe `tabsContent`. On récupère alors le selecteur de cette classe.
+
+.. code-block:: Python
+
+    In [1]: response.css(".tabsContent")
+    Out[1]: [<Selector xpath="descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' tabsContent ')]" data='<section class="tabsContent block-white '>]
+    
+Pour récupérer tous les éléments : 
+    
+.. code-block:: Python
+
+    In [2]: response.css(".tabsContent li")
+    Out[2]: 
+    [<Selector xpath="descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' tabsContent ')]/descendant-or-self::*/li" data='<li itemscope itemtype="http://schema.or'>,
+     <Selector xpath="descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' tabsContent ')]/descendant-or-self::*/li" data='<li itemscope itemtype="http://schema.or'>,...]
+     
+On peut créer des requêtes très longues pour récupérer tous les titres des différentes annonces.
+
+
+.. code-block:: Python
+
+    In [7]: response.css(".tabsContent li .item_infos .item_title::text").extract()
+    Out[7]: 
+    ['\n                            \tMeuble de jukboxe\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tVolkswagen golf 5 1.9 tdi 105 cv \n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tPoulailler xxl\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tVitre côté passager twingo\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tPoupée porcelaine\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \ttuiles\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tDrone racer 250 eachine carbone\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tChaise de douche \n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tLot de 4 chaises de salle à manger\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     '\n                            \tLot de tee-shirt garçon 12 mois\n                                \n                            \t\n\t\t\t\t\t\t\t',
+     "\n                            \tVerre/gobelet d'apprentissage\n                                \n                            \t\n\t\t\t\t\t\t\t", ...]
+
+En HTML les données sont souvent de très mauvaise qualité. Il faut définir des méthodes permettant de récupérer des données plus propres pour être intégrer dans des bases de données.
+
+.. code-block:: Python
+
+    In [13]: def clean_spaces(string):
+    ...:        if string: 
+    ...:            return " ".join(string.split())
+        
+.. code-block:: Python
+
+    In [8]:  [clean_spaces(elt) for elt in response.css(".tabsContent li .item_infos .item_title::text").extract()]
+    Out [8]: 
+    ['Meuble de jukboxe',
+     'Volkswagen golf 5 1.9 tdi 105 cv',
+     'Poulailler xxl',
+     'Vitre côté passager twingo',
+     'Poupée porcelaine',
+     'tuiles',
+     'Drone racer 250 eachine carbone',
+     'Chaise de douche',...]
+     
+Chaque élement est un selecteur on peut alors itérer sur les selecteurs hauts niveaux et récupérer les données sur chacun d'entre eux.
+
+.. code-block:: Python
+
+    In [14]: for item in response.css(".tabsContent li .item_infos"):
+    ...:     print(clean_spaces(item.css(".item_title::text").extract_first()))
+    ...:     
+    Meuble de jukboxe
+    Volkswagen golf 5 1.9 tdi 105 cv
+    Poulailler xxl
+    Vitre côté passager twingo
+    Poupée porcelaine
+    tuiles
+    Drone racer 250 eachine carbone
+    
+Scrapy marche sous la forme d'objets (items). Pour pouvoir stocker les informations que l'on récupère en parcourant un site il faut stocker ses informations soit dans un dictionnaire Python soit directement dans un item Scrapy. Nous allons voir les deux.
+
+
+
+
 
