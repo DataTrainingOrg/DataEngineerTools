@@ -317,6 +317,9 @@ On se propose de récupérer le texte ou les liens associés aux noms des régio
             </ul>
         </section>
         
+        
+A partir de cette structure HTML on peut construire la requête suivante pour récupérer tous les liens : 
+
 .. code-block:: Python
 
     In [30]: response.css(".mapNav li a::attr(href)").extract()
@@ -329,11 +332,24 @@ On se propose de récupérer le texte ou les liens associés aux noms des régio
      '//www.leboncoin.fr/annonces/offres/bretagne/',
      '//www.leboncoin.fr/annonces/offres/centre/',
      '//www.leboncoin.fr/annonces/offres/champagne_ardenne/',...]
-    
-On peut maintenant intégrer ces techniques directement dans notre spider.
+     
+Le shell Scrapy permet de définir la structure des requêtes et de s'assurer de la pertinence du résultat retourné.
+Pour automatiser le processus, il faut intégrer cette syntaxe au code Python des modules de spider définis dans la structure du projet.
 
-La fonction `parse`est appelé sur les premiers liens de la liste `start_urls`. 
+Intégration des requêtes
+------------------------
 
+Le squelette de la classe ``LeboncoinSpider`` généré lors de la création du projet doit maintenant être enrichi. Par défaut 3 attributs et une méthode ``parse()`` ont été créés :
+
+- ``name`` permet d'identifier sans ambiguïté la spider dans le code.
+- ``allowed_domain`` permet de filtrer les requêtes et forcer la spider à rester sur une liste de domaines.
+- ``starts_urls`` est la liste des urls d'où la spider va partir pour commencer son scraping.
+- ``parse()`` est une méthode héritée de la classe ``scrapy.Spider``. Elle doit être redéfinie selon les requêtes que l'on doit effectuer et sera appelée sur l'ensemble des urls contenus dans la liste ``starts_urls``.
+
+
+
+
+est appelé sur les premiers liens de la liste ``start_urls``. 
 
 .. code-block:: Python
 
