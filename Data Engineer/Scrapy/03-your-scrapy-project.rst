@@ -1,13 +1,13 @@
 Votre premier projet
 ====================
 
-Dans un premier temps vous devez créer votre projet. Scrapy le fait pour vous et créer un template de projet que vous aurez à remplir pour remplir vos besoins. 
+Dans un premier temps vous devez créer un projet Scrapy avec la commande : 
 
 .. code-block:: bash
 
     scrapy startproject monprojet
     
-Cette commande va créer un dossier `monprojet` contenant les éléments suivants::
+Cette commande va créer un dossier ``monprojet`` contenant les éléments suivants correspondant au squelette ::
 
     monprojet/
         scrapy.cfg            # Options de déploiement
@@ -27,19 +27,25 @@ Cette commande va créer un dossier `monprojet` contenant les éléments suivant
                 __init__.py
 
 
-Votre première spider
+Votre première Spider
 =====================
 
-Les Spiders sont des classes Scrapy qui permettent de mettre en place toute l'architecture complexe définie plus haut. Pour définir une spider il vous faut hériter de la classe :class:`scrapy.Spider`. La seule chose à faire est de définir la première requête à effectuer et comment suivre les liens. La Spider ne s'arrêtera uniquement lorsqu'elle aura parcouru tous les liens qu'on lui à demander. 
+Une Spider est une classe Scrapy qui permet de mettre en place toute l'architecture complexe vu dans l'introduction. Pour définir une spider, il vous faut hériter de la classe :class:`scrapy.Spider`. La seule chose à faire est de définir la première requête à effectuer et comment suivre les liens. La Spider s'arrêtera lorsqu'elle aura parcouru tous les liens qu'on lui a demandé de suivre. 
 
-Pour créer une Spider : 
+Pour créer une Spider on utilise la syntaxe: 
+
+.. code-block:: bash
+
+    scrapy genspider <SPIDER_NAME> <DOMAIN_NAME>
+
+Par exemple, 
 
 .. code-block:: bash
 
     cd monprojet
     scrapy genspider leboncoin leboncoin.fr
     
-Cette commande permet de créer une spider appelée leboncoin pour scraper le domaine leboncoin.fr. Cela créé un fichier Python :
+Cette commande permet de créer une spider appelée ``leboncoin`` pour scraper le domaine ``leboncoin.fr``. Cela créé le fichier Python ``leboncoin.py`` suivant :
 
 .. code-block:: Python
 
@@ -55,7 +61,7 @@ Cette commande permet de créer une spider appelée leboncoin pour scraper le do
             pass
             
 
-Une bonne pratique pour commencer à développer une Spider est de passer par l'interface Shell proposée par Scrapy. Elle permet de récupérer un objet response et de tester les méthodes de récupérations.
+Une bonne pratique pour commencer à développer une Spider est de passer par l'interface Shell proposée par Scrapy. Elle permet de récupérer un objet ``Response`` et de tester les méthodes de récupération des données.
  
  
 .. code-block:: bash
@@ -114,11 +120,30 @@ Scrapy lance un kernel Python
     [s]   shelp()           Shell help (print this help)
     [s]   view(response)    View response in a browser
     
-Grace à cette interface vous avec accès à plusieurs objets comme la response, la request  la spider par exemple. Vous pouvez aussi exécuter `view(response)` pour afficher ce que Scrapy récupère dans un navigateur.
+Grâce à cette interface, vous avez accès à plusieurs objets comme la ``Response``, la ``Request``,  la ``Spider`` par exemple. Vous pouvez aussi exécuter ``view(response)`` pour afficher ce que Scrapy récupère dans un navigateur.
 
-On peut commencer à regarder comment extraire les données en utilisant le langage de requêtes proposé par Scrapy. Il existe deux types de requêtes les requêtes `css` et `xpath`. Les requêtes xpath sont plus complexes mais plus puissante que les requêtes `css`. Dans le cadre de ce tutorial nous allons uniquement aborder les requêtes `css`, elles nous suffirons pour extraire les données dont avons besoin.
 
-Que ce soit les requêtes `css` ou `xpath` crééent des sélecteurs de différents types. Nous pouvons commencer à faire quelques requêtes.
+.. code-block:: Python
+
+    In [1]: response
+    Out[1]: <200 https://www.leboncoin.fr/>
+    
+    In [3]: request
+    Out[3]: <GET http://leboncoin.fr>
+
+    In [4]: type(request)
+    Out[4]: scrapy.http.request.Request
+    
+    In [5]: spider
+    Out[5]: <LeboncoinSpider 'leboncoin' at 0x111e61b38>
+
+    In [6]: type(spider)
+    Out[6]: monprojet.spiders.leboncoin.LeboncoinSpider
+
+On peut commencer à regarder comment extraire les données de la page web en utilisant le langage de requêtes proposé par Scrapy. Il existe deux types de requêtes : les requêtes ``css`` et ``xpath``. Les requêtes ``xpath`` sont plus complexes mais plus puissantes que les requêtes ``css``. Dans le cadre de ce tutorial, nous allons uniquement aborder les requêtes ``css``, elles nous suffiront pour extraire les données dont nous avons besoin (en interne, Scrapy transforme les requêtes ``css``en requêtes ``xpath``. 
+
+Que ce soit les requêtes ``css`` ou ``xpath``, elles crééent des sélecteurs de différents types.
+Quelques exemples :
 
 Pour récupérer le titre d'une page : 
 
@@ -127,7 +152,8 @@ Pour récupérer le titre d'une page :
     In [1]: response.css('title')
     Out[1]: [<Selector xpath='descendant-or-self::title' data='<title>\n\n\t\tleboncoin, site de petites an'>]
     
-On récupère une liste de sélecteurs correspondant à la requête. Si on utilise une requête moins restrictive : 
+On récupère une liste de sélecteurs correspondant à la requête ``css`` appelée. La requête précédante était unique, d'autre requêtes moins restrictives permettent de récupérer plusieurs résultats. 
+Par exemple pour rechercher l'ensemble des liens présents sur la page, on va rechercher les balises HTML ``<a></a>``
 
 .. code-block:: Python
 
@@ -141,13 +167,17 @@ On récupère une liste de sélecteurs correspondant à la requête. Si on utili
      <Selector xpath='descendant-or-self::a' data='<a href="//www.leboncoin.fr/" title="Acc'>,
      <Selector xpath='descendant-or-self::a' data='<a href="//www.leboncoin.fr/ai?ca=12_s" '>, ... ]
     
-Pour récupérer le texte d'une balise : 
+Pour récupérer le texte contenu dans les balises, on passe le paramêtre ``<TAG>::text``. Par exemple : 
     
 .. code-block:: Python
 
     In [3]: response.css('title::text')
     Out[3]: [<Selector xpath='descendant-or-self::title/text()' data='\n\n\t\tleboncoin, site de petites annonces '>]
     
+    
+.. note ::Exercice : 
+
+    Comparer les résultats des deux requêtes ``response.css('title')`` et ``response.css('title::text')``.
     
 Maintenant pour extraire les données des selecteurs on utilise deux méthodes `extract()` qui permet de récupérer une liste des données extraites de tous les selecteurs et `extract_first()` permet de récupérer une string provenant du premier.
 
