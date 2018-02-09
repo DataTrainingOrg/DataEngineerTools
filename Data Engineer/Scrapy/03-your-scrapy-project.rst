@@ -346,22 +346,44 @@ Le squelette de la classe ``LeboncoinSpider`` généré lors de la création du 
 - ``starts_urls`` est la liste des urls d'où la spider va partir pour commencer son scraping.
 - ``parse()`` est une méthode héritée de la classe ``scrapy.Spider``. Elle doit être redéfinie selon les requêtes que l'on doit effectuer et sera appelée sur l'ensemble des urls contenus dans la liste ``starts_urls``.
 
-
-
-
-est appelé sur les premiers liens de la liste ``start_urls``. 
+``parse()`` est une fonction ``callback`` qui sera appelée automatiquement sur chaque objet ``Response`` retourné par la requête. Cette fonction est appelée de manière asynchrone. Plusieurs requêtes peuvent ainsi être lancées en parallèles sans bloquer le thread principal.
+L'objet ``Response`` passé en paramètre est le même que celui mis à disposition lors de l'exécution du Scrapy Shell.
 
 .. code-block:: Python
 
     def parse(self, response):
         title = response.css('title::text').extract_first()
         all_links = [response.urljoin(url) for url in response.css(".mapNav li a::attr(href)").extract()]
+        yield {
+            "title":title,
+            "all_links":all_links
+        }
         
-L'avantage d'une spider est qu'elles peut se `balader` sur un site assez facilement. Il suffit de lui indiquer comment faire. 
+La fonction est un générateur (``yield``) et retourne un dictionnaire composé de deux éléments : 
 
-Pour que la Spider continue dans les liens des différentes régions il faut créer un objet `Request`. Cet objet permet à Scrapy de l'intégrer dans son flux de données et le faire passer à travers les Middlewares définies dans l'architecture de la première partie du cours.
+- Le titre de la page; 
+- La liste des liens sortants sous forme de String.
+
+Pour le moment cette spider ne parcourt que la page d'accueil, ce qui n'est pas très productif.
+
+
+Votre premier scraper
+---------------------
+
+Récupérer les données sur un ensemble de pages webs nécessite d'explorer en profondeur la structure du site web en suivant tout ou partie des liens rencontrés.
+
+La spider peut se ``balader`` sur un site assez efficacement. Il suffit de lui indiquer comment faire. 
+
+Pour que la Spider continue dans les liens des différentes régions, il faut spécifier à Scrapy de générer de nouvelles requêtes en construisant un objet ``Request`` pour chacune. Le nouvel objet ``Request`` est inséré dans le scheduler de Scrapy. 
+
+Il faut modifier la méthode parse de façon à ce quelle retourne un objet request pour chaque lien rencontré. On lui associe une fonction de callback
+
+
+#TODO : REPRENDRE ICI 
+
 
 .. code-block:: Python
+
 
     import scrapy
     from scrapy import Request
