@@ -175,7 +175,7 @@ Pour récupérer le texte contenu dans les balises, on passe le paramêtre ``<TA
     Out[3]: [<Selector xpath='descendant-or-self::title/text()' data='\n\n\t\tleboncoin, site de petites annonces '>]
     
     
-.. note::Exercice : 
+.. note:: Exercice 
 
     Comparer les résultats des deux requêtes ``response.css('title')`` et ``response.css('title::text')``.
     
