@@ -288,13 +288,35 @@ Le résultat doit ressembler à :
 Des requêtes plus complexes
 ---------------------------
 
-On peut créer des requêtes plus complexes sur des balises imbriquées. Il y a au moins deux choses à savoir en ``css`` :  
+On peut créer des requêtes plus complexes en utilisant à la fois la structuration HTML du document mais également la couche de présentation CSS. On utilise l'inspecteur de ``Google Chrome`` pour identifier le type et l'identifiant de la balise contenant les informations.  
+
+Il y a au moins deux choses à savoir en ``css`` :  
 
 - Les ``.`` représentent les classes 
-- Les ``#` représentent les id
+- Les ``#`` représentent les id
 
-on utilise ces règles pour créer les requêtes. Par exemple si on veut récupérer toutes les régions disposées à droite. Elles sont situées dans une balise de classe `mapNav` et ensuite dans chaque balise `li`.
 
+On se propose de récupérer le texte ou les liens associés aux noms des régions disposées à droite de la page d'accueil de ``leboncoin.fr``. Elles sont situées dans une balise mère ``<section>`` de classe ``mapNav`` et ensuite dans chaque balise fille ``li``.
+
+.. code-block:: HTML
+
+    <section class="mapNav tiny-hidden small-hidden medium-hidden">
+            <ul>
+                <li class="">
+                        <a href="//www.leboncoin.fr/annonces/offres/alsace/" title="Alsace" data-map="alsace" id="region_0" class="trackable" data-info="{&quot;event_name&quot; : &quot;accueil::selection_region::lien_textuel::alsace&quot;, &quot;event_type&quot; : &quot;click&quot;, &quot;event_s2&quot; : &quot;1&quot;, &quot;click_type&quot; : &quot;N&quot;}">Alsace</a>
+                    </li>
+                <li class="">
+                        <a href="//www.leboncoin.fr/annonces/offres/aquitaine/" title="Aquitaine" data-map="aquitaine" id="region_1" class="trackable" data-info="{&quot;event_name&quot; : &quot;accueil::selection_region::lien_textuel::aquitaine&quot;, &quot;event_type&quot; : &quot;click&quot;, &quot;event_s2&quot; : &quot;1&quot;, &quot;click_type&quot; : &quot;N&quot;}">Aquitaine</a>
+                    </li>
+                <li class="">
+                        <a href="//www.leboncoin.fr/annonces/offres/auvergne/" title="Auvergne" data-map="auvergne" id="region_2" class="trackable" data-info="{&quot;event_name&quot; : &quot;accueil::selection_region::lien_textuel::auvergne&quot;, &quot;event_type&quot; : &quot;click&quot;, &quot;event_s2&quot; : &quot;1&quot;, &quot;click_type&quot; : &quot;N&quot;}">Auvergne</a>
+                    </li>
+                    
+                    ...
+                    
+            </ul>
+        </section>
+        
 .. code-block:: Python
 
     In [30]: response.css(".mapNav li a::attr(href)").extract()
