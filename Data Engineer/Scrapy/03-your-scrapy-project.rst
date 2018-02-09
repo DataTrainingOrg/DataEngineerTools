@@ -139,6 +139,10 @@ Grâce à cette interface, vous avez accès à plusieurs objets comme la ``Respo
 
     In [6]: type(spider)
     Out[6]: monprojet.spiders.leboncoin.LeboncoinSpider
+   
+   
+Vos premières requêtes
+----------------------
 
 On peut commencer à regarder comment extraire les données de la page web en utilisant le langage de requêtes proposé par Scrapy. Il existe deux types de requêtes : les requêtes ``css`` et ``xpath``. Les requêtes ``xpath`` sont plus complexes mais plus puissantes que les requêtes ``css``. Dans le cadre de ce tutorial, nous allons uniquement aborder les requêtes ``css``, elles nous suffiront pour extraire les données dont nous avons besoin (en interne, Scrapy transforme les requêtes ``css``en requêtes ``xpath``. 
 
@@ -179,14 +183,18 @@ Pour récupérer le texte contenu dans les balises, on passe le paramêtre ``<TA
 
     Comparer les résultats des deux requêtes ``response.css('title')`` et ``response.css('title::text')``.
     
-Maintenant pour extraire les données des selecteurs on utilise deux méthodes `extract()` qui permet de récupérer une liste des données extraites de tous les selecteurs et `extract_first()` permet de récupérer une string provenant du premier.
+Maintenant pour extraire les données des selecteurs on utilise l'une des deux méthodes suivantes :
+- ``extract()`` permet de récupérer une liste des données extraites de tous les sélecteurs
+- ``extract_first()`` permet de récupérer une ``String`` provenant du premier sélecteur de la liste.
 
 .. code-block:: Python
 
     In [4]: response.css('title::text').extract_first()
     Out[4]: '\n\n\t\tleboncoin, site de petites annonces gratuites\n\n'
     
-On peut maintenant vouloir récupérer un attribut d'un balise. Par exemple, les liens sont contenu dans un attribut `href`.
+On peut récupérer un attribut d'une balise avec la syntaxe ``<TAG>::attr(<ATTRIBUTE_NAME>)``:
+
+Par exemple, les liens sont contenus dans un attribut ``href``.
 
 .. code-block:: Python
 
@@ -217,7 +225,7 @@ On peut maintenant vouloir récupérer un attribut d'un balise. Par exemple, les
      <Selector xpath='descendant-or-self::a/@href' data='https://comptepro.leboncoin.fr/immobilie'>,
      <Selector xpath='descendant-or-self::a/@href' data='//www.leboncoin.fr/vos-recrutements'>,...]
      
-Si on veut récupérer la liste des liens de la page on applique la méthode `extract()`
+Comme vu précédemment, si on veut récupérer la liste des liens de la page on applique la méthode `extract()`
      
 .. code-block:: Python
 
@@ -244,7 +252,7 @@ Si on veut récupérer la liste des liens de la page on applique la méthode `ex
      '//www.leboncoin.fr/cgv_general.htm?ca=12_s',
      '//www.leboncoin.fr/cookies/',...]
      
-Les liens dans une page HTML sont souvent codés de manière relative par rapport à la page courante. L'objet response peut être utilisé pour recréé l'url complet. 
+Les liens dans une page HTML sont souvent codés de manière relative par rapport à la page courante. La méthode de l'objet ``Response`` peut être utilisée pour recréer l'url complet. 
 
 Un exemple sur le 4e élément : 
 
@@ -253,13 +261,14 @@ Un exemple sur le 4e élément :
     In [22]: response.urljoin(response.css('a::attr(href)').extract()[3])
     Out[22]: 'https://www.leboncoin.fr/'
     
-    
-On peut utiliser une liste compréhension pour transformer tous les liens récupérés par la méthode `extract()`.
+Exercice :    
 
+Utiliser une liste compréhension pour transformer les liens relatifs récupérés par la méthode ``extract()`` en liens absolus.
+    
+Le résultat doit ressembler à : 
 
 .. code-block:: Python
 
-    In [23]: [response.urljoin(url) for url in response.css('a::attr(href)').extract()]
     Out[23]: 
     ['https://www.leboncoin.fr/',
      'https://www.leboncoin.fr/',
@@ -274,10 +283,15 @@ On peut utiliser une liste compréhension pour transformer tous les liens récup
      'https://www.leboncoin.fr/boutiques/tout_secteur_d_activite/toutes_categories/ile_de_france/',
      'https://www.leboncoin.fr/',...]
      
+..  [response.urljoin(url) for url in response.css('a::attr(href)').extract()]
 
-On peut créer des requêtes plus complexes sur des balises imbriquées. Il faut savoir deux choses en css : 
-- Les `.` représentent les classes 
-- Les `#` représentent les id
+Des requêtes plus complexes
+---------------------------
+
+On peut créer des requêtes plus complexes sur des balises imbriquées. Il y a au moins deux choses à savoir en ``css`` :  
+
+- Les ``.`` représentent les classes 
+- Les ``#` représentent les id
 
 on utilise ces règles pour créer les requêtes. Par exemple si on veut récupérer toutes les régions disposées à droite. Elles sont situées dans une balise de classe `mapNav` et ensuite dans chaque balise `li`.
 
