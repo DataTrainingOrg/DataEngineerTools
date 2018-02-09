@@ -368,7 +368,7 @@ Chaque élement est un selecteur on peut alors itérer sur les selecteurs hauts 
 .. code-block:: Python
 
     In [14]: for item in response.css(".tabsContent li .item_infos"):
-    ...:     print(clean_spaces(item.css(".item_title::text").extract_first()))
+    ...:        print(clean_spaces(item.css(".item_title::text").extract_first()))
     ...:     
     Meuble de jukboxe
     Volkswagen golf 5 1.9 tdi 105 cv
@@ -380,7 +380,200 @@ Chaque élement est un selecteur on peut alors itérer sur les selecteurs hauts 
     
 Scrapy marche sous la forme d'objets (items). Pour pouvoir stocker les informations que l'on récupère en parcourant un site il faut stocker ses informations soit dans un dictionnaire Python soit directement dans un item Scrapy. Nous allons voir les deux.
 
+.. code-block:: Python
 
+    def parse_region(self, response):
+        for item in response.css(".tabsContent li .item_infos"):
+            title = self.clean_spaces(item.css(".item_title::text").extract_first())
+            price = self.clean_spaces(item.css(".item_price::text").extract_first())
+            yield {
+                "price":price,
+                "title":title
+            }
+Si on combine tout : 
+
+.. code-block:: Python
+
+    import scrapy
+    from scrapy import Request
+
+
+    class LeboncoinSpider(scrapy.Spider):
+        name = "leboncoin"
+        allowed_domains = ["leboncoin.fr"]
+        start_urls = ['http://leboncoin.fr/']
+
+        def parse(self, response):
+            title = response.css('title::text').extract_first()
+            all_links = [response.urljoin(url) for url in response.css(".mapNav li a::attr(href)").extract()]
+            for link in all_links:
+                yield Request(link, callback=self.parse_region)
+
+        def parse_region(self, response):
+            for item in response.css(".tabsContent li .item_infos"):
+                title = self.clean_spaces(item.css(".item_title::text").extract_first())
+                price = self.clean_spaces(item.css(".item_price::text").extract_first())
+                yield {
+                    "price":price,
+                    "title":title
+                }
+
+        def clean_spaces(self, string):
+            if string:
+                return " ".join(string.split())
+                
+On peut alors lancer notre spider avec la commande suivante : 
+
+.. code-block:: bash
+
+    scrapy crawl leboncoin
+    
+`scrapy crawl` permet de lancer la spider avec son nom défini au début de la classe `name = "leboncoin"`.
+
+    2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
+    {'price': '25 €', 'title': 'Maillot de bain Desigual'}
+    2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
+    {'price': '400 €', 'title': 'Kit Embrayage sachs + volant moteur bi masse'}
+    2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
+    {'price': '3 €', 'title': 'Chemisette bébé garçon'}
+    2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
+    {'price': '5 €', 'title': 'Téléphone fixe'}
+    2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
+    {'price': None, 'title': 'Échange Chaise volcane td'}
+    2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
+    {'price': '170 €', 'title': 'samsung j5 pro 2017'}
+    
+On peut exporter les résultats de ces retours dans différents formats de fichiers. 
+
+- CSV : `scrapy crawl leboncoin -o lbc.csv`
+- JSON : `scrapy crawl leboncoin -o lbc.json`
+- JSONLINE : `scrapy crawl leboncoin -o lbc.jl`
+- XML : `scrapy crawl leboncoin -o lbc.xml`
+
+Items
+-----
+
+Les items permettent de structurer les données (sous la forme d'un modèle) que l'on souhaite récupérer. Ils doivent être définis dans le fichier items.py créé précédemment. 
+
+.. code-block:: Python
+
+    import scrapy
+
+
+    class LeboncoinItem(scrapy.Item):
+        title = scrapy.Field()
+        price = scrapy.Field()
+        
+Les items hérite de la class scrapy.Item, ces classes définissent les champs grâce à une autre classe ::class::scrapy.Field().
+
+On peut instancier un item de plusieurs façons : 
+
+.. code-block:: Python
+
+    lbc_item = LeboncoinItem(title="Drone DJI", price="100€")
+    print(lbc_item)
+    
+.. code-block:: Python
+
+    lbc_item = LeboncoinItem()
+    lbc_item["title"] = "Drone Parrot"
+    lbc_item["price"] = "120 €"
+    print(lbc_item)
+    
+La définition d'un item permet de palier toutes les erreurs de typo dans les champs par exemple.
+
+.. code-block:: Python
+
+    lbc_item = LeboncoinItem()
+    lbc_item["titel"] = "Drone Parrot"
+
+    
+     Traceback (most recent call last):
+      File "/Users/raphael/PycharmProjects/scrapy_course/monprojet/monprojet/items.py", line 17, in <module>
+        lbc_item["titel"] = "Drone Parrot"
+      File "/Users/raphael/anaconda3/lib/python3.6/site-packages/Scrapy-1.3.3-py3.6.egg/scrapy/item.py", line 66, in __setitem__
+        (self.__class__.__name__, key))
+    KeyError: 'LeboncoinItem does not support field: titel'
+    
+Les items sont très similaires à des dictionnaire Python.
+
+.. code-block:: Python
+
+    lbc_item = LeboncoinItem(title="Drone DJI")
+    print(lbc_item["title"])
+    print(lbc_item.get("price", "price is not set"))
+    
+    
+On peut transformer un item en dictionnaire très facilement.
+
+.. code-block:: Python
+
+    lbc_item = LeboncoinItem(title="Drone DJI", price="100€")
+    print(type(lbc_item))
+    dict_item = dict(lbc_item)
+    print(type(dict_item))
+    print(dict_item)
+
+Pipelines
+---------
+
+Tous les items renvoyés par une fonction au sein d'un projet Scrapy passent par les pipelines. Les pipelines sont utilisées la plupart du temps pour : 
+
+- Nettoyer du contenu HTML ;
+- Valider les données scrapées ; 
+- Supprimer les items qu'on ne souhaite pas stocker ;
+- Stocker ces objets dans des bases de données.
+
+Les pipelines doivent être définie dans le fichier `pipelines.py`.
+
+Dans notre cas on peut vouloir nettoyer le champ prix et le champs title. Pour cela, il nous faut définir deux pipelines. 
+
+PricePipeline permet d'enlever le signe € et de transformer le prix en entier.
+
+.. code-block:: Python
+
+    from scrapy.exceptions import DropItem
+
+
+    class PricePipeline(object):
+
+        def process_item(self, item, spider):
+            if item['price']:
+                item["price"] = int(item["price"].replace("€", "").strip())
+                return item
+            else:
+                raise DropItem("Missing price in %s" % item)
+                
+                
+Nous allons aussi transferer la fonction de nettoyage du code html dans une Pipeline. 
+
+.. code-block:: Python
+
+    class TextPipeline(object):
+
+        def process_item(self, item, spider):
+            if item['title']:
+                item["title"] = clean_spaces(item["title"])
+                return item
+            else:
+                raise DropItem("Missing title in %s" % item)
+
+
+    def clean_spaces(string):
+        if string:
+            return " ".join(string.split())
+
+
+Pour dire au process Scrapy de faire transiter les items par ces pipelines. Il faut le spécifier dans le fichier de paramétrage `settings.py`.
+
+.. code-block:: Python
+
+    ITEM_PIPELINES = {
+        'monprojet.pipelines.TextPipeline': 100,
+        'monprojet.pipelines.PricePipeline': 200,
+    }
+    
+La valeur entière définie permet de déterminer l'ordre dans lequel les pipelines vont être appelées. Ces entiers peuvent être entre compris 0 et 1000.
 
 
 
