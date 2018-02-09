@@ -513,6 +513,34 @@ On peut transformer un item en dictionnaire très facilement.
     dict_item = dict(lbc_item)
     print(type(dict_item))
     print(dict_item)
+    
+    
+On intègre maintenant cet item dans notre spider.
+
+.. code-block:: Python
+
+    import scrapy
+    from scrapy import Request
+
+    from ..items import LeboncoinItem
+
+
+    class LeboncoinSpider(scrapy.Spider):
+        name = "leboncoin"
+        allowed_domains = ["leboncoin.fr"]
+        start_urls = ['http://leboncoin.fr/']
+
+        def parse(self, response):
+            title = response.css('title::text').extract_first()
+            all_links = [response.urljoin(url) for url in response.css(".mapNav li a::attr(href)").extract()]
+            for link in all_links:
+                yield Request(link, callback=self.parse_region)
+
+        def parse_region(self, response):
+            for item in response.css(".tabsContent li .item_infos"):
+                title = item.css(".item_title::text").extract_first()
+                price = item.css(".item_price::text").extract_first()
+                yield LeboncoinItem(price=price, title=title)
 
 Pipelines
 ---------
@@ -575,5 +603,47 @@ Pour dire au process Scrapy de faire transiter les items par ces pipelines. Il f
     
 La valeur entière définie permet de déterminer l'ordre dans lequel les pipelines vont être appelées. Ces entiers peuvent être entre compris 0 et 1000.
 
+On relance notre spider : 
+
+.. code-block:: bash
+
+    scrapy crawl leboncoin -o lbc.json
+    
+    
+On peut aussi utiliser les Pipelines pour stocker les données récupérées dans une base de données. Pour stocker les items dans des documents mongo. 
+
+.. code-block:: Python
+
+    import pymongo
+
+    class MongoPipeline(object):
+
+        collection_name = 'scrapy_items'
+
+        def open_spider(self, spider):
+            self.client = pymongo.MongoClient()
+            self.db = self.client["leboncoin"]
+
+        def close_spider(self, spider):
+            self.client.close()
+
+        def process_item(self, item, spider):
+            self.db[self.collection_name].insert_one(dict(item))
+            return item
+            
+Ici redéfini deux autres méthodes:  `open_spider()`et `close_spider()`, ces méthode sont appelés comme leurs noms l'indiquent elles sont appelées lorsque la Spider est instanciée et fermée. Ces méthodes nous permettent d'ouvrir la connexion Mongo et de la fermer. La méthode `process_item()` permet d'insérer l'item en tant que document mongo. 
 
 
+Settings
+--------
+
+Scrapy permet de gérer le comportement des spiders avec certains paramètres. Comme expliqué dans le premier cours, il est important de suivre des règles en respectant les différents site. Il existe énormément de paramètres mais nous allons (dans le cadre de ce cours) aborder les plus utilisés : 
+
+- DOWNLOAD_DELAY : Le temps de téléchrgement entre chaque requête sur le même domaine ;
+- CONCURRENT_REQUESTS_PER_DOMAIN : Nombre de requêtes simultanées par domaine ;
+- CONCURRENT_REQUESTS_PER_IP : Nombre de requêtes simultanées par IP ;
+- DEFAULT_REQUEST_HEADERS : Headers HTTP utilisé pour les requêtes ;
+- ROBOTSTXT_OBEY : Scrapy récupère le robots.txt et adapte le scraping en fonction des règles trouvées ;
+- USER_AGENT : UserAgent utilisé pour faire les requêtes ;
+- BOT_NAME : Nom du bot annoncé lors des requêtes
+- HTTPCACHE_ENABLED : Utilisation du cache HTTP, utile lors du parcours multiple de la même page.
