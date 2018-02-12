@@ -698,7 +698,7 @@ On intègre maintenant cet item dans notre spider.
     import scrapy
     from scrapy import Request
 
-    from ..items import LeboncoinItem
+    from ..items import LeboncoinItem # Import relatif Cf. Structure du projet Scrapy
 
 
     class LeboncoinSpider(scrapy.Spider):
@@ -717,20 +717,32 @@ On intègre maintenant cet item dans notre spider.
                 title = item.css(".item_title::text").extract_first()
                 price = item.css(".item_price::text").extract_first()
                 yield LeboncoinItem(price=price, title=title)
+                
+ On voit bien que le générateur retourne maintenant un ``Item``.
+ 
+ .. note:: Exercice : 
+ 
+ Relancer la spider pour vérifier le bon déroulement de l'extraction.
+ 
 
-Pipelines
----------
+Postprocessing
+--------------
 
-Tous les items renvoyés par une fonction au sein d'un projet Scrapy passent par les pipelines. Les pipelines sont utilisées la plupart du temps pour : 
+Si l'on se réfère au diagramme d'architecture de Scrapy, on voit qu'il est possible d'insérer des composants suplémentaires dans le flux de traitement. Ces composants s'appellent ``Pipelines``. 
+
+Par défaut, tous les ``Item`` générés au sein d'un projet Scrapy passent par les ``Pipelines``. Les pipelines sont utilisées la plupart du temps pour : 
 
 - Nettoyer du contenu HTML ;
 - Valider les données scrapées ; 
 - Supprimer les items qu'on ne souhaite pas stocker ;
 - Stocker ces objets dans des bases de données.
 
-Les pipelines doivent être définie dans le fichier `pipelines.py`.
+Les pipelines doivent être définis dans le fichier ``pipelines.py``.
 
-Dans notre cas on peut vouloir nettoyer le champ prix et le champs title. Pour cela, il nous faut définir deux pipelines. 
+Dans notre cas on peut vouloir nettoyer les champs ``price`` et ``title`` pour enlever les caractères supperflus.
+Par exemple, le champ ``price`` on peut vouloir supprimer le caractère ``€``. Une bonne pratique est de passer toutes les méthodes de nettoyage dans les pipelines. 
+
+Pour cela, nous allons en définir deux différentes. 
 
 PricePipeline permet d'enlever le signe € et de transformer le prix en entier.
 
@@ -758,6 +770,8 @@ Nous allons aussi transferer la fonction de nettoyage du code html dans une Pipe
         def process_item(self, item, spider):
             if item['title']:
                 item["title"] = clean_spaces(item["title"])
+            if item['price']:
+                item["price"] = clean_spaces(item["price"])
                 return item
             else:
                 raise DropItem("Missing title in %s" % item)
@@ -768,7 +782,7 @@ Nous allons aussi transferer la fonction de nettoyage du code html dans une Pipe
             return " ".join(string.split())
 
 
-Pour dire au process Scrapy de faire transiter les items par ces pipelines. Il faut le spécifier dans le fichier de paramétrage `settings.py`.
+Pour dire au process Scrapy de faire transiter les items par ces pipelines. Il faut le spécifier dans le fichier de paramétrage ``settings.py``.
 
 .. code-block:: Python
 
