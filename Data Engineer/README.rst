@@ -12,7 +12,16 @@ Pour déployer le conteneur MongoDB :
 
 .. code-block:: bash
 
-  docker run --name mon-mongo -v <VOTRE_REPERTOIRE_DE_STOCKAGE>:/data/db -p 27017:27017 -d mongo
+  docker run --name mon-mongo -v <STOCKAGE_DIRECTORY>:/data/db -p 27017:27017 -d mongo
+  
+Maintenant pour créer le container pour votre projet : 
+
+.. code-block:: bash
+
+  docker build -t <IMAGE_NAME> .
+  docker run -it --name <CONTAINER_NAME> -v <PROJECT_DIRECTORY>:/home/dev/code/ <IMAGE_NAME>
+  
+  
 
 
 
