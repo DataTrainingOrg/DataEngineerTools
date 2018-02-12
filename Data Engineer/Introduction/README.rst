@@ -158,27 +158,19 @@ On peut modifier les paramêtres de la requête. On peut par exemple ajouter un 
  >>> response = requests.get(url, headers=headers, timeout = 10)
  >>> response.content[0:1000]
  b'<!DOCTYPE html>\n<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->\n<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->\n<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->\n<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->\n<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->\n<head profile="http://www.w3.org/1999/xhtml/vocab">\n  <meta name="google-site-verification" content="JnG7DTdhQuWTeSHlWC63CeWpb3WValiOorksYjoYOWI" />\n  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n<meta name="Generator" content="Drupal 7 (http://drupal.org)" />\n<meta name="description" content="\xc3\x89cole d\xe2\x80\x99ing\xc3\xa9nieurs g\xc3\xa9n\xc3\xa9raliste dans les domaines des nouvelles technologies, ESIEE Paris propose une formation en 5 ou 3 ans habilit\xc3\xa9e par la CTI." />\n<link rel="shortcut icon" href="http://www.esiee.fr/sites/all/themes/custom/esiee_theme/favicon.ico" type="image/vnd.microsoft.icon" />\n  <title>Page d\'accueil | ESIEE Par'
- 
- 
-.. note::  This is a **note** box.
-   THis is a block
-
-
     
-Exercice 1 :
+.. note:: Exercice 1
 
-- Créer une classe Python permettant de faire des requêtes HTTP. 
-- Cette classe doit utiliser toujours le même UserAgent. 
-- Le TimeOut sera spécifié à chaque appelle avec une valeur par défaut.
-- Un mécanisme de retry sera mis en place de façon recursive. 
+ - Créer une classe Python permettant de faire des requêtes HTTP. 
+ - Cette classe doit utiliser toujours le même UserAgent. 
+ - Le TimeOut sera spécifié à chaque appelle avec une valeur par défaut.
+ - Un mécanisme de retry sera mis en place de façon recursive. 
 
-Exercice 2 : 
+.. note:: Exercice 2 : 
 
 - Faire une fonction permettant de supprimer tous les espaces supperflus d'une string
 - Faire une fonction qui prend une string html et renvois une string intelligible (enlever les caractères spéciaux, 
 - Récupérer le domaine en fonction d'un url
-
-
 
 Exploitation du code HTML
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -188,10 +180,10 @@ permet de récupérer efficacement les données qui nous intéresse.
 
 Pour les webmasters, le blocage le plus souvent mis en place et un blocage sur le User-Agent. Le User-Agent est un paramètre intégré
 dans la requête HTTP réalisé par le Navigateur pour envoyer au front des informations basiques :
-* la version du Navigateur,
-* la version de l'OS
-* Le type de gestionnaire graphique (Gecko)
-* le type de device utilisé
+- la version du Navigateur,
+- la version de l'OS
+- Le type de gestionnaire graphique (Gecko)
+- le type de device utilisé
 
 Exemple de User Agent 
 
