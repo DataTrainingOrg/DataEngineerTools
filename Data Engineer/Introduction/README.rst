@@ -22,8 +22,7 @@ Contexte de Qwant
 Qwant est un moteur de recherche européen basé sur un concept fort de vie privée. Nous ne gardons pas les informations
 utilisateurs. 
 Pour avoir quelques chiffres: 
-- Nous avons actuellement un ferme de 750 crawlers qui permettent de récupérer environ 1500 pages secondes soit
- 5,4M de pages par heure.
+- Nous avons actuellement un ferme de 750 crawlers qui permettent de récupérer environ 1500 pages secondes soit 5,4M de pages par heure.
 - Le web francais est estimé à 150M de pages ce qui représente environ 2 Peta Bytes de données duppliquées.
 
 Quelques mots clés et définitions
@@ -48,8 +47,7 @@ On peut comprendre très rapidemement si les sites et les webmasters ont envie q
 
 Aujourd'hui certains sites utilisent des méthodes pour empecher la récupération massive de leurs données : 
 
-- Génération à la volée de code HTML et CSS. Le nom des balises HTML est générée de facon à ce qu'on ne puisse
- pas se baser sur celles-ci. 
+- Génération à la volée de code HTML et CSS. Le nom des balises HTML est générée de facon à ce qu'on ne puisse pas se baser sur celles-ci. 
 - Black list d'adresses IP détectées.
 - Génération de contenu via du JavaScript
 - Algorithmes de détection de comportements non-humains (vitesse de navigation, scroll, click,  etc)
@@ -98,54 +96,75 @@ Pour réaliser ces opérations une bonne pratique est d'utiliser l'outil de deve
 
 Deux onglets sont importants dans notre cas : 
  
-- La partie code HTML qui permet de récupérer les pointeurs des balises qui encapsulent nos données. 
-- La partie Network qui permet d'analyser tous les appels réseaux réalisés depuis le front. C'est ici que les appels de 
+- ``Element`` : la partie correspondant au code HTML, elle permet de visualiser la structure et répérer les pointeurs des balises qui encapsulent nos données. 
+- ``Network`` : cette partie permet d'analyser tous les appels réseaux réalisés depuis le front. C'est ici que les appels de 
 récupération de données sont effectués. 
-
 
 Une requête HTTP
 ^^^^^^^^^^^^^^^^
-Un requête HTTP est une requête basé sur le protocole XXXXXX. Elle permet d'accéder aux données mise à disposition sur une
-adresse IP (ou url résolue par un DNS) et un port. Les deux ports les plus utilisé dans le web sont le 80 pour les sites en 
-HTTP et le 443 pour les sites en HTTPS. 
-# TODO : Expliquer plus en détails les ports et le protocole HTTP. 
+Un requête HTTP est une requête basé sur le protocole TCP, elle fait partie de la couche application de la couche OSI. Elle permet d'accéder aux données mise à disposition sur une adresse IP (ou url résolue par un DNS) et un port. Les deux ports les plus utilisé dans le web sont le 80 pour les sites en HTTP et le 443 pour les sites en HTTPS. HTTPS est une variable du protocole HTTP basé sur le protocole TLS.
 
 Il existe de nombreux types de requêtes selon la convention REST: GET, POST, PUT, DELETE, UPDATE. 
 
 Dans notre cas nous allons utiliser la plupart du temps des GET et potentiellement des POST. 
-* Le GET permet comme sont nom l'indique de récupérer des informations en fonction de certain paramètres. Alors que
-* Le POST nécéssite un envoie de données pour récupérer des données. Le body du post est envoyé sous la forme d'un objet JSON. 
+* Le GET permet comme sont nom l'indique de récupérer des informations en fonction de certain paramètres.
+* Le POST nécéssite un envoie de données pour récupérer des données. Le body du post est, la plupart du temps, envoyé sous la forme d'un objet JSON. 
 
 Ces requêtes encapsulent un certain nombre de paramètres qui permettent soient d'identifier une provenance et un utilisateur 
 ou de réaliser différentes actions. 
 
 .. code-block:: Python
 
-    url = "http://www.esiee.fr/"
-    response = requests.get(url)
-    response.status_code
-    
-    
-Pour récupérer le texte : 
+ >>> import requests
 
 .. code-block:: Python
 
-    response.text[0:1000]
+ >>> url = "http://www.esiee.fr/"
+ >>> response = requests.get(url)
+ >>> response.status_code
+ 200
+ 
+Il existe deux méthodes pour récupérer le contenu de la page : 
+
+- ``response.text`` qui permet de retourner le texte sous la forme d'une chaine de charactères.
+- ``response.content`` qui permet de récupérer le contenu de la page sous la forme de bytes
+
+.. code-block:: Python
+
+ >>> type(response.content)
+ <class 'bytes'>
+ >>> type(response.text)
+ <class 'str'>
+ 
+Pour récupérer les 1000 premiers charactères de la page : 
+
+.. code-block:: Python
+
+ >>> response.text[0:1000]
+ '<!DOCTYPE html>\n<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->\n<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->\n<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->\n<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->\n<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->\n<head profile="http://www.w3.org/1999/xhtml/vocab">\n  <meta name="google-site-verification" content="JnG7DTdhQuWTeSHlWC63CeWpb3WValiOorksYjoYOWI" />\n  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n<meta name="Generator" content="Drupal 7 (http://drupal.org)" />\n<meta name="description" content="École d’ingénieurs généraliste dans les domaines des nouvelles technologies, ESIEE Paris propose une formation en 5 ou 3 ans habilitée par la CTI." />\n<link rel="shortcut icon" href="http://www.esiee.fr/sites/all/themes/custom/esiee_theme/favicon.ico" type="image/vnd.microsoft.icon" />\n  <title>Page d\'accueil | ESIEE Paris</tit'
     
 Pour récupérer les headers HTTP de la réponse : 
 
 .. code-block:: Python
     
-    response.headers
-    
-On peut rajouter un user agent et un timeout de 10 secondes: 
+ >>> response.headers
+ {'Date': 'Mon, 12 Feb 2018 12:24:06 GMT', 'Server': 'Apache', 'Expires': 'Sun, 19 Nov 1978 05:00:00 GMT', 'Cache-Control': 'no-cache, must-revalidate', 'X-Content-Type-Options': 'nosniff', 'Content-Language': 'fr', 'X-Frame-Options': 'SAMEORIGIN', 'X-Generator': 'Drupal 7 (http://drupal.org)', 'Vary': 'Accept-Encoding', 'Content-Encoding': 'gzip', 'X-Robots-Tag': 'index,follow,noarchive', 'X-XSS-Protection': '1; mode=block', 'X-Download-Options': 'noopen;', 'X-Permitted-Cross-Domain-Policies': 'none', 'Content-Length': '16258', 'Keep-Alive': 'timeout=5, max=150', 'Connection': 'Keep-Alive', 'Content-Type': 'text/html; charset=utf-8'}
+
+On peut modifier les paramêtres de la requête. On peut par exemple ajouter un UserAgent et un timeout de 10 secondes: 
 
 .. code-block:: Python
 
-    url = "http://www.esiee.fr/"
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    response = requests.get(url, headers=headers, timeout = 10)
-    response.content
+    >>> headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+ >>> response = requests.get(url, headers=headers, timeout = 10)
+ >>> response.content[0:1000]
+ b'<!DOCTYPE html>\n<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->\n<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->\n<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->\n<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->\n<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->\n<head profile="http://www.w3.org/1999/xhtml/vocab">\n  <meta name="google-site-verification" content="JnG7DTdhQuWTeSHlWC63CeWpb3WValiOorksYjoYOWI" />\n  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n<meta name="Generator" content="Drupal 7 (http://drupal.org)" />\n<meta name="description" content="\xc3\x89cole d\xe2\x80\x99ing\xc3\xa9nieurs g\xc3\xa9n\xc3\xa9raliste dans les domaines des nouvelles technologies, ESIEE Paris propose une formation en 5 ou 3 ans habilit\xc3\xa9e par la CTI." />\n<link rel="shortcut icon" href="http://www.esiee.fr/sites/all/themes/custom/esiee_theme/favicon.ico" type="image/vnd.microsoft.icon" />\n  <title>Page d\'accueil | ESIEE Par'
+ 
+.. note:: This is a note admonition.
+   This is the second line of the first paragraph.
+
+   - The note contains all indented body elements
+     following.
+   - It includes this bullet list.
 
     
 Exercice 1 :
