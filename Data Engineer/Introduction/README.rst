@@ -4,6 +4,7 @@ Introduction
 
 Aujourd'hui l'or noir des entreprises est la donnée. Il existe une infinité de sources potentiellement récupérables 
 et utilisables: 
+
 - Données propriétaires (Données clients, Données d'exploitation, Données de capteurs...)
 - Données Open Data (Adresses, Démographie des départements ou villes...)
 - Données publiques disponibles sur le web (Tweets, Réseaux sociaux, produits leboncoin...)
@@ -30,29 +31,28 @@ Quelques mots clés et définitions
 
 Crawler
 ^^^^^^^
-Un Crawler est un robot qui permet de récupérer des informations textuelles, structurelles et de contenu d'un site web. 
+Un Crawler est un robot qui permet de récupérer des données non-structurées soit des informations textuelles, structurelles et de contenu d'un site web. 
 La structure de l'algorithme utilisé doit être agnostique de la structure HTML du site web. Elle permet de récupérer des 
-informations de base comme le texte, les images, les liens entrants ou sortants.
+informations de base comme le texte, les images, les liens entrants ou sortants par exemple.
 
 Scraper
 ^^^^^^^
 Un Scraper est dépendant du site et de sa structure. Il permet de récupérer des informations beaucoup plus qualitatives
-sur un site web. Les Scraper ne sont pas très facilement maintenables puisqu'il est basé sur la structure HTML qui est
+sur un site web. Les Scraper ne sont pas très facilement maintenables puisqu'ils sont basés sur la structure HTML qui est
 vouée à changer plus ou moins rapidement selon les sites. 
 
 Les bonnes pratiques
 --------------------
 
-On peut comprendre très rapidemement si les sites ont envie qu'on puisse accéder à leurs données. Plusieurs manères 
-permettent de montrer ou d'expliciter les comportements non recommandés sur un site. 
+On peut comprendre très rapidemement si les sites et les webmasters ont envie qu'on puisse accéder à leurs données. Plusieurs manières permettent de montrer ou d'expliciter les comportements non recommandés sur un site. 
 
 Aujourd'hui certains sites utilisent des méthodes pour empecher la récupération massive de leurs données : 
 
- - Génération à la volée de code HTML et CSS. Le nom des balises HTML est générée de facon à ce qu'on ne puisse
-  pas se baser sur celles-ci. 
- - Black list d'adresses IP détectées.
- - Génération de contenu via du JavaScript
- - Algorithmes de détection de comportements non-humains (vitesse de navigation, scroll, click,  etc)
+- Génération à la volée de code HTML et CSS. Le nom des balises HTML est générée de facon à ce qu'on ne puisse
+ pas se baser sur celles-ci. 
+- Black list d'adresses IP détectées.
+- Génération de contenu via du JavaScript
+- Algorithmes de détection de comportements non-humains (vitesse de navigation, scroll, click,  etc)
 
 Plusieurs méthodes sont possibles pour éviter ou contourner ces limitations mais elles ne seront pas abordées dans ce cours.
 
@@ -70,19 +70,15 @@ bonne pratique.
 
 Site Map ou Site Index
 ^^^^^^^^^^^^^^^^^^^^^^
-Le site map ou le site index sont des pages HTML générée pour améliorer le SEO d'une page. Le SEO (Search Engine Optimisation)
-permet d'optimiser le référencement sur les moteurs de recherche. La plupart des gros sites ont des équipes SEO qui permettent
-d'arriver dans les premières positions lors des recherches associées. 
-Ces deux pages donnent accès à l'arbre de génération du site. La plupart du temps elles permettent l'exploration massive
-et facile des sites au robots de crawl des moteurs de recherche.
+Le site map ou le site index (plan du site) sont des pages HTML générée pour améliorer le SEO d'une page. Le SEO (Search Engine Optimisation) permet d'optimiser le référencement sur les moteurs de recherche. La plupart des gros sites ont des équipes SEO dédiée qui permettent aux sites d'être présents dans les premières positions lors des recherches associées. 
+Ces pages donnent accès à l'arbre de génération ou de structure du site. La plupart du temps elles permettent l'exploration massive et facile des sites au robots de crawl des moteurs de recherche.
 
 Surcharge du serveur
 ^^^^^^^^^^^^^^^^^^^^
 La plupart des sites importants ont des infrastructures qui tiennent la charge et qui peuvent être utilisées et appelées
 un très grand nombre de fois. D'autres sont beaucoup plus restreint et donc il est important de ne pas surcharger ceux-ci.
 Les sites comme Wikipédia ou StackOverFlow empèche les robots d'accéder trop rapidement à leurs infrastructures et force 
-des temps d'arrêt entre les pages
-
+des temps d'arrêt entre la récupération des différentes pages.
 
 Introduction au scraping
 ------------------------
@@ -94,14 +90,16 @@ Il existe deux grandes pratiques pour scraper un site efficacement nous allons a
 du temps au format JSON. Cette deuxième solution est la plus efficace et facile mais les appels d'API sont souvent cachés
 ou bloqués. 
 
-Dans les deux cas, nous utiliserons des requêtes HTTP et le package requests. Celui-ci permet de faire des requêtes très rapidement 
-et facilement via un interpreter Python. De nombreux paramètres sont modifiables. 
+Dans les deux cas, nous utiliserons des requêtes HTTP et le package ``requests``. Celui-ci permet de faire des requêtes très rapidement et facilement via un interpreter Python. De nombreux paramètres sont modifiables. 
 
-Pour réaliser ces opérations une bonne pratique est d'utiliser l'outil de developpement de Chrome ou Firefox. Je conseil
-du moins celui de Chrome qui est beaucoup plus intuitif et développé. Deux onglets sont important dans notre cas : 
+Pour réaliser ces opérations une bonne pratique est d'utiliser l'outil de developpement de Chrome ou Firefox. Je conseil celui de Google qui est beaucoup plus intuitif et développé que celui de Mozilla. Il existe plusieurs raccourcis claviers mais la plus simple est de faire une click droit et ``inspecter``. 
+
+.. image:: images/inspecteur.png
+
+Deux onglets sont importants dans notre cas : 
  
-* La partie code HTML qui permet de récupérer les pointeurs des balises qui encapsulent nos données. 
-* La partie Network qui permet d'analyser tous les appels réseaux réalisés depuis le front. C'est ici que les appels de 
+- La partie code HTML qui permet de récupérer les pointeurs des balises qui encapsulent nos données. 
+- La partie Network qui permet d'analyser tous les appels réseaux réalisés depuis le front. C'est ici que les appels de 
 récupération de données sont effectués. 
 
 
