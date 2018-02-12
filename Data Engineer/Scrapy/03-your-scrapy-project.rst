@@ -370,20 +370,15 @@ Pour le moment cette spider ne parcourt que la page d'accueil, ce qui n'est pas 
 Votre premier scraper
 ---------------------
 
-Récupérer les données sur un ensemble de pages webs nécessite d'explorer en profondeur la structure du site web en suivant tout ou partie des liens rencontrés.
+Récupérer les données sur un ensemble de pages webs nécessite d'explorer en profondeur la structure du site en suivant tout ou partie des liens rencontrés.
 
-La spider peut se ``balader`` sur un site assez efficacement. Il suffit de lui indiquer comment faire. 
+La spider peut se ``balader`` sur un site assez efficacement. Il suffit de lui indiquer comment faire. Il faut spécifier à Scrapy de générer une requête vers une nouvelle page en construisant l'objet ``Request`` correspondant. Ce nouvel objet ``Request`` est alors inséré dans le scheduler de Scrapy. On peut évidemment générer plusieurs ``Request`` simultanément, correspondant par exemple, à différents liens sur la page courante. Ils sont insérés séquentiellement dans le scheduler.
 
-Pour que la Spider continue dans les liens des différentes régions, il faut spécifier à Scrapy de générer de nouvelles requêtes en construisant un objet ``Request`` pour chacune. Le nouvel objet ``Request`` est inséré dans le scheduler de Scrapy. 
+Pour cela on modifie la méthode ``parse()`` de façon à ce qu'elle retourne un objet ``Request`` pour chaque nouveau lien rencontré. On associe également à cet objet une fonction de callback qui déterminera la manière dont cette nouvelle page doit être extraite.
 
-Il faut modifier la méthode parse de façon à ce quelle retourne un objet request pour chaque lien rencontré. On lui associe une fonction de callback
-
-
-#TODO : REPRENDRE ICI 
-
+Par exemple, pour que la spider continue dans les liens des différentes régions (pour l'instant la fonction de callback ne fait rien) : 
 
 .. code-block:: Python
-
 
     import scrapy
     from scrapy import Request
@@ -395,7 +390,6 @@ Il faut modifier la méthode parse de façon à ce quelle retourne un objet requ
         start_urls = ['http://leboncoin.fr/']
 
         def parse(self, response):
-            title = response.css('title::text').extract_first()
             all_links = [response.urljoin(url) for url in response.css(".mapNav li a::attr(href)").extract()]
             for link in all_links:
                 yield Request(link, callback=self.parse_region)
@@ -403,22 +397,53 @@ Il faut modifier la méthode parse de façon à ce quelle retourne un objet requ
         def parse_region(self, response):
             pass
             
-Ici on définie un nouvel objet Request. On précise la méthode callback qui va être appelé sur la réponse de cette requête après qu'elle soit passé par le processus d'extraction de Scrapy. La méthode `parse_region` prend en argument une response qui sera la response provenant des liens des regions. On peut comme ceci traverser un site en définissant des méthodes différentes en fonction du type de contenu. 
+La méthode ``parse_region()`` prend en argument un objet ``Response`` qui sera la réponse correspondant aux liens des regions. On peut comme ceci traverser un site en définissant des méthodes différentes en fonction du type de contenu.
 
-Quand on arrive sur une page région `https://www.leboncoin.fr/annonces/offres/alsace/. On peut vouloir récupérer tous les éléments de la page. Pour cela, on réutilise le scrapy Shell pour commencer le développement de la nouvelle méthod d'extraction. 
+Si la structure du site est plus profonde, on peut empiler autant de couches que souhaité. Imaginons que la structure du site leboncoin.fr inclue des pages correspondant aux départements de chacune des régions et aux villes de chacun des départements, nous modifirions la classe ``LeboncoinSpider`` comme ci-dessous.
+
+.. code-block:: Python
+
+    import scrapy
+    from scrapy import Request
+
+
+    class LeboncoinSpider(scrapy.Spider):
+        name = "leboncoin"
+        allowed_domains = ["leboncoin.fr"]
+        start_urls = ['http://leboncoin.fr/']
+
+        def parse(self, response):
+            all_links = [response.urljoin(url) for url in response.css(".mapNav li a::attr(href)").extract()]
+            for link in all_links:
+                yield Request(link, callback=self.parse_region)
+
+        def parse_region(self, response):
+            for link in all_links_departments :
+                yield Request(link, callback=self.parse_department)
+                
+        def parse_department(self, response):
+            for link in all_links_cities :
+                yield Request(link, callback=self.parse_cities)
+                
+        def parse_cities(self, response):
+            pass
+            
+Quand on arrive sur une page région, on peut vouloir récupérer tous les éléments de la page. Pour cela, on réutilise le scrapy Shell pour commencer le développement de la nouvelle méthode d'extraction.
+
+Par exemple pour la page ``https://www.leboncoin.fr/annonces/offres/alsace/`` : 
 
 .. code-block:: bash
 
     scrapy shell 'https://www.leboncoin.fr/annonces/offres/alsace/'
     
-Tous les éléments sont stockés dans la balise correspondante à la classe `tabsContent`. On récupère alors le selecteur de cette classe.
+Toutes les offres sont stockées dans une balise mère ``<div></div>`` de classe ``tabsContent``. On récupère alors le selecteur de cette classe et donc de cet objet. 
 
 .. code-block:: Python
 
     In [1]: response.css(".tabsContent")
     Out[1]: [<Selector xpath="descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' tabsContent ')]" data='<section class="tabsContent block-white '>]
     
-Pour récupérer tous les éléments : 
+Pour récupérer chacun des éléments, il faut adresser les balises ``<li>`` contenues dans le sélecteur: 
     
 .. code-block:: Python
 
@@ -427,8 +452,9 @@ Pour récupérer tous les éléments :
     [<Selector xpath="descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' tabsContent ')]/descendant-or-self::*/li" data='<li itemscope itemtype="http://schema.or'>,
      <Selector xpath="descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' tabsContent ')]/descendant-or-self::*/li" data='<li itemscope itemtype="http://schema.or'>,...]
      
-On peut créer des requêtes très longues pour récupérer tous les titres des différentes annonces.
+On peut empiler les sélecteurs ``css`` pour créer des requêtes plus complexes.
 
+Par exemple, pour récupérer tous les titres des différentes annonces :
 
 .. code-block:: Python
 
@@ -446,14 +472,18 @@ On peut créer des requêtes très longues pour récupérer tous les titres des 
      '\n                            \tLot de tee-shirt garçon 12 mois\n                                \n                            \t\n\t\t\t\t\t\t\t',
      "\n                            \tVerre/gobelet d'apprentissage\n                                \n                            \t\n\t\t\t\t\t\t\t", ...]
 
-En HTML les données sont souvent de très mauvaise qualité. Il faut définir des méthodes permettant de récupérer des données plus propres pour être intégrer dans des bases de données.
+En HTML les données sont souvent de très mauvaise qualité. Il faut définir des méthodes permettant de les nettoyer pour être intégrées dans des bases de données.
+
+Par exemple, pour supprimer tous les espaces superflus : 
 
 .. code-block:: Python
 
-    In [13]: def clean_spaces(string):
-    ...:        if string: 
-    ...:            return " ".join(string.split())
+    In [13]: def clean_spaces(string_):
+    ...:        if string_ is not None: 
+    ...:            return " ".join(string_.split())
         
+
+Pour l'appliquer à tous les titres récupérés, on peut faire une list comprehension : 
 .. code-block:: Python
 
     In [8]:  [clean_spaces(elt) for elt in response.css(".tabsContent li .item_infos .item_title::text").extract()]
@@ -467,22 +497,41 @@ En HTML les données sont souvent de très mauvaise qualité. Il faut définir d
      'Drone racer 250 eachine carbone',
      'Chaise de douche',...]
      
-Chaque élement est un selecteur on peut alors itérer sur les selecteurs hauts niveaux et récupérer les données sur chacun d'entre eux.
+La méthode précédente est intéressante si l'on ne recherche qu'une seule information par offre.
+     
+Par contre si l'on veut récupérer d'autres caractéristiques comme le prix par exemple, il est plus intéressant et plus efficace de récupérer l'objet et d'effectuer plusieurs traitements sur ce dernier.
+
+Chaque objet retourné par les requêtes ``css`` est un selecteur avec lequel on peut interagir.
+
+Par exemple pour récupérer le titre et le prix 
 
 .. code-block:: Python
 
-    In [14]: for item in response.css(".tabsContent li .item_infos"):
-    ...:        print(clean_spaces(item.css(".item_title::text").extract_first()))
-    ...:     
-    Meuble de jukboxe
-    Volkswagen golf 5 1.9 tdi 105 cv
-    Poulailler xxl
-    Vitre côté passager twingo
-    Poupée porcelaine
-    tuiles
-    Drone racer 250 eachine carbone
+    In [3]: for item in response.css(".tabsContent li .item_infos"):
+   ...:     print(clean_spaces(item.css(".item_title::text").extract_first()))
+   ...:     print(clean_spaces(item.css(".item_price::text").extract_first()))
+   ...:     
+    Housse pour clic clac
+    20 €
+    Masque a gaz d’époque avec etui en acier
+    20 €
+    Boite neuve lego Chima 70231crocodile
+    9 €
+    Renault Mégane modèle 2004 version sport dynamique
+    3 300 €
+    Iveco 8x4 plateaux grue jib +treuil
+    10 €
+    Gigoteuse fille
+    10 €
+    2 chaises formicas années 60
+    20 €
     
-Scrapy marche sous la forme d'objets (items). Pour pouvoir stocker les informations que l'on récupère en parcourant un site il faut stocker ses informations soit dans un dictionnaire Python soit directement dans un item Scrapy. Nous allons voir les deux.
+Persistence des données
+-----------------------
+    
+Pour pouvoir stocker les informations que l'on récupère en parcourant un site il faut pouvoir les stocker. On utilise soit de simples dictionnaires Python, ou mieux des ``scrapy.Item`` qui sont des dictionnaire améliorés. 
+
+Nous allons voir les deux façons de faire. On peut réécrire la méthode ``parse_region()`` pour lui faire retourner un dictionnaire correspondant à chaque offre rencontrée.
 
 .. code-block:: Python
 
@@ -494,7 +543,8 @@ Scrapy marche sous la forme d'objets (items). Pour pouvoir stocker les informati
                 "price":price,
                 "title":title
             }
-Si on combine tout : 
+            
+Si on combine tout dans la spider : 
 
 .. code-block:: Python
 
@@ -526,14 +576,20 @@ Si on combine tout :
             if string:
                 return " ".join(string.split())
                 
-On peut alors lancer notre spider avec la commande suivante : 
+On peut maintenant lancer notre spider avec la commande suivante : 
+
+.. code-block:: bash
+
+    scrapy crawl <NAME>
+    
+``scrapy crawl`` permet de démarrer le processus en allant chercher la classe ``scrapy.Spider`` dont l'attribut ``name``  = <NAME>.
+
+Par exemple, pour la spider ``LeboncoinSpider`` : 
 
 .. code-block:: bash
 
     scrapy crawl leboncoin
     
-`scrapy crawl` permet de lancer la spider avec son nom défini au début de la classe `name = "leboncoin"`.
-
     2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
     {'price': '25 €', 'title': 'Maillot de bain Desigual'}
     2018-02-09 10:26:04 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.leboncoin.fr/annonces/offres/reunion/>
@@ -554,21 +610,28 @@ On peut exporter les résultats de ces retours dans différents formats de fichi
 - JSONLINE : `scrapy crawl leboncoin -o lbc.jl`
 - XML : `scrapy crawl leboncoin -o lbc.xml`
 
-Items
------
+.. note:: Exercice 
 
-Les items permettent de structurer les données (sous la forme d'un modèle) que l'on souhaite récupérer. Ils doivent être définis dans le fichier items.py créé précédemment. 
+Exécuter la spider avec les différents formats de stockage. Explorer ensuite le contenu des fichiers ainsi créés.
+
+Votre premier Item
+------------------
+
+La classe ``Item`` permet de structurer les données que l'on souhaite récupérer sous la forme d'un modèle. Les items doivent être définis dans le fichier ``items.py`` créé par la commande ``scrapy startproject``. Les ``Item`` héritent de la class ``scrapy.Item``.
+
+On veut structurer les données avec deux champs : le titre et le prix de l'annonce. Scrapy utilise une classe ``scrapy.Field`` permettant de 'déclarer' ces champs. Dans notre cas : 
 
 .. code-block:: Python
 
     import scrapy
 
-
     class LeboncoinItem(scrapy.Item):
         title = scrapy.Field()
         price = scrapy.Field()
         
-Les items hérite de la class scrapy.Item, ces classes définissent les champs grâce à une autre classe ::class::scrapy.Field().
+    
+        
+Utiliser la classe ``scrapy.Item`` plutôt qu'un simple dictionnaire permet plus de contrôle sur la structure des données. En effet, on ne peut insérer dans les items que des données avec des clés 'déclarées'. Ce qui assure une plus grande cohérence au sein d'un projet. 
 
 On peut instancier un item de plusieurs façons : 
 
@@ -577,6 +640,9 @@ On peut instancier un item de plusieurs façons :
     lbc_item = LeboncoinItem(title="Drone DJI", price="100€")
     print(lbc_item)
     
+    {'price': '100€', 'title': 'Drone DJI'}
+
+    
 .. code-block:: Python
 
     lbc_item = LeboncoinItem()
@@ -584,7 +650,10 @@ On peut instancier un item de plusieurs façons :
     lbc_item["price"] = "120 €"
     print(lbc_item)
     
-La définition d'un item permet de palier toutes les erreurs de typo dans les champs par exemple.
+    {'price': '120 €', 'title': 'Drone Parrot'}
+
+    
+La définition d'un item permet de palier toutes les erreurs de typo dans les champs.
 
 .. code-block:: Python
 
@@ -599,16 +668,16 @@ La définition d'un item permet de palier toutes les erreurs de typo dans les ch
         (self.__class__.__name__, key))
     KeyError: 'LeboncoinItem does not support field: titel'
     
-Les items sont très similaires à des dictionnaire Python.
+Les items héritent des dictionnaires Python, et possèdent donc toutes les méthodes de ceux-ci: 
 
 .. code-block:: Python
 
     lbc_item = LeboncoinItem(title="Drone DJI")
-    print(lbc_item["title"])
-    print(lbc_item.get("price", "price is not set"))
+    print(lbc_item["title"]) # Méthode __getitem__() 
+    print(lbc_item.get("price", "price is not set")) # Méthode get() 
     
     
-On peut transformer un item en dictionnaire très facilement.
+On peut transformer un ``Item`` en dictionnaire très facilement, en le passant au constructeur:
 
 .. code-block:: Python
 
@@ -618,6 +687,9 @@ On peut transformer un item en dictionnaire très facilement.
     print(type(dict_item))
     print(dict_item)
     
+    <class '__main__.LeboncoinItem'>
+    <class 'dict'>
+    {'title': 'Drone DJI', 'price': '100€'}
     
 On intègre maintenant cet item dans notre spider.
 
