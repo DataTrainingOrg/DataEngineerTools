@@ -166,11 +166,11 @@ On peut modifier les paramêtres de la requête. On peut par exemple ajouter un 
  - Le TimeOut sera spécifié à chaque appelle avec une valeur par défaut.
  - Un mécanisme de retry sera mis en place de façon recursive. 
 
-.. note:: Exercice 2 : 
+.. note:: Exercice 2
 
-- Faire une fonction permettant de supprimer tous les espaces supperflus d'une string
-- Faire une fonction qui prend une string html et renvois une string intelligible (enlever les caractères spéciaux, 
-- Récupérer le domaine en fonction d'un url
+ - Faire une fonction permettant de supprimer tous les espaces supperflus d'une string
+ - Faire une fonction qui prend une string html et renvois une string intelligible (enlever les caractères spéciaux, 
+ - Récupérer le domaine en fonction d'un url
 
 Exploitation du code HTML
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -180,6 +180,7 @@ permet de récupérer efficacement les données qui nous intéresse.
 
 Pour les webmasters, le blocage le plus souvent mis en place et un blocage sur le User-Agent. Le User-Agent est un paramètre intégré
 dans la requête HTTP réalisé par le Navigateur pour envoyer au front des informations basiques :
+
 - la version du Navigateur,
 - la version de l'OS
 - Le type de gestionnaire graphique (Gecko)
@@ -205,13 +206,27 @@ Pour transformer une requête (requests) en objets BeautifulSoup :
 .. code-block:: Python
 
     response = requests.get(url)
-    soup = BeautifulSoup(response.text, "lxml")    
+    soup = BeautifulSoup(response.text, "lxml")   
     
+Il se peut qu'un message d'erreur arrive à ce point là si vous n'avez pas la librarie ``lxml`` installée, pour se faire vous avez juste à lancer la commande suivante : ``pip install lxml``.
+    
 Pour trouver tous les liens d'une page on récupère la balise a : 
 
 .. code-block:: Python
 
-    soup.find_all("a")[0:10]
+ >>> soup.find_all("a")[0:10]
+ [<a href="#">
+ <i class="icon-parametres"></i>
+ </a>, <a href="https://gmail.com" target="_blank" title="Webmail ESIEE Paris"><i><img alt="" src="http://www.esiee.fr/sites/default/files/menu_icons/menu_icon_950.png"/> </i><span>Webmail ESIEE Paris</span></a>, <a href="https://planif.esiee.fr/direct/" target="_blank" title="Emploi du temps général"><i><img alt="" src="http://www.esiee.fr/sites/default/files/menu_icons/menu_icon_1331.png"/> </i><span>Emploi du temps général</span></a>, <a href="https://planif.esiee.fr/jsp/custom/esiee/easyMyPlanning.jsp" target="_blank" title="Emploi du temps individuel"><i><img alt="" src="http://www.esiee.fr/sites/default/files/menu_icons/menu_icon_1332.png"/> </i><span>Emploi du temps individuel</span></a>, <a href="https://intra.esiee.fr" target="_blank" title="Extranet"><i><img alt="" src="http://www.esiee.fr/sites/default/files/menu_icons/menu_icon_951.png"/> </i><span>Extranet</span></a>, <a href="https://esiee.blackboard.com" target="_blank" title="iCampus"><i><img alt="" src="http://www.esiee.fr/sites/default/files/menu_icons/menu_icon_1311.png"/> </i><span>iCampus</span></a>, <a href="http://e5.onthehub.com/WebStore/Welcome.aspx?vsro=8&amp;ws=45AD823E-799B-E011-969D-0030487D8897&amp;JSEnabled=1" target="_blank" title="Microsoft DreamSpark"><i><img alt="" src="http://www.esiee.fr/sites/default/files/menu_icons/menu_icon_1696.png"/> </i><span>Microsoft DreamSpark</span></a>, <a href="/en">
+ <i>
+ <img alt="English" src="/sites/all/themes/custom/esiee_theme/assets/images/flag-en.png"/>
+ </i>
+ </a>, <a href="https://www.facebook.com/esieeparis" target="_blank">
+ <i class="fa fa-facebook"></i>
+ </a>, <a href="https://twitter.com/ESIEEPARIS" target="_blank">
+ <i class="fa fa-twitter"></i>
+ </a>]
+ >>> 
     
 On peut préciser la classe voulue : 
 
@@ -219,29 +234,66 @@ On peut préciser la classe voulue :
 
     soup.find_all(class_="<CLASS_NAME>")[0:10]
 
-
-Un autre package très utile pour récupérer des données d'un site web est Readability. # TODO: Historique de Readability
-
-.. code-block:: bash
-
-     pip install python-Readability
+Par exemple : 
 
 .. code-block:: Python
 
-    from readability import Document
-    doc = Document(response.text)
-    print("Le titre de la page est {}".format(doc.title())
-    print("Le texte important de la page est")
-    print(doc.summary())
+ >>> soup.find_all(class_="slide")[0:5]
+ [<div class="slide slide-content">
+ <span class="slide-content-date inline-block"><span class="date-display-single">15.01.2018</span></span>
+ <span class="slide-content-theme inline-block is-uppercase">Admissions</span>
+ <div class="clearfix"></div>
+ <div class="slide-content-img pull-left"><!-- scald=1434:news_thumbnail --><img alt="illustration-admissions-actu.jpg" height="90" src="http://www.esiee.fr/sites/default/files/styles/news/public/thumbnails/image/illustration-admissions-actu.jpg?itok=uKSbuL6y" title="Ouverture de la plate-forme des admissions ESIEE Paris" width="120"/><!-- END scald=1434 --></div>
+ <span class="slide-content-title"><a class="is-uppercase" href="/fr/actualite/inscriptions-rentree-2018">Votre inscription, c'est maintenant !</a></span>
+ <div class="clearfix"></div>
+ <p class="slide-content-desc">Le portail Parcoursup et la plateforme Admissions ESIEE Paris sont ouverts.</p> </div>, <div class="slide slide-content">
+ <span class="slide-content-date inline-block"><span class="date-display-single">21.12.2017</span></span>
+ <span class="slide-content-theme inline-block is-uppercase">Journée portes ouvertes</span>
+ <div class="clearfix"></div>
+ <div class="slide-content-img pull-left"><!-- scald=1689:news_thumbnail --><img alt="illustration-jpo-2018.jpg" height="90" src="http://www.esiee.fr/sites/default/files/styles/news/public/thumbnails/image/illustration-jpo-2018.jpg?itok=-YCadC35" title="Illustration Journées Portes Ouvertes" width="120"/><!-- END scald=1689 --></div>
+ <span class="slide-content-title"><a class="is-uppercase" href="/fr/actualite/journee-portes-ouvertes-10-fevrier-2018">Bien choisir son école, c’est aussi la rencontrer !</a></span>
+ <div class="clearfix"></div>
+ <p class="slide-content-desc">ESIEE Paris vous convie à la prochaine Journée Portes Ouvertes (JPO) qui aura lieu le samedi 10 février de 9h30 à 17h30. </p> </div>, <div class="slide slide-content">
+ <span class="slide-content-date inline-block"><span class="date-display-single">04.12.2017</span></span>
+ <span class="slide-content-theme inline-block is-uppercase">Admissions</span>
+ <div class="clearfix"></div>
+ <div class="slide-content-img pull-left"><!-- scald=1404:news_thumbnail --><img alt="illustration-paces-etudiants-passerelle.jpg" height="90" src="http://www.esiee.fr/sites/default/files/styles/news/public/thumbnails/image/illustration-paces-etudiants-passerelle.jpg?itok=Acm93yfD" title="Illustration actualité programme paces" width="120"/><!-- END scald=1404 --></div>
+ <span class="slide-content-title"><a class="is-uppercase" href="/fr/fr/actualite/programme-passerelle-2018"> Se réorienter après PACES ? C’est possible grâce au programme Passerelle</a></span>
+ <div class="clearfix"></div>
+ <p class="slide-content-desc">ESIEE Paris permet aux étudiants issus de PACES ou 1re année de CPGE scientifique d’intégrer le programme « Passerelle » pour se réorienter sans perdre d’année.</p> </div>, <div class="slide slide-content">
+ <span class="slide-content-date inline-block"><span class="date-display-single">31.01.2018</span></span>
+ <span class="slide-content-theme inline-block is-uppercase">Séminaire</span>
+ <div class="clearfix"></div>
+ <div class="slide-content-img pull-left"><!-- scald=1740:news_thumbnail --><img alt="visuel-captronics.jpg" height="90" src="http://www.esiee.fr/sites/default/files/styles/news/public/thumbnails/image/visuel-captronics.jpg?itok=iOE9XiJ7" title="Séminaire Captronics" width="120"/><!-- END scald=1740 --></div>
+ <span class="slide-content-title"><a class="is-uppercase" href="/fr/actualite/seminaire-captronics">Séminaire « PME, TPE, Startup » : Accélérez vos projets de miniaturisation d’objets connectés !</a></span>
+ <div class="clearfix"></div>
+ <p class="slide-content-desc">CAP’TRONIC, ESIEE Paris et le Réseau Mesure organise un séminaire consacré à la réalisation d’objets connectés pour les PME.</p> </div>, <div class="slide slide-content">
+ <span class="slide-content-date inline-block"><span class="date-display-single">29.01.2018</span></span>
+ <span class="slide-content-theme inline-block is-uppercase">Actualités</span>
+ <div class="clearfix"></div>
+ <div class="slide-content-img pull-left"><!-- scald=1229:news_thumbnail --><img alt="Journée des cordées de la réussite" height="90" src="http://www.esiee.fr/sites/default/files/styles/news/public/thumbnails/image/visuel-jourrnee-des-cordees-de-la-reussite-2016.jpg?itok=dmQZ8UJy" title="Journée des cordées de la réussite" width="120"/><!-- END scald=1229 --></div>
+ <span class="slide-content-title"><a class="is-uppercase" href="/fr/actualite/esiee-paris-cordees-de-la-reussite-2018">ESIEE Paris a participé à la journée nationale des cordées de la réussite</a></span>
+ <div class="clearfix"></div>
+ <p class="slide-content-desc">L'école a participé une nouvelle fois, le vendredi 26 janvier 2018, aux Cordées de la réussite en collaboration avec ses partenaires de la cité Descartes.</p> </div>]
+ >>> 
+    
+Pour récupérer le text sans les balises HTML : 
 
+.. code-block:: Python
 
-Exercices :
+ >>> soup.text[0:1000]
+ ' \n\n\n\n\n\n\nPage d\'accueil | ESIEE Paris\n\n\n@import url("http://www.esiee.fr/modules/system/system.base.css?p40jh1");\n@import url("http://www.esiee.fr/modules/system/system.menus.css?p40jh1");\n@import url("http://www.esiee.fr/modules/system/system.messages.css?p40jh1");\n@import url("http://www.esiee.fr/modules/system/system.theme.css?p40jh1");\n\n\n@import url("http://www.esiee.fr/sites/all/modules/contrib/date/date_api/date.css?p40jh1");\n@import url("http://www.esiee.fr/sites/all/modules/contrib/scald/modules/library/dnd/css/editor-global.css?p40jh1");\n@import url("http://www.esiee.fr/modules/field/theme/field.css?p40jh1");\n@import url("http://www.esiee.fr/sites/all/modules/contrib/google_cse/google_cse.css?p40jh1");\n@import url("http://www.esiee.fr/modules/node/node.css?p40jh1");\n@import url("http://www.esiee.fr/sites/all/modules/contrib/scald_file/scald_file.css?p40jh1");\n@import url("http://www.esiee.fr/modules/search/search.css?p40jh1");\n@import url("http://www.esiee.fr/modules/user/user.'
+ >>> 
 
-- ajouter une méthode pour récupérer l'objet soup d'un url 
-- Récupérer une liste de User Agent et effectuer une rotation aléatoire sur le UA à utiliser 
-- Utiliser cette classe pour parser une page HTML et récupérer : le titre, tous les H1 (si ils existes), les liens vers les images, les liens sortants vers d'autres sites, et le texte principal.
+.. note:: Exercice 3
 
-Parsing d'un sitemaps pour récupérer une listes de liens avec les informations disponibles. -> Stocker dans un dictionnary et un fichier JSON. 
+ Améliorer la classe développé précédemment.
+
+ - ajouter une méthode pour récupérer l'objet soup d'un url 
+ - Récupérer une liste de User Agent et effectuer une rotation aléatoire sur celui à utiliser 
+ - Utiliser cette classe pour parser une page HTML et récupérer : le titre, tous les H1 (si ils existes), les liens vers les images, les liens sortants vers d'autres sites, et le texte principal.
+
+ Parsing d'un sitemaps pour récupérer une listes de liens avec les informations disponibles. -> Stocker dans un dictionnaire et dans un fichier JSON local. 
 
 
 Exploitation des appels d'API  
@@ -254,10 +306,10 @@ paramètres sont présents :
 * un token généré à la volée avec des protocole OAuth2 (ou moins développés). 
 * un referer provenant du site web (la source de la requête), très facile à falsifier.  
 
-Exercices :
+.. note:: Exercice 4
 
-- Utiliser les informations développées plus haut pour récupérer les premiers résultats d'une recherche d'une requête 
-sur Qwant.
+ - Utiliser les informations développées plus haut pour récupérer les premiers résultats d'une recherche d'une requête 
+ sur Qwant.
 
 Exercice Final
 --------------
@@ -271,14 +323,3 @@ Les données doivent comprendre :
  * Le titre de l'article
  * Le titre de la page
  * (Facultatif) : les images
-
-
-
-
-
-
-
-
-
-
-
