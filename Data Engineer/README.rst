@@ -30,17 +30,17 @@ Afin de pouvoir travailler dans les meilleurs conditions, nous allons travailler
 
 .. image:: Introduction/images/docker-vm-container.png
 
-Pour créer l'image utilisée dans le projet : 
+Pour créer l'image utilisée dans le projet, on utilise le ``Dockerfile`` présent dans le répertoire (jeter un oeil à ce fichier pour comprendre les composants utilisés)  : 
 
 .. code-block:: bash
 
-  > docker build -t image_OUAP  .
+  > docker build -t image_ouap  .
 
 A partir de cette image, on peut créer une instance (conteneur) dans lequel on va travailler: 
 
 .. code-block:: bash
 
-  > docker run -it --name conteneur_OUAP -v <WORKDIR>/esiee_lectures/Data\ Engineer/:/home/dev/code/ image_OUAP
+  > docker run -it --name conteneur_ouap -v <WORKDIR>/esiee_lectures/Data\ Engineer/:/home/dev/code/ image_ouap
  
 Il n'est pas rare de lancer plusieurs conteneurs instanciés à partir de la même image. Contrairement à une machine virtuelle, docker utilise la même base et les mêmes composants pour tous ces conteneurs et donc réduire l'impact mémoire de ces derniers.
 
