@@ -7,9 +7,16 @@ Cours données dans le cadre du OUAP-4314 : Data Engineering sur la récupérati
 Github
 ------
 
-Si vous ne disposez pas déjà d'un compte `Github <https://github.com>`_.
-Dans un premier temps pour suivre au mieux ce cours, je vous propose de ``forker`` ce projet afin de pouvoir le modifier comme bon vous semble. Avec le bouton en haut à droite. Le projet courant  Vous pourrez rajouter des notes, modifier le code, et pousser votre projet final directement pour que l'on puisse le corriger.
+Si vous ne disposez pas déjà d'un compte `Github <https://github.com>`_, il faut en créer un.
 
+Forkez (avec le bouton ``Fork`` en haut à droite) ce projet. Il contient toutes les ressources nécessaires pour ce cours. Vous pourrez ajouter des notes, modifier le code, et pousser votre projet final directement pour que l'on puisse l'évaluer.
+
+
+Docker
+------
+Docker est une technologie de conteneurs utilisés par les DevOps pour permettre un déploiement plus simple et plus rapide. Par rapport à des machines virtuelles, Docker est plus léger.
+
+.. image:: images/docker-vm-container.png
 Dans un deuxième temps, afin de pouvoir travailler dans les meilleurs conditions, nous allons travailler à partir de la technologie Docker.
 
 
