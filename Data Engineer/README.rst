@@ -59,4 +59,20 @@ Les fichiers Python doivent être nommés de la façon suivante : ``<PARTIE>_Exe
 
 Par exemple : ``Introduction_Exercice2.py`` 
 
-Le projet doit être place dans le dossier projet avec le code de l'application Flask et de la spider Scrapy. 
+Le projet doit être placé dans le dossier ``Evaluation/Projet`` avec la totalité du code de l'application. Vous devez aussi remplir les fichiers README.rst correspondants, ce qui permet de faire une documentation élémentaire.
+
+Il est conseillé de travailler en local lors de chaque séance, puis de pusher son travail en fin de séance sur le repository Github.
+
+.. code-block:: bash
+  
+   > git add .
+   > git commit -m "message explicatif"
+   > git push origin master
+   
+ Au début de la séance suivante, on récupère les éventuelles modifications apportées entre temps avec  :
+ 
+.. code-block:: bash
+  
+   > git pull
+
+Si vous travaillez sur une machine locale différente, il faut recloner le projet. 
