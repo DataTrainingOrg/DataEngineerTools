@@ -64,8 +64,8 @@ Pour créer l'image utilisée dans le projet, on utilise le ``Dockerfile`` prés
    ---> f5da69f1f76c
   Removing intermediate container a77c1a7b0f08
   Successfully built f5da69f1f76c
-  
- L'opération se termine correctement si ``Successfully built`` est affiché. La chaîne alphanumérique qui suit permet d'identifier l'image sans ambiguité.
+
+L'opération se termine correctement si ``Successfully built`` est affiché. La chaîne alphanumérique qui suit permet d'identifier l'image sans ambiguité.
 
 Créer un conteneur
 ..................
