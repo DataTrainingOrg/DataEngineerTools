@@ -69,7 +69,7 @@ Il est conseillé de travailler en local lors de chaque séance, puis de pusher 
    > git commit -m "message explicatif"
    > git push origin master
    
- Au début de la séance suivante, on récupère les éventuelles modifications apportées entre temps avec  :
+Au début de la séance suivante, on récupère les éventuelles modifications apportées entre temps avec  :
  
 .. code-block:: bash
   
