@@ -11,36 +11,52 @@ Si vous ne disposez pas déjà d'un compte `Github <https://github.com>`_, il fa
 
 Forkez (avec le bouton ``Fork`` en haut à droite) ce projet. Il contient toutes les ressources nécessaires pour ce cours. Vous pourrez ajouter des notes, modifier le code, et pousser votre projet final directement pour que l'on puisse l'évaluer.
 
+Pour commencer à travailler il vous faut cloner le projet dans votre répertoire (local) de travail : 
 
+.. code-block:: bash
+
+  $:~/> cd <WORKDIR>
+  $:~/<WORKDIR> > git clone https://github.com/<GITHUB_NAME>/esiee_lectures
+  $:~/<WORKDIR> > ls
+  esiee_lectures
+  $:~/<WORKDIR> > cd esiee_lectures/Data\ Engineer/
+  $:~/<WORKDIR>/esiee_lectures/Data Engineer> ls
+  Dockerfile  Evaluation	Introduction  Mongo  README.rst  requirements.txt  Scrapy
+  
 Docker
 ------
-Docker est une technologie de conteneurs utilisés par les DevOps pour permettre un déploiement plus simple et plus rapide. Par rapport à des machines virtuelles, Docker est plus léger.
+
+Afin de pouvoir travailler dans les meilleurs conditions, nous allons travailler à partir de la technologie Docker. Docker est une technologie de conteneurs utilisés par les DevOps pour permettre un déploiement plus simple et plus rapide. Par rapport à des machines virtuelles, Docker est plus léger.
 
 .. image:: Introduction/images/docker-vm-container.png
-Dans un deuxième temps, afin de pouvoir travailler dans les meilleurs conditions, nous allons travailler à partir de la technologie Docker.
 
+Pour créer l'image utilisée dans le projet : 
 
-Pour déployer le conteneur MongoDB : 
+.. code-block:: bash
+
+  > docker build -t image_OUAP  .
+
+A partir de cette image, on peut créer une instance (conteneur) dans lequel on va travailler: 
+
+.. code-block:: bash
+
+  > docker run -it --name conteneur_OUAP -v <WORKDIR>/esiee_lectures/Data\ Engineer/:/home/dev/code/ image_OUAP
+ 
+Il n'est pas rare de lancer plusieurs conteneurs instanciés à partir de la même image. Contrairement à une machine virtuelle, docker utilise la même base et les mêmes composants pour tous ces conteneurs et donc réduire l'impact mémoire de ces derniers.
+
+Dans ce cours nous allons utiliser MongoDB. Normalement il est installé par défaut sur toutes les machines. Si toutefois, il ne l'était pas ou si vous souhaitez travailler dans un autre environnment il faut envisager d'utiliser un conteneur Mongo.
 
 .. code-block:: bash
 
   docker run --name mon-mongo -v <STOCKAGE_DIRECTORY>:/data/db -p 27017:27017 -d mongo
+   
+Consignes
+---------
   
-Maintenant pour créer le container pour votre projet : 
+L'ensemble des exercices présents dans les différents cours doivent être placés dans des fichiers Python séparés (et commentés) dans le dossier ``Evaluation``. 
 
-.. code-block:: bash
+Les fichiers Python doivent être nommés de la façon suivante : ``<PARTIE>_Exercice<NO_EXERCICE>.py`` 
 
-  docker build -t <IMAGE_NAME> .
-  docker run -it --name <CONTAINER_NAME> -v <PROJECT_DIRECTORY>:/home/dev/code/ <IMAGE_NAME>
-  
-  
-L'ensemble des exercices présents dans les différents cours doivent être mis dans dans fichier Python séparés et commentés. Vous devrez pousser tous vos fichiers dans le dossier évaluation. Les fichiers Python doivent être nommés de la façon suivante : ``<PARTIE>_Exercice<NO_EXERCICE>.py`` 
+Par exemple : ``Introduction_Exercice2.py`` 
 
 Le projet doit être place dans le dossier projet avec le code de l'application Flask et de la spider Scrapy. 
-
-
-
-
-
-
-
