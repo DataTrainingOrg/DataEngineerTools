@@ -91,7 +91,7 @@ Le prompt ``#`` est celui du conteneur dans lequel on est ``root``. On peut alor
 MongoDB
 .......
 
-Dans ce cours nous allons utiliser MongoDB. Normalement il est installé par défaut sur toutes les machines. Si toutefois, il ne l'était pas ou si vous souhaitez travailler dans un autre environnment, il faut envisager d'utiliser un conteneur Mongo.
+Dans ce cours nous allons utiliser MongoDB. Normalement il est installé par défaut sur toutes les machines. Si toutefois, il ne l'était pas ou si vous souhaitez travailler dans un autre environnment, il faut envisager de lancer un conteneur Mongo en parallèle.
 
 .. code-block:: bash
 
