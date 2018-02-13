@@ -30,21 +30,68 @@ Afin de pouvoir travailler dans les meilleurs conditions, nous allons travailler
 
 .. image:: Introduction/images/docker-vm-container.png
 
+Créer une image
+...............
+
 Pour créer l'image utilisée dans le projet, on utilise le ``Dockerfile`` présent dans le répertoire (jeter un oeil à ce fichier pour comprendre les composants utilisés)  : 
 
 .. code-block:: bash
 
   > docker build -t image_ouap  .
+  
+  Sending build context to Docker daemon  26.97MB
+  Step 1/6 : FROM python:3
+   ---> c1e459c00dc3
+  Step 2/6 : RUN mkdir /home/dev/ && mkdir /home/dev/code/
+   ---> Running in 7b1a56c8f507
+   ---> 456761cb01d3
+  Removing intermediate container 7b1a56c8f507
+  Step 3/6 : WORKDIR /home/dev/code/
+   ---> abcb9015d45c
+  Removing intermediate container a5bc16f1b985
+  Step 4/6 : COPY . .
+   ---> 6ad3d3ab3d27
+  Removing intermediate container 4c98a0951342
+  Step 5/6 : RUN pip install --no-cache-dir -r requirements.txt
+   ---> Running in b6646ab9dd67
+  Collecting beautifulsoup4==4.6.0 (from -r requirements.txt (line 1))
+    Downloading beautifulsoup4-4.6.0-py3-none-any.whl (86kB)
+  Collecting Flask==0.12.2 (from -r requirements.txt (line 2))
+    Downloading Flask-0.12.2-py2.py3-none-any.whl (83kB)
+  ...
+  Step 6/6 : CMD /bin/bash
+   ---> Running in a77c1a7b0f08
+   ---> f5da69f1f76c
+  Removing intermediate container a77c1a7b0f08
+  Successfully built f5da69f1f76c
+  
+ L'opération se termine correctement si ``Successfully built`` est affiché. La chaîne alphanumérique qui suit permet d'identifier l'image sans ambiguité.
 
-A partir de cette image, on peut créer une instance (conteneur) dans lequel on va travailler: 
+Créer un conteneur
+..................
+
+A partir de cette image, on peut créer une instance (conteneur) dans lequel on va travailler (on remplacera ``<WORKDIR>`` par son propre répertoire de travail) : 
 
 .. code-block:: bash
 
   > docker run -it --name conteneur_ouap -v <WORKDIR>/esiee_lectures/Data\ Engineer/:/home/dev/code/ image_ouap
- 
-Il n'est pas rare de lancer plusieurs conteneurs instanciés à partir de la même image. Contrairement à une machine virtuelle, docker utilise la même base et les mêmes composants pour tous ces conteneurs et donc réduire l'impact mémoire de ces derniers.
+  
+  root@a74861d489f5:/home/dev/code# python
+  Python 3.6.4 (default, Dec 21 2017, 01:35:12) 
+  [GCC 4.9.2] on linux
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> 
 
-Dans ce cours nous allons utiliser MongoDB. Normalement il est installé par défaut sur toutes les machines. Si toutefois, il ne l'était pas ou si vous souhaitez travailler dans un autre environnment il faut envisager d'utiliser un conteneur Mongo.
+Le prompt ``#`` est celui du conteneur dans lequel on est ``root``. On peut alors lancer les commandes incluses dans le conteneur(ici l'interpréteur Python). 
+ 
+.. note::
+
+  Il n'est pas rare de lancer plusieurs conteneurs instanciés à partir de la même image. Contrairement à une machine virtuelle, docker utilise la même base et les mêmes composants pour tous ces conteneurs et donc réduire l'impact mémoire de ces derniers.
+  
+MongoDB
+.......
+
+Dans ce cours nous allons utiliser MongoDB. Normalement il est installé par défaut sur toutes les machines. Si toutefois, il ne l'était pas ou si vous souhaitez travailler dans un autre environnment, il faut envisager d'utiliser un conteneur Mongo.
 
 .. code-block:: bash
 
