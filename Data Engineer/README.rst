@@ -7,7 +7,7 @@ Cours données dans le cadre du OUAP-4314 : Data Engineering sur la récupérati
 Github
 ------
 
-Si vous ne disposez pas déjà d'un compte (Github)[!https://github.com]. 
+Si vous ne disposez pas déjà d'un compte [Github](https://github.com).
 Dans un premier temps pour suivre au mieux ce cours, je vous propose de ``forker`` ce projet afin de pouvoir le modifier comme bon vous semble. Avec le bouton en haut à droite. Le projet courant  Vous pourrez rajouter des notes, modifier le code, et pousser votre projet final directement pour que l'on puisse le corriger.
 
 Dans un deuxième temps, afin de pouvoir travailler dans les meilleurs conditions, nous allons travailler à partir de la technologie Docker.
