@@ -6,9 +6,11 @@ Sujet 1
 
 Objectif : Construire une base MongoDB des monuments historiques parisiens consultable via une interface Flask
 
-URL : http://www.culture.gouv.fr/public/mistral/dapamer_fr?ACTION=RETOUR&USRNAME=nobody&USRPWD=4%24%2534P
+URL : `http://www.culture.gouv.fr/public/mistral/dapamer_fr?ACTION=RETOUR&USRNAME=nobody&USRPWD=4%24%2534P`
 
 Structure de la base MongoDB :
+
+.. code-block::
     <adresse>:
         {   "numero" : [<32-bit integer>] , 
             "voie" : <String>, 
