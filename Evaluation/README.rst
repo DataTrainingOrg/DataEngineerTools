@@ -11,6 +11,7 @@ URL : `http://www.culture.gouv.fr/public/mistral/dapamer_fr?ACTION=RETOUR&USRNAM
 Structure de la base MongoDB :
 
 .. code-block::
+
     <adresse>:
         {   "numero" : [<32-bit integer>] , 
             "voie" : <String>, 
@@ -39,7 +40,6 @@ Structure de la base MongoDB :
     
 Exemple : www.culture.gouv.fr/public/mistral/dapamer_fr?ACTION=RETROUVER&NUMBER=1&REQ=((paris) %3aLOCA%2cPLOC )
 Ressources externes : on pourra utiliser https://adresse.data.gouv.fr/api pour le geocoding
-
 
 
 Sujet 2
@@ -95,5 +95,62 @@ Structure de la base MongoDB :
         "horaires" : [<horaire>],
         "tarifs" : [tarif]
     }
+    
 Exemple : http://equipement.paris.fr/musee-cognacq-jay-1519, http://equipement.paris.fr/jardin-des-tuileries-1795
 Ressources externes : on pourra utiliser https://adresse.data.gouv.fr/api pour le geocoding
+
+
+Sujet 3
+-------
+
+Récupérer toutes les agences immobilières de la chaine ORPi ainsi que toutes les annonces correspondantes. Vous pouvez récupérer toutes les agences depuis ce lien https://www.orpi.com/agences-immobilieres/recherche/
+Structure de la base MongoDB :
+Pour une agence (exemple https://www.orpi.com/agence-de-lizy/)
+
+.. code-block::
+
+    <contact>:
+        {   
+            "phone" : <String>, 
+            "email" : <String>, 
+         }
+
+    <location>:
+        {               
+            "address" : <String>, 
+            "city" : <String>,
+            "lat" : <double>, 
+            "lon" : <double> 
+        }
+
+    <informations> : 
+        {   
+            rating:<String>, 
+            description:<String>,
+            sells_number:<32-bit integer>,
+            location_number:<32-bit integer>,
+            ad_number:<32-bit integer>,
+            agent_number:<32-bit integer>,
+
+        }
+    <agent_contacts> : 
+        {   
+            name:<String>,
+            title:<String>,
+            email:<String>,
+            phone_number:<32-bit integer>,
+        }
+
+
+Le document représentant une agence s'agencera sous la forme : 
+
+.. code-block::
+
+    { 
+        "url" : <String>,
+        "agency_contact" : <contact>,
+        "location" : <location>,
+        "informations" : <informations>,
+        "agent_contacts" : <agent_contacts>,
+
+    }
