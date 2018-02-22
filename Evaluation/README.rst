@@ -154,3 +154,26 @@ Le document représentant une agence s'agencera sous la forme :
         "agent_contacts" : <agent_contacts>,
 
     }
+    
+Ensuite vous devrez récupérer toutes les annonces des différentes agences dans une nouvelle collection : 
+
+Le format de données représentant une annonce sera : 
+
+.. code-block::
+
+    { 
+        "url" : <String>,
+        "title" : <String>,
+        "room_number":<32-bit integer>,
+        "bed_room_number":<32-bit integer>,
+        "bath_room_number":<32-bit integer>,
+        "construction_year":<32-bit integer>,
+        "area" : <32-bit integer>,
+        "storey" : <32-bit integer>,
+        "total_storey" : <32-bit integer>,
+        "description" : <String>,
+        "ges" : <String>,
+        "energy" : <String>,
+        "location":<location>,
+        "local_id":<String>
+    }
