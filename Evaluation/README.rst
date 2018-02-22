@@ -163,7 +163,9 @@ Le format de données représentant une annonce sera :
 
     { 
         "url" : <String>,
+        "domaine": <String>,
         "title" : <String>,
+        "type":<String>,
         "room_number":<32-bit integer>,
         "bed_room_number":<32-bit integer>,
         "bath_room_number":<32-bit integer>,
@@ -175,5 +177,35 @@ Le format de données représentant une annonce sera :
         "ges" : <String>,
         "energy" : <String>,
         "location":<location>,
-        "local_id":<String>
+        "local_id":<String>, 
+        "images":[<String>]
+    }
+
+
+Encore dans l'immobilier, je vous propose de récupérer toutes les annonces du site Logic-Immo. Pour cela vous pouvez partir de la page index de toutes les villes : http://www.logic-immo.com/index-villes-vente.html. Récupérer les villes par ordre alphabétique, et ensuite récupérer la page annonce. 
+
+La structure des annonces sera à peut près la même que pour le projet précédant. 
+
+.. code-block::
+
+    { 
+        "url" : <String>,
+        "domaine": <String>,
+        "title" : <String>,
+        "type":<String>, 
+        "room_number":<32-bit integer>,
+        "phone_number":<32-bit integer>,
+        "bed_room_number":<32-bit integer>,
+        "bath_room_number":<32-bit integer>,
+        "construction_year":<32-bit integer>,
+        "area" : <32-bit integer>,
+        "storey" : <32-bit integer>,
+        "total_storey" : <32-bit integer>,
+        "description" : <String>,
+        "ges" : <String>,
+        "energy" : <String>,
+        "location":<location>,
+        "local_id":<String>,
+        "images":[<String>]
+
     }
