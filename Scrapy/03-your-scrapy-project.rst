@@ -821,9 +821,21 @@ On peut aussi utiliser les Pipelines pour stocker les données récupérées dan
             self.db[self.collection_name].insert_one(dict(item))
             return item
             
-Ici redéfini deux autres méthodes:  `open_spider()`et `close_spider()`, ces méthode sont appelés comme leurs noms l'indiquent elles sont appelées lorsque la Spider est instanciée et fermée. Ces méthodes nous permettent d'ouvrir la connexion Mongo et de la fermer. La méthode `process_item()` permet d'insérer l'item en tant que document mongo. 
+Ici redéfini deux autres méthodes:  ``open_spider()``et ``close_spider()``, ces méthode sont appelés comme leurs noms l'indiquent elles sont appelées lorsque la Spider est instanciée et fermée. 
 
+Ces méthodes nous permettent d'ouvrir la connexion Mongo et de la fermer lorsque le scraping se termine. La méthode ``process_item()`` est appelé à chaque fois qu'un item passe dans le mécanisme interne de scrapy. Ici, la méthode permet d'insérer l'item en tant que document mongo. 
 
+Pour que cette pipeline soit appelé il faut l'ajouter dans les settings du projet.
+
+ITEM_PIPELINES = {
+        'monprojet.pipelines.TextPipeline': 100,
+        'monprojet.pipelines.PricePipeline': 200,
+        'monprojet.pipelines.MongoPipeline': 300,
+
+    }
+    
+La pipeline est ajoutée à la fin du process pour profiter des deux précédantes.
+    
 Settings
 --------
 
@@ -837,3 +849,18 @@ Scrapy permet de gérer le comportement des spiders avec certains paramètres. C
 - USER_AGENT : UserAgent utilisé pour faire les requêtes ;
 - BOT_NAME : Nom du bot annoncé lors des requêtes
 - HTTPCACHE_ENABLED : Utilisation du cache HTTP, utile lors du parcours multiple de la même page.
+
+
+Le fichiers settings.py permet de définir les paramètres globaux d'un projet. Si votre projet contient un grand nombre de spiders il peut être intéressant d'avoir des paramètres distincts pour chaque spider. Un moyen simple est d'ajouter un attribut ``custom_settings``à votre spider :
+
+.. code-block:: Python
+
+    class LeboncoinSpider(scrapy.Spider):
+            name = "leboncoin"
+            allowed_domains = ["leboncoin.fr"]
+            start_urls = ['http://leboncoin.fr/']
+            custom_settings = {
+                "HTTPCACHE_ENABLED":True, 
+                "CONCURRENT_REQUESTS_PER_DOMAIN":100
+            }
+
