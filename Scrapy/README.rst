@@ -1,10 +1,9 @@
 Scrapy
 ======
 
+Check out this `relative link`_.
 
-External hyperlinks, like Python_.
-.. _Python: http://www.python.org/
-
+.. _relative link: 01-introduction.rst
 
 - Partie 1 : Une introduction partie1_ :
 
