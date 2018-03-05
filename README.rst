@@ -29,7 +29,7 @@ Si au fil du temps j'ai besoin de modifier le contenu en temps réel vous pouvez
 .. code-block:: bash
 
   $:~/> cd <WORKDIR>
-  $:~/<WORKDIR> > cd OUAP-4314/
+  $:~/<WORKDIR>cd OUAP-4314/
   $:~/<WORKDIR>/OUAP-4314>git remote add upstream https://github.com/rcourivaud/OUAP-4314
   $:~/<WORKDIR>/OUAP-4314>git fetch upstream
 
