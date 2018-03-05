@@ -16,12 +16,26 @@ Pour commencer à travailler il vous faut cloner le projet dans votre répertoir
 .. code-block:: bash
 
   $:~/> cd <WORKDIR>
-  $:~/<WORKDIR> > git clone https://github.com/<GITHUB_NAME>/esiee_lectures
+  $:~/<WORKDIR> > git clone https://github.com/<GITHUB_NAME>/OUAP-4314
   $:~/<WORKDIR> > ls
   esiee_lectures
-  $:~/<WORKDIR> > cd esiee_lectures/Data\ Engineer/
-  $:~/<WORKDIR>/esiee_lectures/Data Engineer> ls
+  $:~/<WORKDIR> > cd OUAP-4314/
+  $:~/<WORKDIR>/OUAP-4314> ls
   Dockerfile  Evaluation	Introduction  Mongo  README.rst  requirements.txt  Scrapy
+  
+  
+Si au fil du temps j'ai besoin de modifier le contenu en temps réel vous pouvez garder votre projet à jour en ajoutant ces quelques commandes :
+
+.. code-block:: bash
+
+  $:~/> cd <WORKDIR>
+  $:~/<WORKDIR> > cd OUAP-4314/
+  $:~/<WORKDIR>/OUAP-4314>git remote add upstream https://github.com/rcourivaud/OUAP-4314
+  $:~/<WORKDIR>/OUAP-4314>git fetch upstream
+
+Maintenant pour mettre à jour le projet :
+
+  $:~/<WORKDIR>/OUAP-4314>git pull upstream master
   
 Docker
 ------
