@@ -1,5 +1,10 @@
 Scrapy
-=====
+======
+
+
+External hyperlinks, like Python_.
+.. _Python: http://www.python.org/
+
 
 - Partie 1 : Une introduction partie1_ :
 
