@@ -68,6 +68,12 @@ Une bonne pratique pour commencer à développer une Spider est de passer par l'
     
     scrapy shell 'http://leboncoin.fr'
     
+Pour les utilisateurs de windows il vous faut mettre des doubles quotes : 
+
+.. code-block:: bash
+    
+    scrapy shell "http://leboncoin.fr"
+    
 Scrapy lance un kernel Python 
 
 .. code-block:: bash
