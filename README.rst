@@ -89,40 +89,40 @@ Pour créer l'image utilisée dans le projet, on utilise le ``Dockerfile`` prés
   > docker build -t image_drio  .
   
   Sending build context to Docker daemon  40.41MB
-Step 1/6 : FROM python:3
- ---> c1e459c00dc3
-Step 2/6 : RUN mkdir /home/dev/ && mkdir /home/dev/code/
- ---> Using cache
- ---> bd6089ebb2af
-Step 3/6 : WORKDIR /home/dev/code/
- ---> Using cache
- ---> 8ff86602b0bf
-Step 4/6 : COPY . .
- ---> 2d52f96d1b3a
-Step 5/6 : RUN pip install pipenv && pipenv install --system --deploy --ignore-pipfile
- ---> Running in 78c89f488e9d
-Collecting pipenv
-  Downloading https://files.pythonhosted.org/packages/90/06/0008f53835495fbbf6e31ced9119b8f517e1271bdefcf0d04aaa9f28dbf4/pipenv-2018.10.13-py3-none-any.whl (5.2MB)
-Collecting certifi (from pipenv)
-  Downloading https://files.pythonhosted.org/packages/56/9d/1d02dd80bc4cd955f98980f28c5ee2200e1209292d5f9e9cc8d030d18655/certifi-2018.10.15-py2.py3-none-any.whl (146kB)
-Requirement already satisfied: setuptools>=36.2.1 in /usr/local/lib/python3.6/site-packages (from pipenv)
-Collecting virtualenv (from pipenv)
-  Downloading https://files.pythonhosted.org/packages/b6/30/96a02b2287098b23b875bc8c2f58071c35d2efe84f747b64d523721dc2b5/virtualenv-16.0.0-py2.py3-none-any.whl (1.9MB)
-Collecting virtualenv-clone>=0.2.5 (from pipenv)
-  Downloading https://files.pythonhosted.org/packages/16/9d/6419a4f0fe4350db7fdc01e9d22e949779b6f2d2650e4884aa8aededc5ae/virtualenv_clone-0.4.0-py2.py3-none-any.whl
-Requirement already satisfied: pip>=9.0.1 in /usr/local/lib/python3.6/site-packages (from pipenv)
-Installing collected packages: certifi, virtualenv, virtualenv-clone, pipenv
-Successfully installed certifi-2018.10.15 pipenv-2018.10.13 virtualenv-16.0.0 virtualenv-clone-0.4.0
-You are using pip version 9.0.1, however version 18.1 is available.
-You should consider upgrading via the 'pip install --upgrade pip' command.
-Installing dependencies from Pipfile.lock (20e54e)…
-Removing intermediate container 78c89f488e9d
- ---> d2a07b746e6a
-Step 6/6 : CMD [ "/bin/bash" ]
- ---> Running in e8e235efe37a
-Removing intermediate container e8e235efe37a
- ---> 2dc8cdd64ecb
-Successfully built 2dc8cdd64ecb
+  Step 1/6 : FROM python:3
+  ---> c1e459c00dc3
+  Step 2/6 : RUN mkdir /home/dev/ && mkdir /home/dev/code/
+  ---> Using cache
+  ---> bd6089ebb2af
+  Step 3/6 : WORKDIR /home/dev/code/
+  ---> Using cache
+  ---> 8ff86602b0bf
+  Step 4/6 : COPY . .
+  ---> 2d52f96d1b3a
+  Step 5/6 : RUN pip install pipenv && pipenv install --system --deploy --ignore-pipfile
+  ---> Running in 78c89f488e9d
+  Collecting pipenv
+    Downloading https://files.pythonhosted.org/packages/90/06/0008f53835495fbbf6e31ced9119b8f517e1271bdefcf0d04aaa9f28dbf4/pipenv-2018.10.13-py3-none-any.whl (5.2MB)
+  Collecting certifi (from pipenv)
+    Downloading https://files.pythonhosted.org/packages/56/9d/1d02dd80bc4cd955f98980f28c5ee2200e1209292d5f9e9cc8d030d18655/certifi-2018.10.15-py2.py3-none-any.whl (146kB)
+  Requirement already satisfied: setuptools>=36.2.1 in /usr/local/lib/python3.6/site-packages (from pipenv)
+  Collecting virtualenv (from pipenv)
+    Downloading https://files.pythonhosted.org/packages/b6/30/96a02b2287098b23b875bc8c2f58071c35d2efe84f747b64d523721dc2b5/virtualenv-16.0.0-py2.py3-none-any.whl (1.9MB)
+  Collecting virtualenv-clone>=0.2.5 (from pipenv)
+    Downloading https://files.pythonhosted.org/packages/16/9d/6419a4f0fe4350db7fdc01e9d22e949779b6f2d2650e4884aa8aededc5ae/virtualenv_clone-0.4.0-py2.py3-none-any.whl
+  Requirement already satisfied: pip>=9.0.1 in /usr/local/lib/python3.6/site-packages (from pipenv)
+  Installing collected packages: certifi, virtualenv, virtualenv-clone, pipenv
+  Successfully installed certifi-2018.10.15 pipenv-2018.10.13 virtualenv-16.0.0 virtualenv-clone-0.4.0
+  You are using pip version 9.0.1, however version 18.1 is available.
+  You should consider upgrading via the 'pip install --upgrade pip' command.
+  Installing dependencies from Pipfile.lock (20e54e)…
+  Removing intermediate container 78c89f488e9d
+  ---> d2a07b746e6a
+  Step 6/6 : CMD [ "/bin/bash" ]
+  ---> Running in e8e235efe37a
+  Removing intermediate container e8e235efe37a
+  ---> 2dc8cdd64ecb
+  Successfully built 2dc8cdd64ecb
 
 L'opération se termine correctement si ``Successfully built`` est affiché. La chaîne alphanumérique qui suit permet d'identifier l'image sans ambiguité.
 
