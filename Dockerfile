@@ -10,4 +10,4 @@ WORKDIR /home/dev/code/
 COPY . .
 RUN pip install pipenv && pipenv install --system --deploy --ignore-pipfile
 
-CMD [ "/bin/bash" ]
+CMD [ "jupyter", "notebook" ]
