@@ -18,6 +18,7 @@ flask = "==1.0.2"
 elasticsearch = "*"
 redis = "*"
 jupyter = "*"
+selenium = "*"
 
 [dev-packages]
 

@@ -185,3 +185,12 @@ Il est souvent nécessaire de récupérer plusieurs informations relatives à un
                 author_value = cit.xpath('div/div[@class="figsco__fake__col-9"]/a/text()').extract_first()
                 yield { 'text' : text_value,
                         'author' : author_value }
+
+Pour lancer l'exécution de la spider : 
+
+    $ scrapy runspider spiders/citations_churchill_spider2.py
+
+On peut aussi vouloir stocker les données extraites : 
+
+    $ scrapy runspider spiders/citations_churchill_spider2.py -o data/citation.json -t json 
+

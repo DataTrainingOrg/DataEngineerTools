@@ -2,7 +2,7 @@
 Data Engineer
 =============
 
-Cours donné dans le cadre du DRIO-4203C : Data Engineering sur la récupération de données WEB et l'intégration dans un flux de stockage basé sur MongoDB.
+Cours donné dans le cadre du DRIO-4203C : Data Engineering sur la récupération de données WEB et l'intégration dans un flux de stockage basé sur des bases de données NoSQL.
 
 Github
 ------
@@ -16,8 +16,8 @@ Pour commencer à travailler il vous faut cloner le projet dans votre répertoir
 .. code-block:: bash
 
   $:~/> cd <WORKDIR>
-  $:~/<WORKDIR> > git clone https://github.com/<GITHUB_NAME>/DRIO-4203C
-  $:~/<WORKDIR> > cd DRIO-4203C/
+  $:~/<WORKDIR> > git clone https://github.com/<GITHUB_NAME>/DataEngineerTools
+  $:~/<WORKDIR> > cd DataEngineerTools/
   $:~/<WORKDIR> > ls
   Dockerfile  Evaluation  Introduction  Mongo  Pipfile  Pipfile.lock  README.rst  Scrapy  requirements.txt
   
@@ -26,13 +26,13 @@ Si au fil du temps j'ai besoin de modifier le contenu en temps réel vous pouvez
 .. code-block:: bash
 
   $:~/> cd <WORKDIR>
-  $:~/<WORKDIR>cd DRIO-4203C/
-  $:~/<WORKDIR>/DRIO-4203C>git remote add basestream https://github.com/rcourivaud/DRIO-4203C
-  $:~/<WORKDIR>/DRIO-4203C>git fetch basestream
+  $:~/<WORKDIR>cd DataEngineerTools/
+  $:~/<WORKDIR>/DataEngineerTools>git remote add basestream https://github.com/rcourivaud/DataEngineerTools
+  $:~/<WORKDIR>/DataEngineerTools>git fetch basestream
 
 Maintenant pour mettre à jour le projet :
 
-  $:~/<WORKDIR>/DRIO-4203C>git pull basestream master
+  $:~/<WORKDIR>/DataEngineerTools>git pull basestream master
 
 Pipenv
 ------
