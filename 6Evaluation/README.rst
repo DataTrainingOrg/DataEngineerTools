@@ -15,8 +15,11 @@ Consignes
 Evaluation
 **********
 
-[] 
-[] Bonus scraping .   
-[] Bonus scraping temps réel .    
-[] Bonus Docker .   
-[] Bonus Docker-compose .   
+- [] Bonus scraping  
+
+- [] Bonus scraping temps réel  
+
+- [] Bonus Docker 
+
+- [] Bonus Docker-compose  
+
