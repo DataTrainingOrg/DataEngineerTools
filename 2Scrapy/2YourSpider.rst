@@ -832,9 +832,9 @@ On intègre maintenant cet item dans notre spider.
 Postprocessing
 --------------
 
-Si l'on se réfère au diagramme d'architecture de Scrapy, on voit qu'il est possible d'insérer des composants suplémentaires dans le flux de traitement. Ces composants s'appellent ``Pipelines``. 
+Si l'on se réfère au diagramme d'architecture de Scrapy, on voit qu'il est possible d'insérer des composants supplémentaires dans le flux de traitement. Ces composants s'appellent ``Pipelines``. 
 
-Par défaut, tous les ``Item`` générés au sein d'un projet Scrapy passent par les ``Pipelines``. Les pipelines sont utilisées la plupart du temps pour : 
+Par défaut, tous les ``Item`` générés au sein d'un projet Scrapy passent par les ``Pipelines``. Les pipelines sont utilisés la plupart du temps pour : 
 
 - Nettoyer du contenu HTML ;
 - Valider les données scrapées ; 
@@ -843,7 +843,7 @@ Par défaut, tous les ``Item`` générés au sein d'un projet Scrapy passent par
 
 Les pipelines doivent être définis dans le fichier ``pipelines.py``.
 
-Dans notre cas on peut vouloir nettoyer le champ ``title`` pour enlever les caractères supperflus.
+Dans notre cas on peut vouloir nettoyer le champ ``title`` pour enlever les caractères superflus.
 
 Nous allons alors transferer la fonction de nettoyage du code html dans une Pipeline. 
 
@@ -875,8 +875,8 @@ Pour dire au process Scrapy de faire transiter les items par ces pipelines. Il f
     }
 
     
-On peut maintenant supprimer la fonction `clean_spaces()` de l'extraction des données et laisser la Pipeline faire son travail. 
-La valeur entière définie permet de déterminer l'ordre dans lequel les pipelines vont être appelées. Ces entiers peuvent être entre compris 0 et 1000.
+On peut maintenant supprimer la fonction ``clean_spaces()`` de l'extraction des données et laisser le Pipeline faire son travail. 
+La valeur entière définie permet de déterminer l'ordre dans lequel les pipelines vont être appelés. Ces entiers peuvent être compris entre 0 et 1000.
 
 On relance notre spider : 
 
@@ -884,7 +884,7 @@ On relance notre spider :
 
     scrapy crawl lemonde -o ../data/articles.json
     
-On peut aussi utiliser les Pipelines pour stocker les données récupérées dans une base de données. Pour stocker les items dans des documents mongo. 
+On peut aussi utiliser les Pipelines pour stocker les données récupérées dans une base de données. Pour stocker les items dans des documents mongo :
 
 .. code-block:: Python
 
@@ -905,11 +905,11 @@ On peut aussi utiliser les Pipelines pour stocker les données récupérées dan
             self.db[self.collection_name].insert_one(dict(item))
             return item
             
-Ici redéfini deux autres méthodes:  ``open_spider()``et ``close_spider()``, ces méthode sont appelés comme leurs noms l'indiquent elles sont appelées lorsque la Spider est instanciée et fermée. 
+Ici on redéfinit deux autres méthodes:  ``open_spider()``et ``close_spider()``, ces méthodes sont appelées comme leur nom l'indique,  lorsque la Spider est instanciée et fermée. 
 
 Ces méthodes nous permettent d'ouvrir la connexion Mongo et de la fermer lorsque le scraping se termine. La méthode ``process_item()`` est appelé à chaque fois qu'un item passe dans le mécanisme interne de scrapy. Ici, la méthode permet d'insérer l'item en tant que document mongo. 
 
-Pour que cette pipeline soit appelé il faut l'ajouter dans les settings du projet.
+Pour que ce pipeline soit appelé il faut l'ajouter dans les settings du projet.
 
 
 .. code-block:: Python
@@ -919,23 +919,23 @@ Pour que cette pipeline soit appelé il faut l'ajouter dans les settings du proj
         'newscrawler.pipelines.MongoPipeline': 300
     }
     
-La pipeline est ajoutée à la fin du process pour profiter des deux précédantes.
+Le pipeline est ajoutée à la fin du process pour profiter des deux précédents.
     
 Settings
 --------
 
-Scrapy permet de gérer le comportement des spiders avec certains paramètres. Comme expliqué dans le premier cours, il est important de suivre des règles en respectant les différents site. Il existe énormément de paramètres mais nous allons (dans le cadre de ce cours) aborder les plus utilisés : 
+Scrapy permet de gérer le comportement des spiders avec certains paramètres. Comme expliqué dans le premier cours, il est important de suivre des règles en respectant la structure des différents sites. Il existe énormément de paramètres mais nous allons (dans le cadre de ce cours) aborder les plus utilisés : 
 
-- DOWNLOAD_DELAY : Le temps de téléchrgement entre chaque requête sur le même domaine ;
+- DOWNLOAD_DELAY : Le temps de téléchargement entre chaque requête sur le même domaine ;
 - CONCURRENT_REQUESTS_PER_DOMAIN : Nombre de requêtes simultanées par domaine ;
 - CONCURRENT_REQUESTS_PER_IP : Nombre de requêtes simultanées par IP ;
-- DEFAULT_REQUEST_HEADERS : Headers HTTP utilisé pour les requêtes ;
+- DEFAULT_REQUEST_HEADERS : Headers HTTP utilisés pour les requêtes ;
 - ROBOTSTXT_OBEY : Scrapy récupère le robots.txt et adapte le scraping en fonction des règles trouvées ;
 - USER_AGENT : UserAgent utilisé pour faire les requêtes ;
 - BOT_NAME : Nom du bot annoncé lors des requêtes
 - HTTPCACHE_ENABLED : Utilisation du cache HTTP, utile lors du parcours multiple de la même page.
 
-Le fichiers settings.py permet de définir les paramètres globaux d'un projet. Si votre projet contient un grand nombre de spiders il peut être intéressant d'avoir des paramètres distincts pour chaque spider. Un moyen simple est d'ajouter un attribut ``custom_settings`` à votre spider :
+Le fichiers ``settings.py`` permet de définir les paramètres globaux d'un projet. Si votre projet contient un grand nombre de spiders, il peut être intéressant d'avoir des paramètres distincts pour chaque spider. Un moyen simple est d'ajouter un attribut ``custom_settings`` à votre spider :
 
 .. code-block:: Python
 
