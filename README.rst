@@ -159,7 +159,7 @@ Pour revenir un peu sur la commande ``docker run -it --name conteneur_drio -v `p
 - docker run : permet de lancer un conteneur à partir d'une image (ici image_drio)
 - -it permet de passer en mode intéractif, ie: le terminal du conteneur prend la main sur le terminal de votre machine
 - --name conteneur_drio donne un petit nom au conteneur pour pouvoir le trouver plus facilement 
-- -v `pwd`:/home/dev/code/ permet de faire mapping entre le dossier à l'intérieur du conteneur et le dossier de votre machine, ie: tous les fichiers modifiés dans votre conteneur ou sur votre machine se répercutera respectivement sur votre machine et dans votre conteneur.
+- -v `pwd`:/home/dev/code/ permet de faire mapping entre le dossier à l'intérieur du conteneur et le dossier de votre machine, ie: tous les modifications de fichier dans votre conteneur ou sur votre machine se répercuteront respectivement sur votre machine et dans votre conteneur.
 - image_drio est le nom de l'image à utiliser pour créer votre conteneur
   
 MongoDB
@@ -174,7 +174,7 @@ Dans ce cours nous allons aussi utiliser MongoDB. Normalement il est installé p
 Un nouveau paramètre dans cette commande: 
 - -p permet de mapper les ports du conteneur avec le port de la machine qui l'heberge. 
 
-Docker par défault créé des machines complètement indépendantes et fermées. C'est pour cela qu'il faut lui spécifier explicitement quand on veut ouvrir un dossier ou un port. 
+Docker par défault crée des machines complètement indépendantes et fermées. C'est pour cela qu'il faut lui spécifier explicitement quand on veut ouvrir un dossier ou un port. 
    
 Consignes
 ---------
