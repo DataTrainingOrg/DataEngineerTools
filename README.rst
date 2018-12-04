@@ -175,15 +175,38 @@ Un nouveau paramètre dans cette commande:
 - -p permet de mapper les ports du conteneur avec le port de la machine qui l'heberge. 
 
 Docker par défault crée des machines complètement indépendantes et fermées. C'est pour cela qu'il faut lui spécifier explicitement quand on veut ouvrir un dossier ou un port. 
+
+Redis
+.....
+
+.. code-block:: bash
+
+  docker run -d --name redis -p 6379:6379 redis
+  
+  
+ElasticSearch
+.....
+
+.. code-block:: bash
+
+  docker run -d -p 9200:9200 -p 9300:9300 --name elastic -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.5.1
+
+
+Docker Compose
+..............
+
+Pour faciliter les développments, un fichier docker-compose est disponible. Il permet d'instancier toutes les bases de données et l'image principale. 
+
+Pour le lancer 
+
+.. code-block:: bash
+
+  docker-compose up -d
    
 Consignes
 ---------
   
-L'ensemble des exercices présents dans les différents cours doivent être placés dans des fichiers Python séparés (et commentés) dans le dossier ``Evaluation``. 
-
-Les fichiers Python doivent être nommés de la façon suivante : ``<PARTIE>_Exercice<NO_EXERCICE>.py`` 
-
-Par exemple : ``Introduction_Exercice2.py`` 
+L'ensemble des exercices présents dans les différents cours doivent être complétés directement dans les notebooks et mis à jours sur vos comptes Github respectifs. 
 
 Le projet doit être placé dans le dossier ``Evaluation/Projet`` avec la totalité du code de l'application. Vous devez aussi remplir les fichiers README.rst correspondants, ce qui permet de faire une documentation élémentaire.
 
