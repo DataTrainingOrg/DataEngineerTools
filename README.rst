@@ -54,6 +54,13 @@ Pipenv est développé par @kennethreitz, un pilier dans la communauté de Pytho
 Pour faire simple, Pipenv permet de créer un environnment virtuel propre pour votre projet. Toutes les librairies sont listées dans le fichier `Pipfile`.
 Le Pipfile.lock référence les versions d'installation de toutes les librairies, un hash est aussi stocké permettant de vérifier la cohérence avec les librairies déclarées et celles installées. 
 
+Pour installer pipenv : 
+
+.. code-block:: bash
+
+  > pipenv install
+
+
 Pour installer l'environnment : 
 
 .. code-block:: bash
