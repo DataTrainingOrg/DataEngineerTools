@@ -176,6 +176,22 @@ Un nouveau paramètre dans cette commande:
 
 Docker par défault crée des machines complètement indépendantes et fermées. C'est pour cela qu'il faut lui spécifier explicitement quand on veut ouvrir un dossier ou un port. 
 
+Redis
+.....
+
+.. code-block:: bash
+
+  docker run -d --name redis -p 6379:6379 redis
+  
+  
+ElasticSearch
+.....
+
+.. code-block:: bash
+
+  docker run -d -p 9200:9200 -p 9300:9300 --name elastic -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.5.1
+
+
 Docker Compose
 ..............
 
