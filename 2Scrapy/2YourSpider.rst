@@ -30,7 +30,7 @@ Cette commande va créer un dossier ``monprojet`` contenant les éléments suiva
 Votre première Spider
 =====================
 
-Une Spider est une classe Scrapy qui permet de mettre en place toute l'architecture complexe vu dans l'introduction. Pour définir une spider, il vous faut hériter de la classe `scrapy.Spider`. La seule chose à faire est de définir la première requête à effectuer et comment suivre les liens. La Spider s'arrêtera lorsqu'elle aura parcouru tous les liens qu'on lui a demandé de suivre. 
+Une Spider est une classe Scrapy qui permet de mettre en place toute l'architecture complexe vue dans l'introduction. Pour définir une spider, il vous faut hériter de la classe `scrapy.Spider`. La seule chose à faire est de définir la première requête à effectuer et comment suivre les liens. La Spider s'arrêtera lorsqu'elle aura parcouru tous les liens qu'on lui a demandé de suivre. 
 
 Pour créer une Spider on utilise la syntaxe: 
 
@@ -45,7 +45,7 @@ Par exemple,
     cd newscrawler
     scrapy genspider lemonde lemonde.fr
     
-Cette commande permet de créer une spider appelée ``lemonde`` pour scraper le domaine ``lemonde.fr``. Cela créé le fichier Python ``spiders/lemonde.py`` suivant :
+Cette commande permet de créer une spider appelée ``lemonde`` pour scraper le domaine ``lemonde.fr``. Cela crée le fichier Python ``spiders/lemonde.py`` suivant :
 
 .. code-block:: Python
 
@@ -162,7 +162,7 @@ Pour récupérer le titre d'une page :
     In [1]: response.css('title')
     Out[1]: [<Selector xpath='descendant-or-self::title' data='<title>Le Monde.fr - Actualités et Infos'>]
     
-On récupère une liste de sélecteurs correspondant à la requête ``css`` appelée. La requête précédante était unique, d'autre requêtes moins restrictives permettent de récupérer plusieurs résultats. 
+On récupère une liste de sélecteurs correspondant à la requête ``css`` appelée. La requête précédente était unique, d'autres requêtes moins restrictives permettent de récupérer plusieurs résultats. 
 Par exemple pour rechercher l'ensemble des liens présents sur la page, on va rechercher les balises HTML ``<a></a>``
 
 .. code-block:: Python
@@ -180,7 +180,7 @@ Par exemple pour rechercher l'ensemble des liens présents sur la page, on va re
     <Selector xpath='descendant-or-self::a' data='<a href="/carlos-ghosn/" data-suggestion'>,
     <Selector xpath='descendant-or-self::a' data='<a href="/implant-files/" data-suggestio'>]
     
-Pour récupérer le texte contenu dans les balises, on passe le paramêtre ``<TAG>::text``. Par exemple : 
+Pour récupérer le texte contenu dans les balises, on passe le paramètre ``<TAG>::text``. Par exemple : 
     
 .. code-block:: Python
 
@@ -292,7 +292,7 @@ A partir de cette structure HTML on peut construire la requête suivante pour r�
     In [19]: response.css("#nav-markup")
     Out[19]: [<Selector xpath="descendant-or-self::*[@id = 'nav-markup']" data='<ul id="nav-markup"> <li class="Nav__ite'>]
 
-Ensuite pour récupérer les différentes catégories. 
+Ensuite pour récupérer les différentes catégories : 
 
 .. code-block:: Python
 
@@ -459,7 +459,7 @@ Par exemple, pour que la spider continue dans les liens des différentes région
             }
 
             
-On veut ensuite *entrer* dans les liens des différentes sous-catégories pour récupérer les articles. Pour cela, nous créons une méthode ``parse_category()`` prend en argument un objet ``Response`` qui sera la réponse correspondant aux liens des regions. On peut comme ceci traverser un site en définissant des méthodes différentes en fonction du type de contenu.
+On veut ensuite *entrer* dans les liens des différentes sous-catégories pour récupérer les articles. Pour cela, nous créons une méthode ``parse_category()`` prend en argument un objet ``Response`` qui sera la réponse correspondant aux liens des régions. On peut comme ceci traverser un site en définissant des méthodes différentes en fonction du type de contenu.
 
 Si la structure du site est plus profonde, on peut empiler autant de couches que souhaité.
             
@@ -471,7 +471,7 @@ Par exemple pour la page ``https://www.lemonde.fr/international/`` :
 
     scrapy shell 'https://www.lemonde.fr/international/'
     
-Le fil des articles est stocké dans une balise avec la classe `class=fleuve` 
+Le fil des articles est stocké dans une balise avec la classe `class=fleuve`.
 
 .. code-block:: Python
 
@@ -591,7 +591,7 @@ Par exemple pour récupérer le titre et le prix
 Persistence des données
 -----------------------
     
-Pour pouvoir stocker les informations que l'on récupère en parcourant un site il faut pouvoir les stocker. On utilise soit de simples dictionnaires Python, ou mieux des ``scrapy.Item`` qui sont des dictionnaire améliorés. 
+Pour pouvoir stocker les informations que l'on récupère en parcourant un site il faut pouvoir les stocker. On utilise soit de simples dictionnaires Python, ou mieux des ``scrapy.Item`` qui sont des dictionnaires améliorés. 
 
 Nous allons voir les deux façons de faire. On peut réécrire la méthode ``parse_category()`` pour lui faire retourner un dictionnaire correspondant à chaque offre rencontrée.
 
