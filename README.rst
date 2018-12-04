@@ -58,7 +58,7 @@ Pour installer pipenv :
 
 .. code-block:: bash
 
-  > pipenv install
+  > pip install pipenv
 
 
 Pour installer l'environnment : 
