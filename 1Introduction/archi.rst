@@ -3,14 +3,14 @@ Architecture
 ============
 
 Il est important en développement logiciel de réfléchir directement à une infrastructure solide et scalable.
-Cela demande un coup de développement plus important mais un coup de maintenance beaucoup plus restreint.
+Cela demande un coût de développement plus important mais un coût de maintenance beaucoup plus restreint.
 
-Plusieurs technologies peuvent être utilisées en fonction des besoins et des affinités de chacun..
+Plusieurs technologies peuvent être utilisées en fonction des besoins et des affinités de chacun.
 
 Récupération des données
 ------------------------
 Pour la récupération des données n'importe quelle technologie peut être utilisée. Il suffit de pouvoir faire des requêtes 
-HTTP et de pouvoir le parser. Tous les langages de programmation possèdent des API pour faire ces transformations.
+HTTP et de pouvoir parser le résultat. Tous les langages de programmation possèdent des API pour faire ces transformations.
 En python de nombreuses librairies ont été développée dans ce but et nous en aborderons plusieurs dans ce cours :
 
 * Requests (+ requests_cache qui fait gagner un temps précieux lors des développements)
@@ -21,9 +21,9 @@ En python de nombreuses librairies ont été développée dans ce but et nous en
 Stockage
 --------
 
-Pour le stockage un grand nombre de bases de données sont disponibles sur le marché. Chacune a sa particularité, il est 
-souhaitable de bien définir les besoins et le format des données pour utiliser la base la plus adaptée à ses besoins.
-Dans le contexte du web, les bases noSQL sont très recherchées et demandées du à leur structure très flexible et optimisée
+Pour le stockage un grand nombre de bases de données sont disponibles sur le marché. Chacune ayant sa particularité, il est 
+souhaitable de bien définir les besoins et le format des données pour utiliser la base la plus adaptée à son environnement.
+Dans le contexte du web, les bases noSQL sont très recherchées et demandées, à cause de leur structure très flexible et optimisée
 pour le stockage de données hétérogènes.
 Quelques examples de bases de données : 
 
@@ -37,10 +37,10 @@ très efficacement dans des données textuelles, numériques et géolocalisées.
 
 Scalabilité
 -----------
-Tout dépend des besoins dont vous avez besoin mais souvent l'extraction sur une seule machine et un seul processus 
-s'averera trop lente et peu efficace. Il existe des outils permettant de distribuer la charge de calcul.
-Pour se faire, une queue de messages est créée qui permet d'envoyer les instructions à différents programmes devant les
-éxécuter. 
+Tout dépend de ce dont vous avez besoin mais souvent l'extraction sur une seule machine et un seul processus 
+s'avérera trop lente et peu efficace. Il existe des outils permettant de distribuer la charge de calcul.
+Pour ce faire, une queue de messages est créée, ce qui permet d'envoyer les instructions à différents programmes devant les
+exécuter. 
 Les deux les plus utilisés sont :
 
 * RabbitMQ : développé initialement pour l'internet des objets et l'échange de données entre objets connectés.
