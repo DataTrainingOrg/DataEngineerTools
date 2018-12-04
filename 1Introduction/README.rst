@@ -99,3 +99,10 @@ Deux onglets sont importants dans notre cas :
 - ``Element`` : la partie correspondant au code HTML, elle permet de visualiser la structure et répérer les pointeurs des balises qui encapsulent nos données. 
 - ``Network`` : cette partie permet d'analyser tous les appels réseaux réalisés depuis le front. C'est ici que les appels de 
 récupération de données sont effectués. 
+
+
+# Suite
+
+Ouvrez un navigateur et allez à l'adresse http://localhost:8888
+
+Allez directement voir le notebook `Part1_Simple_Web_Scraping.ipynb` quand vous avez terminé vous pouvez passer à la partie 2 `Part2_Web_Scraping_WebDriver.ipynb`

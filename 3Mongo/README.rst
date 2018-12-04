@@ -672,3 +672,10 @@ Maintenant pour récupérer les résultats du Map->Reduce :
         function(key,values){return Array.sum(values)},
         {query :{gender:"Male"}, out:"sumAge"}
         )
+
+
+# Suite
+
+Ouvrez un navigateur et allez à l'adresse http://localhost:8888
+
+Allez voir le notebook `Tutoriel.ipynb` quand vous avez terminé vous pouvez passer aux exercices `ExerciceYoutube.ipynb` & `ExerciceKickStarter.ipynb`

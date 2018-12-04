@@ -1,7 +1,5 @@
-Les Projets
-===========
-Introduction
-============
+Redis
+=====
 
 Ouvrez un navigateur et allez à l'adresse http://localhost:8888
 
