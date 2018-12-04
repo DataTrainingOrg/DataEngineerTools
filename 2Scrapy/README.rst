@@ -43,10 +43,10 @@ Architecture
 
 L'ensemble du processus est contrôlé par l'**engine** (les termes anglo saxons ont été retenus pour un meilleur référencement dans la `documentation officielle <https://docs.scrapy.org/en/latest/>`_).
 
-Le framework est articulé avec plusieurs composants qui gère chacun un rôle différent. Nous allons les détailler.
+Le framework est articulé avec plusieurs composants qui gèrent chacun un rôle différent. Nous allons les détailler.
 
 - Les **Spiders** :  permettent de naviguer sur un site et de référencer les règles d'extraction de la donnée.
-- Les **Pipelines** : font le lien entre la donnée brutes et des objets structurés
+- Les **Pipelines** : font le lien entre la donnée brute et des objets structurés
 - Les **Middlewares** : permettent d'effectuer des transformations sur les objets ou sur les requêtes exécutées par l'engine.
 - Le **Scheduler** : gère l'ordre et le timing des requêtes effectuées. 
 
