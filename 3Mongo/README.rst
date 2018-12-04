@@ -5,9 +5,9 @@ MongoDB
 Introduction
 ------------
 
-MongoDB est une base de données open source codée en C++ basée sur un concept de stockage sous la forme de documents au format JSON.
+MongoDB est une base de données open source (codée en C++) basée sur un concept de stockage sous la forme de documents au format JSON.
 Le grand avantage de ce système est l'optimisation de la mémoire. Dans une base relationelle, chaque colonne doit être définie au préalable avec une empreinte mémoire et un type de donnée.
-Dans une base MongoDB si le champ n'est pas présent, il n'apparait pas dans un document et n'impacte pas la mémoire, alors qu'en SQL la place mémoire est utilisée même si le champ est absent, pour spécifier que la valeur est null.
+Dans une base MongoDB, si le champ n'est pas présent, il n'apparait pas dans un document et n'impacte pas la mémoire, alors qu'en SQL la place mémoire est utilisée même si le champ est absent, pour spécifier que la valeur est ``null``.
 
 Les avantages
 ^^^^^^^^^^^^^
@@ -92,6 +92,7 @@ Sur une Debian 9 Stretch:
 - Ou en instanciant un conteneur Docker. L'avantage de Docker est qu'il n'installe aucune dépendance sur votre machine et laisse son environnement propre. Lien vers le tutorial : https://hub.docker.com/_/mongo/
 
 Démarrage du service
+^^^^^^^^^^^^^^^^^^^^
 
 Vérifier que le service Mongo est démarré
 
@@ -118,7 +119,7 @@ Sinon, le démarrer avec
 
 Connexion
 ---------
-Pour se connecter à une base Mongo deux solutions sont possibles. En ligne de commande ou via un gestionnaire de BDD comme Robo3T https://robomongo.org/ . Dans les deux cas, la syntaxe Mongo est utilisée pour effectuer des requêtes. L'avantage de Robo3T est qu'il possède une interface permettant de visualiser très simplement les données.
+Pour se connecter à une base Mongo, deux solutions sont possibles. En ligne de commande ou via un gestionnaire de BDD comme Robo3T https://robomongo.org/ . Dans les deux cas, la syntaxe Mongo est utilisée pour effectuer des requêtes. L'avantage de Robo3T est qu'il possède une interface permettant de visualiser très simplement les données.
 
 Dans un terminal utilisateur standard, la commande ``mongo`` permet d'obtenir un shell interactif:
 
@@ -135,7 +136,7 @@ Création d'un modèle de données
 -------------------------------
 
 La création d'un modèle de données clair et adapté est une tâche importante et primordiale. 
-Ce modèle de données doit être réfléchi à court et long terme et doit prendre en compte la capacité de stockage et les besoins métiers.
+Ce modèle de données doit être réfléchi à court et long terme, et doit prendre en compte la capacité de stockage et les besoins métiers.
 
 
 Database
@@ -286,7 +287,7 @@ Afin de récupérer les documents stockés dans une collection, des fonctions de
 
     db.<YOUR_COLLECTION_NAME>.find().pretty()
     
-Il est possible de ne récupérer qu'un seul élément. Si aucun argument n'est précisé il récupère le premier document.
+Il est possible de ne récupérer qu'un seul élément. Si aucun argument n'est précisé, il récupère le premier document.
 
 .. code-block:: bash
 
@@ -300,7 +301,7 @@ Il est possible de passer des arguments à la fonction find() ou findOne().
     
 Les différentes opérations mathématiques sont implémentées. 
 
-- Egalité :  `{key:value}` Correspondance clé valeur entre le champ et le la requête. 
+- Egalité :  `{key:value}` Correspondance clé valeur entre le champ et la requête. 
 - Différence :  `{key: {$ne:value}}`
 - Plus (Grand|Petit) que :  les opérateurs sont `$lt` (lower than) ; `$lte` (lower than equals) ; `$gt` (greater than) ; `$gte` (greater than equals) : `{key: {<OPERATEUR>:value}}`.
 
@@ -324,7 +325,7 @@ Les objets Mongo peuvent être assez complexes et les requêtes doivent pouvoir 
 
 - Les requêtes sur les sous-objets:
 
-Pour faire une requête sur un objet complet il faut redéfinir l'objet dans son intégralité.
+Pour faire une requête sur un objet complet, il faut redéfinir l'objet dans son intégralité.
 
 .. code-block:: bash
 
@@ -360,7 +361,7 @@ On peut vouloir maintenant récupérer tous les documents comptenant "Mickey" da
 
     db.<YOUR_COLLECTION_NAME>.find( { nicknames: "Mickey" } )
     
-Comme on vient de le voir, une requête sur un champ d'un liste se construit de la même manière qu'une requête sur un champ 'basique'.
+Comme on vient de le voir, une requête sur le champ d'une liste se construit de la même manière qu'une requête sur un champ 'basique'.
 
 La syntaxe générique d'une requête Mongo est la suivante.
 
@@ -469,7 +470,7 @@ Les performances ne sont visibles que pour des collections de taille importante.
 Indexation composée
 '''''''''''''''''''
 
-L'indexation composée permet de créér un index basé sur deux champs différents. L'ordre des champs spécifié dans la création d'un index est important.On peut trier dans l'ordre croissant le premier champ et dans l'ordre décroissant le deuxième champ. 
+L'indexation composée permet de créer un index basé sur deux champs différents. L'ordre des champs spécifié dans la création d'un index est important.On peut trier dans l'ordre croissant le premier champ et dans l'ordre décroissant le deuxième champ. 
 
 .. code-block:: bash
 
@@ -493,7 +494,7 @@ Dans ce cours, on se contentera de faire de l'indexation textuelle.
 Tous ces mécanismes d'indexation permettent d'accélérer les performances des requêtes. Mais ils peuvent avoir des effets négatifs: 
 
 - Sur l'occupation mémoire : Chaque index doit avoir un minimum de 8 kB et peut prendre beaucoup de place sur le disque et dans la mémoire RAM.
-- Sur le temps d'éxécution : les opérations d'insertions et d'écritures peuvent être longues puisque mongo doit insérer chaque nouveau document dans l'index en plus de l'insertion dans la collection.
+- Sur le temps d'exécution : les opérations d'insertion et d'écriture peuvent être longues puisque Mongo doit insérer chaque nouveau document dans l'index en plus de l'insertion dans la collection.
 
 Exemple : 
 
@@ -601,14 +602,14 @@ Pour supprimer un seul document (ou le premier si la condition n'est pas assez r
 
 Quelques choses à savoir : 
 
-- La méthode `deleteMany()` applique une fonction à tous les documents. Toutes les fonctions en Mongo sont atomiques ce qui veut dire qu'elles s'appliquent à chaque document indépendament les uns des autres.
+- La méthode `deleteMany()` applique une fonction à tous les documents. Toutes les fonctions en Mongo sont atomiques ce qui veut dire qu'elles s'appliquent à chaque document indépendamment les uns des autres.
 - La méthode `delete()` ne supprime pas les index, même si on supprime tous les documents de la collection.
 
 
 Aggregation
 ***********
 
-Une aggrégations permet de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d'effectuer une opération sur l'ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments `GROUP BY`.
+Une aggrégation permet de faire des opérations complexes sur des groupes de documents directement dans la base. Elle se charge de grouper les documents entre eux suivant la requête et se charge d'effectuer une opération sur l'ensemble des documents de chacun des groupes. On peut retrouver les mêmes opérations en SQL avec les arguments `GROUP BY`.
 
 La syntaxe est très similaire à toutes les autres fonctions Mongo mais la requête va être plus complexe. 
 
@@ -660,8 +661,6 @@ Il est aussi possible d'intégrer directement du code JavaScript dans les requê
         {query :{gender:"Male"}, out:"sumAge"}
         )
         
-        
- 
 On voit le nombre de d'entrées pour le MAP et le résultat du REDUCE.
 Maintenant pour récupérer les résultats du Map->Reduce : 
 
@@ -678,4 +677,4 @@ Maintenant pour récupérer les résultats du Map->Reduce :
 
 Ouvrez un navigateur et allez à l'adresse http://localhost:8888
 
-Allez voir le notebook `Tutoriel.ipynb` quand vous avez terminé vous pouvez passer aux exercices `ExerciceYoutube.ipynb` & `ExerciceKickStarter.ipynb`
+Allez voir le notebook `Tutoriel.ipynb`. Quand vous avez terminé vous pouvez passer aux exercices `ExerciceYoutube.ipynb` & `ExerciceKickStarter.ipynb`
