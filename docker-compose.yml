@@ -37,9 +37,10 @@ services:
         - 27018:27017
   notebook:
     build: .
+    network_mode: host
     ports:
      - "8888:8888"
-    command: ["pipenv", "run", "jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root"]
+    command: ["pipenv", "run", "jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
     volumes:
       - ./:/home/dev/code/
   
