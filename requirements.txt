@@ -1,9 +1,9 @@
 beautifulsoup4==4.6.0
-Flask==0.12.2
+Flask==1.1.1
 Flask-Cors==3.0.3
 Flask-WTF==0.14.2
 gunicorn==19.7.1
-Jinja2==2.9.6
+Jinja2==2.10.3
 lxml==4.1.0
 matplotlib==2.1.0
 pandas==0.20.3
