@@ -84,7 +84,7 @@ Docker
 
 Afin de pouvoir travailler dans les meilleurs conditions, nous allons travailler à partir de la technologie Docker. Docker est une technologie de conteneurs utilisés par les DevOps pour permettre un déploiement plus simple et plus rapide. Par rapport à des machines virtuelles, Docker est plus léger.
 
-.. image:: Introduction/images/docker-vm-container.png
+.. image:: 1Introduction/images/docker-vm-container.png
 
 Créer une image
 ...............
