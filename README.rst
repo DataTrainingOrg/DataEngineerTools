@@ -91,6 +91,35 @@ Créer une image
 
 Pour créer l'image utilisée dans le projet, on utilise le ``Dockerfile`` présent dans le répertoire (jeter un oeil à ce fichier pour comprendre les composants utilisés)  : 
 
+
+.. code-block::
+
+  # Image de laquelle on part
+  # Tous les packages présents dans cette images seront installés dans la nouvelle créée
+  FROM python:3.6
+
+  # On lance des commandes directement dans le conteneur
+  # Ici pour créer des dossiers
+  RUN mkdir /home/dev/ && mkdir /home/dev/code/
+
+  # On place le répertoire de travail du conteneur
+  WORKDIR /home/dev/code/
+
+  # Proxies de l'esiee
+  ENV http_proxy http://147.215.1.189:3128 
+  ENV https_proxy http://147.215.1.189:3128
+
+  # On copie l'ensemble des fichiers directement dans le dossier de travail du conteneur
+  COPY . .
+  # On install les dépendances via pipenv
+  RUN  pip install --upgrade pip &&  pip install pipenv && pipenv install --skip-lock
+
+  # On lance un notebook jupyter dans l'environnment de pipenv
+  CMD ["pipenv", "run",  "jupyter", "notebook" ]
+  #CMD ["/bin/bash"]
+
+
+
 .. code-block:: bash
 
   > docker build -t image_drio  .
@@ -140,7 +169,7 @@ A partir de cette image, on peut créer une instance (conteneur) dans lequel on 
 
 .. code-block:: bash
 
-  > docker run -it --name conteneur_drio -v `pwd`:/home/dev/code/ image_drio
+  > docker run -it --name conteneur_drio -v `pwd`:/home/dev/code/ -p 8888:8888 image_drio
   
   root@a74861d489f5:/home/dev/code# python
   Python 3.6.4 (default, Dec 21 2017, 01:35:12) 
@@ -197,11 +226,14 @@ Docker Compose
 
 Pour faciliter les développments, un fichier docker-compose est disponible. Il permet d'instancier toutes les bases de données et l'image principale. 
 
+
 Pour le lancer 
 
 .. code-block:: bash
 
   docker-compose up -d
+
+Vous voyez toutes les machines se lancer. Allez voir dans le fichier `docker-compose.yml` 
    
 Consignes
 ---------
