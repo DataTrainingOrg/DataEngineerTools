@@ -58,6 +58,7 @@ Scrapy = "*"
 Twisted = "*"
 Werkzeug = "*"
 WTForms = "*"
+jupyter = "*"
 
 [dev-packages]
 
