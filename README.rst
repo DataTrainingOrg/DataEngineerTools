@@ -41,10 +41,12 @@ Maintenant pour mettre à jour le projet :
 
 Consignes
 ---------
-  
+L'unité est composée de 6 parties, les 5 premières sont des notebook guidés vous permettant d'acquérir les compétences
+nécessaires à la bonne réalisation de votre projet de fin d'unité.
+
 L'ensemble des exercices présents dans les différents cours doivent être complétés directement dans les notebooks et mis à jours sur vos comptes Github respectifs. 
 
-Le projet doit être placé dans le dossier ``Evaluation/Projet`` avec la totalité du code de l'application. Vous devez aussi remplir les fichiers README.rst correspondants, ce qui permet de faire une documentation élémentaire.
+Le projet doit être placé dans le dossier ``Evaluation/Projet`` avec la totalité du code de l'application. Vous devez aussi remplir les fichiers README.md correspondants, ce qui permet de faire une documentation élémentaire.
 
 Il est conseillé de travailler en local lors de chaque séance, puis de pusher son travail en fin de séance sur le repository Github.
 
