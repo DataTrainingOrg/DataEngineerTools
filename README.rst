@@ -39,51 +39,6 @@ Maintenant pour mettre à jour le projet :
 
   $:~/<WORKDIR>/DataEngineerTools>git pull basestream master
 
-Pipenv
-------
-
-Vous pouvez voir qu'il y a trois fichiers disponibles dans le dossier de travail :
-- requirements.txt
-- Pipfile
-- Pipfile.lock
-
-Le fichier requirements.txt permet de lister toutes les librairies dont vous aurez besoin pour lancer et exécuter votre projet. Cette méthode est assez ancienne, vous pouvez cependant utiliser : 
-
-.. code-block:: bash
-
-  > pip install -r requirements.txt
-
-
-Pipenv est développé par @kennethreitz, un pilier dans la communauté de Python, vous pouvez accéder à la documentation de pipenv https://pipenv.readthedocs.io/en/latest/
-
-Pour faire simple, Pipenv permet de créer un environnment virtuel propre pour votre projet. Toutes les librairies sont listées dans le fichier `Pipfile`.
-Le Pipfile.lock référence les versions d'installation de toutes les librairies, un hash est aussi stocké permettant de vérifier la cohérence avec les librairies déclarées et celles installées. 
-
-Pour installer pipenv : 
-
-.. code-block:: bash
-
-  > pip install pipenv
-
-
-Pour installer l'environnment : 
-
-.. code-block:: bash
-
-  > pipenv install
-
-Vous pouvez ensuite lancer un terminal à l'interieur de cet environnment:
-
-.. code-block:: bash
-
-  > pipenv shell
-
-Si vous voulez installer de nouvelles librairies dont vous avez besoin pour votre projet : 
-
-.. code-block:: bash
-
-  > pipenv install <votre_librairie>
-
 Consignes
 ---------
   

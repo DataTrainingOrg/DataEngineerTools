@@ -15,15 +15,15 @@ différentes pour pouvoir en tirer le maximum d'informations et mettre en place 
 Présentation du cours
 ---------------------
 
-Le but de ce cours est de présenter les tenants et les aboutissants d'une infrastucture de récupération de données.
+Le but de ce cours est de présenter les tenants et les aboutissants d'une infrastructure de récupération de données.
 
-Contexte de Qwant
+L'exemple de Qwant
 ^^^^^^^^^^^^^^^^^
-Qwant est un moteur de recherche européen basé sur un concept fort de vie privée. Nous ne gardons pas les informations
+Qwant est un moteur de recherche européen basé sur un concept fort de vie privée. Il ne garde pas les informations
 utilisateurs. 
 Pour avoir quelques chiffres: 
-- Nous avons actuellement un ferme de 750 crawlers qui permettent de récupérer environ 1500 pages secondes soit 5,4M de pages par heure.
-- Le web francais est estimé à 150M de pages ce qui représente environ 2 Peta Bytes de données duppliquées.
+- Ils ont actuellement une ferme de 750 crawlers qui permettent de récupérer environ 1500 pages secondes soit 5,4M de pages par heure.
+- Le web francais est estimé à 150M de pages ce qui représente environ 2 Peta Bytes de données dupliquées.
 
 Quelques mots clés et définitions
 ---------------------------------
@@ -43,13 +43,14 @@ vouée à changer plus ou moins rapidement selon les sites.
 Les bonnes pratiques
 --------------------
 
-On peut comprendre très rapidemement si les sites et les webmasters ont envie qu'on puisse accéder à leurs données. Plusieurs manières permettent de montrer ou d'expliciter les comportements non recommandés sur un site. 
+On peut comprendre rapidement que les sites et les webmasters n'ont pas très envie qu'on puisse accéder à leurs données.
+Plusieurs manières permettent de montrer ou d'expliciter les comportements non recommandés sur un site.
 
-Aujourd'hui certains sites utilisent des méthodes pour empecher la récupération massive de leurs données : 
+Aujourd'hui certains sites utilisent des méthodes pour empêcher la récupération massive de leurs données :
 
 - Génération à la volée de code HTML et CSS. Le nom des balises HTML est générée de facon à ce qu'on ne puisse pas se baser sur celles-ci. 
 - Black list d'adresses IP détectées.
-- Génération de contenu via du JavaScript
+- Génération de contenu via du JavaScript (React, technologies Server Side Rendering)
 - Algorithmes de détection de comportements non-humains (vitesse de navigation, scroll, click,  etc)
 
 Plusieurs méthodes sont possibles pour éviter ou contourner ces limitations mais elles ne seront pas abordées dans ce cours.
@@ -68,8 +69,12 @@ bonne pratique.
 
 Site Map ou Site Index
 ^^^^^^^^^^^^^^^^^^^^^^
-Le site map ou le site index (plan du site) sont des pages HTML générées pour améliorer le SEO d'une page. Le SEO (Search Engine Optimisation) permet d'optimiser le référencement sur les moteurs de recherche. La plupart des gros sites ont des équipes SEO dédiées qui permettent aux sites d'être présents dans les premières positions lors des recherches associées. 
-Ces pages donnent accès à l'arbre de génération ou de structure du site. La plupart du temps elles permettent l'exploration massive et facile des sites pour les robots de crawl des moteurs de recherche.
+Le site map ou le site index (plan du site) sont des pages HTML générées pour améliorer le SEO d'une page.
+Le SEO (Search Engine Optimisation) permet d'optimiser le référencement sur les moteurs de recherche.
+La plupart des gros sites ont des équipes SEO dédiées qui permettent aux sites d'être présents dans les premières
+positions lors des recherches associées.
+Ces pages donnent accès à l'arbre de génération ou de structure du site. La plupart du temps elles permettent
+l'exploration massive et facile des sites pour les robots de crawl des moteurs de recherche.
 
 Surcharge du serveur
 ^^^^^^^^^^^^^^^^^^^^
@@ -84,23 +89,26 @@ Introduction au scraping
 Il existe deux grandes pratiques pour scraper un site efficacement. Nous allons aborder les deux :  
 
 - Récupération et parsing du code HTML. Cette solution nécessite une compréhension du code et des notions basiques de DOM et architecture HTML.
-- Récupération des appels API aux serveurs permettant de récupérer les informations directement à la source, la plupart du temps au format JSON. Cette deuxième solution est la plus efficace et facile mais les appels d'API sont souvent cachés ou bloqués. 
+- Récupération des appels API aux serveurs permettant de récupérer les informations directement à la source, la plupart du temps au format JSON.
+Cette deuxième solution est la plus efficace et facile mais les appels d'API sont souvent cachés ou bloqués.
 
-Dans les deux cas, nous utiliserons des requêtes HTTP et le package ``requests``. Celui-ci permet de faire des requêtes très rapidement et facilement via un interpreteur Python. De nombreux paramètres sont modifiables. 
+Dans les deux cas, nous utiliserons des requêtes HTTP et le package ``requests``.
+Celui-ci permet de faire des requêtes très rapidement et facilement via un interpreter Python. De nombreux paramètres sont modifiables.
 
-Pour réaliser ces opérations une bonne pratique est d'utiliser l'outil de developpement de Chrome ou Firefox. Je conseille celui de Google qui est beaucoup plus intuitif et développé que celui de Mozilla. Il existe plusieurs raccourcis claviers mais le plus simple est de faire une click droit et ``inspecter``. 
+Pour réaliser ces opérations une bonne pratique est d'utiliser l'outil de développement de Chrome ou Firefox.
+Il est conseillé d'utiliser celui de Google qui est beaucoup plus intuitif et développé que celui de Mozilla.
+Il existe plusieurs raccourcis claviers mais le plus simple est de faire une click droit et ``inspecter``.
 
 .. image:: images/inspecteur.png
 
 Deux onglets sont importants dans notre cas : 
  
-- ``Element`` : la partie correspondant au code HTML : elle permet de visualiser la structure et répérer les pointeurs des balises qui encapsulent nos données. 
+- ``Element`` : la partie correspondant au code HTML : elle permet de visualiser la structure et repérer les pointeurs des balises qui encapsulent nos données.
 - ``Network`` : cette partie permet d'analyser tous les appels réseaux réalisés depuis le front. C'est ici que les appels de 
 récupération de données sont effectués. 
 
 
 # Suite
 
-Ouvrez un navigateur et allez à l'adresse http://localhost:8888
-
-Allez directement voir le notebook `Part1_Simple_Web_Scraping.ipynb` quand vous avez terminé vous pouvez passer à la partie 2 `Part2_Web_Scraping_WebDriver.ipynb`
+Lisez les instructions dans le fichier sur ``virtual_env.md`` ou vous allez apprendre à créer des environnements virtuels
+Python afin de correctement commencer l'unité
