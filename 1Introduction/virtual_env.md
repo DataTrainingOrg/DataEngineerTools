@@ -38,12 +38,12 @@ A la racine du projet, ous pouvez voir qu'il y a deux fichiers disponibles :
 - Pipfile
 - Pipfile.lock
 
-Ces fichiers définissent les dépendances de notre porjet et donc les packages que nous devons installer afin que celui tourne
+Ces fichiers définissent les dépendances de notre projet et donc les packages que nous devons installer afin que celui tourne
 sans soucis
 
 Si vous ouvrez le fichier `PipFile` vous pouvez voir toutes ces dépendances ainsi que les versions requises.
 
-Pour créer un environnement virtuel et installer les dépendances aev Pipenv lancez la commande suivante à la racine du projet :
+Pour créer un environnement virtuel et installer les dépendances avec Pipenv lancez la commande suivante à la racine du projet :
 
 ```bash
 pipenv install
@@ -84,7 +84,7 @@ Au cours du projet, si vous avez besoin d'installer un package dans votre env, v
 pipenv install <nom_du_package>
 ```
 
-Celui ci sera alors automatiquement ajouté au fichier Pipfile
+Celui-ci sera alors automatiquement ajouté au fichier Pipfile
 
 
 Lorsque vous travaillez sur le projet faites bien attention à avoir votre environnement virtuel d'activer afin d'éviter les
