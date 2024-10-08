@@ -92,4 +92,4 @@ problèmes de dépendances !
 
 
 ## Suite
-Lorsque tout est bon du côté des environnements, vous pouvez passer à la suite en ouvrant le notebook `Part1_Git.ipynb`
+Lorsque tout est bon du côté des environnements, vous pouvez passer à la suite en ouvrant le notebook `Part2_Git.ipynb`

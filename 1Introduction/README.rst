@@ -181,5 +181,5 @@ Exemple d'Architecture
 Suite
 ------------------------
 
-Lisez les instructions dans le fichier sur ``virtual_env.md`` ou vous allez apprendre à créer des environnements virtuels
+Lisez les instructions dans le fichier sur ``Part1_virtual_env.md`` ou vous allez apprendre à créer des environnements virtuels
 Python afin de correctement commencer l'unité
