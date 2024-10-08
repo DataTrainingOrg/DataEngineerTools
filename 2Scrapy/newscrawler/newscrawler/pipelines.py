@@ -7,6 +7,7 @@
 
 from scrapy.exceptions import DropItem
 
+
 class TextPipeline(object):
 
     def process_item(self, item, spider):
@@ -14,7 +15,7 @@ class TextPipeline(object):
             item["title"] = clean_spaces(item["title"])
             return item
         else:
-            raise DropItem("Missing title in %s" % item)
+            raise DropItem(f"Missing title in {item}")
 
 
 def clean_spaces(string):
