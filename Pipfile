@@ -16,6 +16,7 @@ elasticsearch = "==8.15.1"
 redis = "==5.0.8"
 
 [dev-packages]
+ipykernel = "*"
 
 [requires]
 python_version = "3.12"
