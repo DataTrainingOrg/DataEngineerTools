@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongo-product-tracker
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
+      - ./init-mongo:/docker-entrypoint-initdb.d  # Lier le dossier d'initialisation
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    networks:
+      - mongo-network
+    restart: always
+
+networks:
+  mongo-network:
+    driver: brid
