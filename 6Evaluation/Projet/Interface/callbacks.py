@@ -43,7 +43,8 @@ def register_callbacks(app):
     @app.callback(
         [Output('feedback-output', 'children'),
          Output('confirmation-message', 'children'),
-         Output('input-tracking', 'value')],
+         Output('input-tracking', 'value'),
+         Output('dynamic-elements-container', 'children')],  # Ajoutez cet Output pour afficher dynamic_elements
         [Input('submit-button', 'n_clicks'), Input('search-button', 'n_clicks')],
         State('input-tracking', 'value'),
         State({'type': 'input-duration', 'index': ALL}, 'value'),
@@ -58,13 +59,25 @@ def register_callbacks(app):
             print(f"Envoi des données : Type - {type_data}, URL/Thème - {input_value}, Durée - {duration}, Pages - {pages}")
             add_task_to_db(type_data, input_value, duration, pages)
             confirmation_message = f"Les données ont été envoyées : URL/Thème - {input_value}, Durée - {duration}, Pages - {pages}"
-            return "", confirmation_message, ""  # Réinitialisation de l'input
+            return "", confirmation_message, "", ""  # Réinitialisation de l'input
 
         elif search_n_clicks > 0 and input_value:
             # Logique pour le bouton "Rechercher"
             print(f"Recherche lancée pour : {input_value}")
-            data=scrape_product_details_with_image(input_value)
+            data = scrape_product_details_with_image(input_value)
+            product_name = data["product_name"]
+            price = data["price"]
+            asin = data["asin"]
+            product_image_url = data["image_url"]
+            dynamic_elements = [
+                html.H4(product_name, style={'text-align': 'center', 'color': '#333'}),
+                html.Img(src=product_image_url, style={'display': 'block', 'margin': '20px auto', 'max-width': '80%'}),
+                html.P(f"Prix : {price}", style={'text-align': 'center', 'color': '#666'}),
+                html.P(f"ASIN : {asin}", style={'text-align': 'center', 'color': '#666'})
+            ]
             confirmation_message = f"Les données ont été envoyées : URL/Thème - {input_value}, Durée - {duration_values}, Pages - {pages_values}"
-            return "", confirmation_message, input_value  # Pas de réinitialisation de l'input
+            
+            # Retourner dynamic_elements ici pour les afficher dans la Div correspondante
+            return "", confirmation_message, input_value, dynamic_elements
 
-        return "", "", input_value  # Aucun changement si aucun bouton n'est cliqué
+        return "", "", input_value, ""  # Aucun changement si aucun bouton n'est cliqué

@@ -23,10 +23,6 @@ layout = html.Div(
         html.Div(id='feedback-output', style={'margin-top': '20px', 'color': 'green'}),
         html.Div(id='confirmation-message', style={'margin-top': '20px', 'color': 'blue'}),
 
-        # Bouton Envoyer (déplacé en dessous)
-        html.Button('Envoyer', id='submit-button', n_clicks=0, style={
-            'background-color': '#008CBA', 'color': 'white', 'border': 'none', 'padding': '10px 20px',
-            'font-size': '16px', 'cursor': 'pointer', 'border-radius': '5px', 'margin-top': '20px'
-        }),
+        
     ]
 )
