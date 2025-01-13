@@ -127,6 +127,28 @@ def scrape_product_by_name(product_name):
         print(f"Échec de la récupération de la page pour {product_name}. Code d'état : {response.status_code}.")
         return []
 
+# Fonction pour compter le nombre de produits sur une page de recherche Amazon
+def count_products_on_page(product_name):
+    url = f"https://www.amazon.fr/s?k={product_name}"  # Construire l'URL de recherche
+    headers = {"User-Agent": get_random_user_agent()}
+
+    random_delay()  # Ajouter un délai aléatoire entre les requêtes
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        print(f"Page fetch réussie pour {product_name} avec User-Agent: {headers['User-Agent']}")
+
+        # Parser le contenu HTML avec BeautifulSoup
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Trouver les conteneurs de produits
+        product_containers = soup.find_all("div", {"data-component-type": "s-search-result"})
+        
+        # Retourner le nombre de produits trouvés
+        return len(product_containers)
+    else:
+        print(f"Échec de la récupération de la page pour {product_name}. Code d'état : {response.status_code}.")
+        return 0
 
 
 # Fonction pour scraper les détails d'un produit, y compris l'image, via son URL

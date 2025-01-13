@@ -26,7 +26,7 @@ layout = html.Div(
         # Bouton "Envoyer" sous les champs de saisie
         html.Div(
             children=[
-                html.Button('Envoyer', id='submit-button', n_clicks=0, style={
+                html.Button('Traquer', id='submit-button', n_clicks=0, style={
                     'background-color': '#008CBA', 'color': 'white', 'border': 'none', 'padding': '10px 20px',
                     'font-size': '16px', 'cursor': 'pointer', 'border-radius': '5px', 'margin-top': '20px'
                 }),

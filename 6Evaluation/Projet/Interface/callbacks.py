@@ -1,6 +1,7 @@
 from dash import Input, Output, State, ALL, html, dcc
 from MongoDB.website_request import add_task_to_db
-from Scrapping.Amazon_scrap import scrape_product_details_with_image
+from Scrapping.Amazon_scrap import scrape_product_details_with_image,count_products_on_page
+from backend.input_processing import is_amazon_url
 
 def register_callbacks(app):
     # Callback pour l'affichage dynamique des entrées en fonction de l'input
@@ -62,19 +63,35 @@ def register_callbacks(app):
             return "", confirmation_message, "", ""  # Réinitialisation de l'input
 
         elif search_n_clicks > 0 and input_value:
-            # Logique pour le bouton "Rechercher"
+            # Logique pour le bouton "Rechercher" check si c'est un mot clé/url
             print(f"Recherche lancée pour : {input_value}")
-            data = scrape_product_details_with_image(input_value)
-            product_name = data["product_name"]
-            price = data["price"]
-            asin = data["asin"]
-            product_image_url = data["image_url"]
-            dynamic_elements = [
-                html.H4(product_name, style={'text-align': 'center', 'color': '#333'}),
-                html.Img(src=product_image_url, style={'display': 'block', 'margin': '20px auto', 'max-width': '80%'}),
-                html.P(f"Prix : {price}", style={'text-align': 'center', 'color': '#666'}),
-                html.P(f"ASIN : {asin}", style={'text-align': 'center', 'color': '#666'})
-            ]
+            isAmazonUrl = is_amazon_url(input_value)
+            if isAmazonUrl:
+                data = scrape_product_details_with_image(input_value)
+                if not data:
+                    return "Aucun produit trouvé pour cette URL.", "", input_value, ""
+                else:
+                    product_name = data["product_name"]
+                    price = data["price"]
+                    asin = data["asin"]
+                    product_image_url = data["image_url"]
+                    dynamic_elements = [
+                        html.H4(product_name, style={'text-align': 'center', 'color': '#333'}),
+                        html.Img(src=product_image_url, style={'display': 'block', 'margin': '20px auto', 'max-width': '80%'}),
+                        html.P(f"Prix : {price}", style={'text-align': 'center', 'color': '#666'}),
+                        html.P(f"ASIN : {asin}", style={'text-align': 'center', 'color': '#666'})
+                    ]
+            else:
+                print("theme")
+                data = count_products_on_page(input_value)
+                if data == 0:
+                    return "Aucun produit trouvé pour ce thème.", "", input_value, ""
+                else:
+                    dynamic_elements = [
+                        html.H4(f"Nombres de produits trouvés : {data}", style={'text-align': 'center', 'color': '#333'})
+                    ]
+            # Gestion des erreurs si aucun produit n'est trouvé
+            
             confirmation_message = f"Les données ont été envoyées : URL/Thème - {input_value}, Durée - {duration_values}, Pages - {pages_values}"
             
             # Retourner dynamic_elements ici pour les afficher dans la Div correspondante

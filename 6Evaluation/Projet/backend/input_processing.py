@@ -19,5 +19,3 @@ def is_amazon_url(input_value):
         return True
     return False
 
-
-print(is_amazon_url("https://www.amazon.fr/Processeur-Intel-i5-12600K-Alder-Lake-S/dp/B09GYHXDHH?ref_=ast_sto_dp&th=1&psc=1"))
