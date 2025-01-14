@@ -37,18 +37,33 @@ def is_amazon_url(input_value):
         return True
     return False
 
-def del_spaces(text):
+
+
+def clean_text(text):
     """
-    Remplace les espaces d'une chaîne de caractères par des tirets.
+    Remplace les espaces par des tirets et supprime les caractères spéciaux d'une chaîne de caractères,
+    tout en identifiant les caractères non autorisés.
 
     Parameters:
         text (str): La chaîne de caractères à traiter.
 
     Returns:
-        str: La chaîne de caractères avec des tirets.
+        tuple: La chaîne nettoyée et une chaîne des caractères supprimés, séparés par des espaces.
     """
     if not isinstance(text, str):
         raise ValueError("Le paramètre 'text' doit être une chaîne de caractères.")
-    return text.replace(" ", "-")
-
     
+    # Remplacer les espaces par des tirets
+    text = text.replace(" ", "-")
+    
+    # Trouver tous les caractères non autorisés
+    invalid_chars = re.findall(r'[^a-zA-Z0-9\-]', text)  
+    
+    # Supprimer les caractères non autorisés
+    cleaned_text = re.sub(r'[^a-zA-Z0-9\-]', '', text)  
+
+    # Convertir la liste des caractères non autorisés en une chaîne unique
+    invalid_chars_str = " ".join(sorted(set(invalid_chars)))  # Tri et suppression des doublons
+    
+    return cleaned_text, invalid_chars_str
+

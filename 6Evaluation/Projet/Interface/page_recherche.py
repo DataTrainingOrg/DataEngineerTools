@@ -19,31 +19,6 @@ page_rechercher=html.Div(
     ]
 )
 
-base_contenu_début=html.Div(
-    [
-        html.Label('Durée entre deux récupérations de données (en heures) :'),
-                dcc.Input(
-                    id={"type": "input-duration", "index": "1"},
-                    type='number',
-                    value=24,
-                    min=1,
-                    style={'width': '30%'}
-                )
-    ]
-)
-#Si url, append ce contenu
-contenu_pour_url=html.Div(
-    [
-        html.Div([
-                        html.Label('Nombre de pages à scrapper (max 5) :'),
-                        dcc.Dropdown(
-                            id={"type": 'input-pages', "index": "1"},
-                            options=[{'label': str(i), 'value': i} for i in range(1, 6)],
-                            value=1,
-                            style={'width': '30%'}
-                        ),
-                    ])
-    ])
 
 
 def resultat_url(product_name,product_image_url,price,asin):

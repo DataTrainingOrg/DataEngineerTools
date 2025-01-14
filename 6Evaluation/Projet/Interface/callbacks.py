@@ -4,10 +4,24 @@ from dash import Dash, Input, Output, State, dcc, html, ALL
 import dash_bootstrap_components as dbc
 from MongoDB.website_request import add_task_to_db
 from Scrapping.Amazon_scrap import scrape_product_details_with_image, count_products_on_page
-from backend.input_processing import is_amazon_url,del_spaces,is_url
-from Interface.page_recherche import base_contenu_début, contenu_pour_url, resultat_url, resulat_theme
+from backend.input_processing import is_amazon_url,is_url,clean_text
+from Interface.page_recherche import resultat_url, resulat_theme
 
 def register_callbacks(app):
+    #Callback pour la gestion d'apparition de mon bouton traquer et du choix de délai
+    @app.callback(
+        Output('duration-submit-div', 'style'),
+        Input('dynamic-content-div', 'children')
+    )
+    def toggle_duration_submit_visibility(dynamic_content):
+        """
+        Affiche ou masque le conteneur de durée et bouton en fonction du contenu généré.
+        """
+        if dynamic_content:  # Si du contenu existe dans dynamic-content-div
+            return {'display': 'block', 'margin-top': '20px'}  # Affiche
+        return {'display': 'none'}  # Masque
+
+
     # Callback pour déterminer le type de donnée (URL ou thème)
     @app.callback(
         Output('type-data-store', 'data'),
@@ -53,9 +67,9 @@ def register_callbacks(app):
                 # Si type_data est 'link' (URL Amazon), traiter l'URL
                 return handle_url_search(input_value, overlay_style)
             elif type_data == 'theme':
-                input_value=del_spaces(input_value)
+                input_value,error=clean_text(input_value)
                 # Si type_data est 'theme', traiter la recherche par thème
-                return handle_theme_search(input_value, overlay_style)
+                return handle_theme_search(input_value,error, overlay_style)
 
         if triggered_id == 'submit-button' and submit_n_clicks > 0 and input_value:
             
@@ -87,7 +101,7 @@ def register_callbacks(app):
         else:
             return "", "","URL invalide, veuillez fournir un lien Amazon.",  {"visibility": "hidden", "filter": "none"}
 
-    def handle_theme_search(input_value, overlay_style):
+    def handle_theme_search(input_value,error, overlay_style):
         """Traite la recherche basée sur un theme Amazon."""
         
         data = count_products_on_page(input_value)
@@ -97,4 +111,4 @@ def register_callbacks(app):
         dynamic_elements = [
             resulat_theme(data)
         ]
-        return input_value, dynamic_elements, "", {"visibility": "hidden", "filter": "none"}  # Résultat trouvé
+        return input_value, dynamic_elements, "Les caractères suivants ont été supprimés : "+error+", recherche effectuée pour "+input_value, {"visibility": "hidden", "filter": "none"}  # Résultat trouvé
