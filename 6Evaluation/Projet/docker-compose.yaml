@@ -62,3 +62,4 @@ services:
 networks:
   mongo-network:
     driver: bridge
+    external: true

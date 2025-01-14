@@ -6,7 +6,7 @@ def connect_to_mongo(collection_name):
     """
     Établit la connexion à MongoDB et retourne la collection demandée.
     """
-    client = MongoClient("mongodb://root:rootpassword@localhost:27017/admin")
+    client = MongoClient("mongodb://root:rootpassword@mongodb:27017/admin")
     db = client["amazon_scrapping"]
     return db[collection_name]
 
@@ -76,7 +76,7 @@ def add_products_from_theme(theme, products):
         "products": [
             {
                 "asin": product["asin"],
-                "name": product["product_name"],
+                "name": product["name"],
                 "price_history": [{"price": product["price"], "timestamp": datetime.utcnow()}],
             }
             for product in products

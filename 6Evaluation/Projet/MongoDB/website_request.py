@@ -7,7 +7,7 @@ def connect_to_mongo(table):
     """
     Établit la connexion à MongoDB et retourne la collection.
     """
-    client = MongoClient("mongodb://root:rootpassword@localhost:27017/admin")
+    client = MongoClient("mongodb://root:rootpassword@mongodb:27017/admin")
     db = client["amazon_scrapping"]
     return db[table]
 
