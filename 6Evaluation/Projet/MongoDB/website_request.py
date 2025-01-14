@@ -13,7 +13,7 @@ def connect_to_mongo():
     return db["scrapping_tasks"]
 
 # Fonction pour ajouter une tâche
-def add_task_to_db(task_type, task_value, interval_hours,page_number):
+def add_task_to_db(task_type, task_value, interval_hours):
     """
     Ajoute une tâche dans la collection MongoDB.
 

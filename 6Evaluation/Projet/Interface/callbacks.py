@@ -1,100 +1,100 @@
-from dash import Input, Output, State, ALL, html, dcc
+import time
+import dash
+from dash import Dash, Input, Output, State, dcc, html, ALL
+import dash_bootstrap_components as dbc
 from MongoDB.website_request import add_task_to_db
-from Scrapping.Amazon_scrap import scrape_product_details_with_image,count_products_on_page
-from backend.input_processing import is_amazon_url
+from Scrapping.Amazon_scrap import scrape_product_details_with_image, count_products_on_page
+from backend.input_processing import is_amazon_url,del_spaces,is_url
+from Interface.page_recherche import base_contenu_début, contenu_pour_url, resultat_url, resulat_theme
 
 def register_callbacks(app):
-    # Callback pour l'affichage dynamique des entrées en fonction de l'input
+    # Callback pour déterminer le type de donnée (URL ou thème)
     @app.callback(
-        [Output('dynamic-inputs', 'children'),
-         Output('type-data-store', 'data')],
+        Output('type-data-store', 'data'),
         Input('input-tracking', 'value')
     )
-    def display_dynamic_inputs(input_value):
+    def determine_input_type(input_value):
         if input_value:
-            is_url = input_value.startswith('http')
-            type_data = 'link' if is_url else 'theme'
-            dynamic_elements = [
-                html.Label('Durée entre deux récupérations de données (en heures) :'),
-                dcc.Input(
-                    id={"type": "input-duration", "index": "1"},
-                    type='number',
-                    value=24,
-                    min=1,
-                    style={'width': '30%'}
-                )
-            ]
-            if not is_url:
-                dynamic_elements.append(
-                    html.Div([
-                        html.Label('Nombre de pages à scrapper (max 5) :'),
-                        dcc.Dropdown(
-                            id={"type": 'input-pages', "index": "1"},
-                            options=[{'label': str(i), 'value': i} for i in range(1, 6)],
-                            value=1,
-                            style={'width': '30%'}
-                        ),
-                    ])
-                )
-            return dynamic_elements, type_data
-
-        return "", None
-
-    # Callback pour gérer les deux boutons "Envoyer" et "Rechercher"
+            isUrl = is_url(input_value)
+            type_data = 'link' if isUrl else 'theme'
+            return type_data
+        return None
+    
+    # Callback pour gérer les interactions des boutons "Envoyer" et "Rechercher"
     @app.callback(
-        [Output('feedback-output', 'children'),
-         Output('confirmation-message', 'children'),
-         Output('input-tracking', 'value'),
-         Output('dynamic-elements-container', 'children')],  # Ajoutez cet Output pour afficher dynamic_elements
-        [Input('submit-button', 'n_clicks'), Input('search-button', 'n_clicks')],
-        State('input-tracking', 'value'),
-        State({'type': 'input-duration', 'index': ALL}, 'value'),
-        State({'type': 'input-pages', 'index': ALL}, 'value'),
-        State('type-data-store', 'data')
+        [
+            Output('input-tracking', 'value'),
+            Output('dynamic-content-div', 'children'),
+            Output('confirmation-message-div', 'children'),
+            Output('loading', 'overlay_style')  # Afficher/masquer l'animation de chargement
+        ],
+        Input('search-button', 'n_clicks'),
+        Input('submit-button', 'n_clicks'),
+        [
+            State('input-tracking', 'value'),
+            State('input-duration', 'value'),
+            State('type-data-store', 'data')
+        ]
     )
-    def handle_buttons_click(submit_n_clicks, search_n_clicks, input_value, duration_values, pages_values, type_data):
-        if submit_n_clicks > 0 and input_value:
+    def handle_search_click(search_n_clicks,submit_n_clicks, input_value, duration_values, type_data):
+        ctx = dash.callback_context
+        # Vérification si l'action vient du bouton "Rechercher"
+        if not ctx.triggered:
+            return input_value, "", "", {"visibility": "hidden", "filter": "none"}  # Pas d'action, valeurs par défaut
+
+        triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if triggered_id == 'search-button' and search_n_clicks > 0 and input_value:
+            print(type_data)
+            # Afficher l'animation de chargement pendant le traitement
+            overlay_style = {"visibility": "visible", "filter": "blur(2px)"}  # Animation visible
+
+            if type_data == 'link':
+                # Si type_data est 'link' (URL Amazon), traiter l'URL
+                return handle_url_search(input_value, overlay_style)
+            elif type_data == 'theme':
+                input_value=del_spaces(input_value)
+                # Si type_data est 'theme', traiter la recherche par thème
+                return handle_theme_search(input_value, overlay_style)
+
+        if triggered_id == 'submit-button' and submit_n_clicks > 0 and input_value:
+            
             # Logique pour le bouton "Envoyer"
-            duration = duration_values[0] if duration_values else None
-            pages = pages_values[0] if pages_values else None
-            print(f"Envoi des données : Type - {type_data}, URL/Thème - {input_value}, Durée - {duration}, Pages - {pages}")
-            add_task_to_db(type_data, input_value, duration, pages)
-            confirmation_message = f"Les données ont été envoyées : URL/Thème - {input_value}, Durée - {duration}, Pages - {pages}"
-            return "", confirmation_message, "", ""  # Réinitialisation de l'input
+            duration = duration_values if duration_values else None
+            print(f"Envoi des données : Type - {type_data}, URL/Thème - {input_value}, Durée - {duration}")
+            add_task_to_db(type_data, input_value, duration)
+            confirmation_message = f"Les données ont été envoyées. Prochaine récupération dans {duration} heures."
+            return "", "", confirmation_message , {"visibility": "hidden", "filter": "none"} # Réinitialisation de l'input
+        # Valeurs par défaut si aucune action pertinente
+        return input_value, "", "", {"visibility": "hidden", "filter": "none"}  # Masquer l'animation
 
-        elif search_n_clicks > 0 and input_value:
-            # Logique pour le bouton "Rechercher" check si c'est un mot clé/url
-            print(f"Recherche lancée pour : {input_value}")
-            isAmazonUrl = is_amazon_url(input_value)
-            if isAmazonUrl:
-                data = scrape_product_details_with_image(input_value)
-                if not data:
-                    return "Aucun produit trouvé pour cette URL.", "", input_value, ""
-                else:
-                    product_name = data["product_name"]
-                    price = data["price"]
-                    asin = data["asin"]
-                    product_image_url = data["image_url"]
-                    dynamic_elements = [
-                        html.H4(product_name, style={'text-align': 'center', 'color': '#333'}),
-                        html.Img(src=product_image_url, style={'display': 'block', 'margin': '20px auto', 'max-width': '80%'}),
-                        html.P(f"Prix : {price}", style={'text-align': 'center', 'color': '#666'}),
-                        html.P(f"ASIN : {asin}", style={'text-align': 'center', 'color': '#666'})
-                    ]
-            else:
-                print("theme")
-                data = count_products_on_page(input_value)
-                if data == 0:
-                    return "Aucun produit trouvé pour ce thème.", "", input_value, ""
-                else:
-                    dynamic_elements = [
-                        html.H4(f"Nombres de produits trouvés : {data}", style={'text-align': 'center', 'color': '#333'})
-                    ]
-            # Gestion des erreurs si aucun produit n'est trouvé
+    def handle_url_search(input_value, overlay_style):
+        """Traite la recherche basée sur un lien Amazon."""
+        if is_amazon_url(input_value):
+            data = scrape_product_details_with_image(input_value)
+            if not data:
+                return "", "", "Aucun produit trouvé pour cette URL.", {"visibility": "hidden", "filter": "none"}
             
-            confirmation_message = f"Les données ont été envoyées : URL/Thème - {input_value}, Durée - {duration_values}, Pages - {pages_values}"
+            product_name = data["product_name"]
+            price = data["price"]
+            asin = data["asin"]
+            product_image_url = data["image_url"]
             
-            # Retourner dynamic_elements ici pour les afficher dans la Div correspondante
-            return "", confirmation_message, input_value, dynamic_elements
+            dynamic_elements = [
+                resultat_url(product_name, product_image_url, price, asin)
+            ]
+            return input_value, dynamic_elements, "", {"visibility": "hidden", "filter": "none"}  # Résultat trouvé
+        else:
+            return "", "","URL invalide, veuillez fournir un lien Amazon.",  {"visibility": "hidden", "filter": "none"}
 
-        return "", "", input_value, ""  # Aucun changement si aucun bouton n'est cliqué
+    def handle_theme_search(input_value, overlay_style):
+        """Traite la recherche basée sur un theme Amazon."""
+        
+        data = count_products_on_page(input_value)
+        if data == 0:
+            return "", "", "Aucun produit trouvé pour ce thème.", {"visibility": "hidden", "filter": "none"}
+
+        dynamic_elements = [
+            resulat_theme(data)
+        ]
+        return input_value, dynamic_elements, "", {"visibility": "hidden", "filter": "none"}  # Résultat trouvé
