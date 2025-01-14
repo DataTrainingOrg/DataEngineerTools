@@ -89,7 +89,7 @@ def register_callbacks(app):
             if not data:
                 return "", "", "Aucun produit trouvé pour cette URL.", {"visibility": "hidden", "filter": "none"}
             
-            product_name = data["product_name"]
+            product_name = data["name"]
             price = data["price"]
             asin = data["asin"]
             product_image_url = data["image_url"]
@@ -111,4 +111,8 @@ def register_callbacks(app):
         dynamic_elements = [
             resulat_theme(data)
         ]
-        return input_value, dynamic_elements, "Les caractères suivants ont été supprimés : "+error+", recherche effectuée pour "+input_value, {"visibility": "hidden", "filter": "none"}  # Résultat trouvé
+        if error != "":
+            msg="Les caractères suivants ont été supprimés : "+error+", recherche effectuée pour "+input_value
+        else:
+            msg=""
+        return input_value, dynamic_elements, msg, {"visibility": "hidden", "filter": "none"}  # Résultat trouvé

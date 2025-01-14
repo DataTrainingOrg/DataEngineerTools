@@ -76,7 +76,7 @@ def add_products_from_theme(theme, products):
         "products": [
             {
                 "asin": product["asin"],
-                "name": product["name"],
+                "name": product["product_name"],
                 "price_history": [{"price": product["price"], "timestamp": datetime.utcnow()}],
             }
             for product in products
@@ -91,42 +91,42 @@ def add_products_from_theme(theme, products):
     )
     return {"success": result.modified_count > 0 or result.upserted_id is not None}
 
+
 def sync_theme_products(theme_name, new_products):
-    """
-    Synchronise les produits d'un thème :
-    - Ajoute les nouveaux produits.
-    - Met à jour les prix des produits existants dans la nouvelle liste.
-    - Conserve les produits absents dans leur état actuel (sans mise à jour).
-    """
     collection = connect_to_mongo("product_scrapping_theme")
     now = datetime.utcnow()
 
-    # Récupérer les données existantes pour le thème
     theme = collection.find_one({"theme": theme_name})
 
     if theme:
-        # Créer un dictionnaire des produits existants pour un accès rapide
         existing_products = {p["asin"]: p for p in theme["products"]}
 
-        # Mettre à jour ou ajouter les produits présents dans la nouvelle liste
         for product in new_products:
             asin = product["asin"]
             price = product["price"]
             name = product["name"]
 
             if asin in existing_products:
-                # Produit existant : mettre à jour son historique de prix
                 existing_product = existing_products[asin]
-                existing_product["price_history"].append({"price": price, "timestamp": now})
+
+                # Vérifier uniquement les deux derniers éléments de la liste
+                if len(existing_product["price_history"]) < 2 or not (
+                    existing_product["price_history"][-1]["price"] == price
+                    and existing_product["price_history"][-1]["timestamp"] == now
+                ) and not (
+                    existing_product["price_history"][-2]["price"] == price
+                    and existing_product["price_history"][-2]["timestamp"] == now
+                ):
+                    # Ajouter une nouvelle entrée si elle est différente des deux dernières
+                    existing_product["price_history"].append({"price": price, "timestamp": now})
+
             else:
-                # Nouveau produit : ajouter
                 existing_products[asin] = {
                     "asin": asin,
                     "name": name,
                     "price_history": [{"price": price, "timestamp": now}]
                 }
 
-        # Sauvegarder toutes les données dans la base (y compris les produits non mis à jour)
         collection.update_one(
             {"theme": theme_name},
             {
@@ -137,7 +137,6 @@ def sync_theme_products(theme_name, new_products):
             }
         )
     else:
-        # Créer une nouvelle entrée pour le thème avec les produits de la nouvelle liste
         products = [
             {
                 "asin": product["asin"],

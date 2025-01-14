@@ -49,7 +49,7 @@ def scrape_product_details_from_url(url):
 
         # Retourner les informations récupérées
         return {
-            "product_name": product_name,
+            "name": product_name,
             "price": price,
             "asin": asin
         }
@@ -113,7 +113,7 @@ def scrape_product_by_name(product_name):
 
                 # Ajouter les détails du produit à la liste des résultats
                 r={
-                    "product_name": title,
+                    "name": title,
                     "price": price,
                     "asin": asin
                 }
@@ -181,7 +181,7 @@ def scrape_product_details_with_image(url):
 
         # Retourner les informations récupérées
         return {
-            "product_name": product_name,
+            "name": product_name,
             "price": price,
             "asin": asin,
             "image_url": image_url

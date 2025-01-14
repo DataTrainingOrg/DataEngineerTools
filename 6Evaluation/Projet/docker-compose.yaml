@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+  # MongoDB service
   mongodb:
     image: mongo:latest
     container_name: mongo-product-tracker
@@ -8,7 +9,7 @@ services:
       - "27017:27017"
     volumes:
       - ./data/db:/data/db
-      - ./init-mongo:/docker-entrypoint-initdb.d  # Lier le dossier d'initialisation
+      - ./init-mongo:/docker-entrypoint-initdb.d
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
@@ -16,6 +17,48 @@ services:
       - mongo-network
     restart: always
 
+  # Elasticsearch service
+  elasticsearch: #Communiquer ac Elasticsearch, API HTTP d'Elasticsearch sur http://elasticsearch:9200
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    networks:
+      - mongo-network
+    restart: always
+
+  # Python Dash App
+  dash-app:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Utilise un Dockerfile pour ton app Python
+    command: python app.py  # Lancer ton script Dash
+    volumes:
+      - .:/app  # Monte ton code dans le conteneur
+    ports:
+      - "8050:8050"  # Port d'accès à l'application Dash
+    networks:
+      - mongo-network
+    depends_on:
+      - mongodb
+      - elasticsearch
+    restart: always
+
+  # Python Scraping Script
+  scraping-script:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Utilise le même Dockerfile ou un autre si nécessaire
+    command: python time_scraper.py  # Lancer ton script de scraping
+    networks:
+      - mongo-network
+    depends_on:
+      - mongodb
+      - elasticsearch
+    restart: always
+
 networks:
   mongo-network:
-    driver: brid
+    driver: bridge
