@@ -5,7 +5,7 @@ from MongoDB.website_request import check_and_execute_tasks
 
 # Planification avec APScheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(check_and_execute_tasks, 'interval', heures=1)  # Vérifie toutes les heures
+scheduler.add_job(check_and_execute_tasks, 'interval', minutes=1)  # Vérifie toutes les minutes
 scheduler.start()
 
 # Application principale

@@ -1,0 +1,30 @@
+# MongoDB connection URL
+mongo-url = "mongodb://root:rootpassword@mongodb:27017/amazon_scrapping"
+
+# Elasticsearch connection URLs (plural, as an array)
+elasticsearch-urls = ["http://elasticsearch:9200"]
+
+# Namespace regex for filtering the MongoDB collections to sync
+namespace-regex = "amazon_scrapping.*"
+
+# Specify the namespaces (databases and collections) to track with change streams
+change-stream-namespaces = [
+  "amazon_scrapping.product_scrapping_theme",
+  "amazon_scrapping.product_scrapping_url",
+  "amazon_scrapping.scrapping_tasks"
+]
+
+direct-read-namespaces = [
+  "amazon_scrapping.product_scrapping_theme",
+  "amazon_scrapping.product_scrapping_url",
+  "amazon_scrapping.scrapping_tasks"
+]
+
+[logs]
+error = "/var/log/monstache/error.log"
+info = "/var/log/monstache/info.log"
+warn = "/var/log/monstache/warn.log"
+trace = "/var/log/monstache/trace.log"
+
+# Enable gzip compression for Elasticsearch requests
+gzip = true

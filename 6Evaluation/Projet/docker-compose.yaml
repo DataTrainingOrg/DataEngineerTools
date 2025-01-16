@@ -1,4 +1,7 @@
-version: "3.8"
+networks:
+  mongo-network:
+    driver: bridge
+    external: true
 
 services:
   # MongoDB service
@@ -10,21 +13,47 @@ services:
     volumes:
       - ./data/db:/data/db
       - ./init-mongo:/docker-entrypoint-initdb.d
+      - ./mongodb-keyfile:/mongodb-keyfile
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/mongodb-keyfile"]
     networks:
       - mongo-network
     restart: always
 
   # Elasticsearch service
-  elasticsearch: #Communiquer ac Elasticsearch, API HTTP d'Elasticsearch sur http://elasticsearch:9200
+  elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - "9200:9200"
+    networks:
+      - mongo-network
+    restart: always
+
+  # Monstache service
+  monstache:
+    image: rwynn/monstache:latest
+    container_name: monstache
+    environment:
+      - MONGODB_URL=mongodb://root:rootpassword@mongo-product-tracker:27017
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    volumes:
+      - ./config/monstache.toml:/config/monstache.toml  # Mount the TOML config file
+    entrypoint: ["monstache", "-f", "/config/monstache.toml"]
+    depends_on:
+      - mongodb
+      - elasticsearch
     networks:
       - mongo-network
     restart: always
@@ -44,6 +73,7 @@ services:
     depends_on:
       - mongodb
       - elasticsearch
+      - monstache
     restart: always
 
   # Python Scraping Script
@@ -57,9 +87,5 @@ services:
     depends_on:
       - mongodb
       - elasticsearch
+      - monstache
     restart: always
-
-networks:
-  mongo-network:
-    driver: bridge
-    external: true

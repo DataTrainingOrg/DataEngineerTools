@@ -108,7 +108,7 @@ def check_and_execute_tasks():
             else:
                 print(f"Valeur inattendue pour last_executed: {task['last_executed']}")
 
-        interval = timedelta(minutes=task["interval_hours"])
+        interval = timedelta(hours=task["interval_hours"])
         #/!\ remetttre heure et pas laisser min
         if not last_executed or now - last_executed >= interval:
             perform_scrapping(task)

@@ -6,7 +6,7 @@ amazon_styles = {
     'container': {
         'padding': '20px',
         'font-family': 'Arial, sans-serif',
-        'backgroundColor': '#f3f3f3',
+        'backgroundColor': '#ffffff',
     },
     'header': {
         'text-align': 'center',
@@ -77,8 +77,7 @@ layout = html.Div(
     style=amazon_styles['container'],
     children=[
         # En-tête principal
-        html.H1('Interface Amazon-like', style=amazon_styles['header']),
-
+        html.Img(src='/assets/baniere.JPG', style={'display': 'block', 'margin': '20px auto', 'max-width': '30%'}),
         # Onglets pour navigation
         dcc.Tabs(
             style=amazon_styles['tabs'],
