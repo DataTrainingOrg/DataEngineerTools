@@ -78,7 +78,7 @@ services:
 
   # Python Scraping Script
   scraping-script:
-    build:
+    build:  
       context: .
       dockerfile: Dockerfile  # Utilise le même Dockerfile ou un autre si nécessaire
     command: python time_scraper.py  # Lancer ton script de scraping

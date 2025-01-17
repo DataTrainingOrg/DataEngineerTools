@@ -20,11 +20,6 @@ direct-read-namespaces = [
   "amazon_scrapping.scrapping_tasks"
 ]
 
-[logs]
-error = "/var/log/monstache/error.log"
-info = "/var/log/monstache/info.log"
-warn = "/var/log/monstache/warn.log"
-trace = "/var/log/monstache/trace.log"
 
 # Enable gzip compression for Elasticsearch requests
 gzip = true
