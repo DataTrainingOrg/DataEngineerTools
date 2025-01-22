@@ -1,5 +1,5 @@
 # MongoDB connection URL
-mongo-url = "mongodb://root:rootpassword@mongodb:27017/amazon_scrapping"
+mongo-url = "mongodb://root:rootpassword@localhost:27017/admin?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.3"
 
 # Elasticsearch connection URLs (plural, as an array)
 elasticsearch-urls = ["http://elasticsearch:9200"]

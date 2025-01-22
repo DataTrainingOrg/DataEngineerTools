@@ -19,8 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Copier le fichier mongodb-keyfile dans le conteneur et lui attribuer les bonnes permissions
-COPY mongodb-keyfile/mongodb-key /mongodb-keyfile
+# CREER le fichier mongodb-keyfile/mongodb-key  dans le conteneur et lui attribuer les bonnes permissions
+RUN openssl rand -base64 756 > /mongodb-keyfile
 RUN chmod 600 /mongodb-keyfile && chown root:root /mongodb-keyfile
 
 

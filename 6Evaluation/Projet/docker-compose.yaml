@@ -6,19 +6,21 @@ networks:
 services:
   # MongoDB service
   mongodb:
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile  # Utilise un Dockerfile pour MongoDB  
     image: mongo:latest
     container_name: mongo-product-tracker
+    
     ports:
       - "27017:27017"
     volumes:
-      - ./data/db:/data/db
-      - ./init-mongo:/docker-entrypoint-initdb.d
-      - ./mongodb-keyfile:/mongodb-keyfile
+      - ./mongodb/data/db:/mongodb/data/db
+      - ./mongodb/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
       
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/mongodb-keyfile"]
     networks:
       - mongo-network
     restart: always
@@ -37,6 +39,8 @@ services:
         hard: -1
     ports:
       - "9200:9200"
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
     networks:
       - mongo-network
     restart: always
@@ -46,7 +50,7 @@ services:
     image: rwynn/monstache:latest
     container_name: monstache
     environment:
-      - MONGODB_URL=mongodb://root:rootpassword@mongo-product-tracker:27017
+      - MONGODB_URL=mongodb://root:rootpassword@localhost:27017/admin?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.3
       - ELASTICSEARCH_URL=http://elasticsearch:9200
     volumes:
       - ./config/monstache.toml:/config/monstache.toml  # Mount the TOML config file
