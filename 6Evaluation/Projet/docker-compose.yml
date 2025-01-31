@@ -1,0 +1,87 @@
+services:
+  # MongoDB principal (avec Replica Set)
+  mongo1:
+    image: mongo:6
+    container_name: ${MONGO_PRIMARY_CONTAINER}
+    command: ["mongod", "--replSet", "${MONGO_REPLICA_SET}", "--bind_ip_all"]
+    ports:
+      - "${MONGO_PORT}:${MONGO_PORT}"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mongo-cluster
+
+  # Initialisation du Replica Set
+  mongo-init:
+    image: mongo:6
+    container_name: ${MONGO_INIT_CONTAINER}
+    depends_on:
+      - mongo1
+    entrypoint: ["bash", "-c", "sleep 10 && mongosh --host ${MONGO_HOST}:${MONGO_PORT} --eval 'rs.initiate({_id: \"${MONGO_REPLICA_SET}\", members: [{ _id: 0, host: \"${MONGO_HOST}:${MONGO_PORT}\" }]})'"]
+    networks:
+      - mongo-cluster
+
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    container_name: ${ELASTICSEARCH_CONTAINER}
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "${ELASTIC_PORT}:${ELASTIC_PORT}"
+    networks:
+      - mongo-cluster
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.6.0
+    container_name: ${KIBANA_CONTAINER}
+    depends_on:
+      - elasticsearch
+    ports:
+      - "${KIBANA_PORT}:${KIBANA_PORT}"
+    networks:
+      - mongo-cluster
+
+  # Service pour exécuter le script Python
+  mongo-tracker:
+    image: python:3.9
+    container_name: ${MONGO_TRACKER_CONTAINER}
+    volumes:
+      - ./mongo_to_elastic/tracker.py:/tracker.py
+    depends_on:
+      - mongo1
+      - elasticsearch
+    env_file:
+      - .env
+    entrypoint: ["bash", "-c", "python -m venv /venv && /venv/bin/pip install pymongo elasticsearch && /venv/bin/python /tracker.py"]
+    networks:
+      - mongo-cluster
+# Application Flask
+  flask-app:
+    image: python:3.9
+    container_name: flask-app
+    build:
+      context: ./interface
+    volumes:
+      - ./interface:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo1
+    networks:
+      - mongo-cluster
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - ELASTIC_HOST=elasticsearch 
+      - ELASTIC_PORT=9200  
+volumes:
+  mongo-data:
+  elastic-data:
+
+networks:
+  mongo-cluster: {}

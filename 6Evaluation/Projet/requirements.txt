@@ -1,9 +1,0 @@
-APScheduler==3.11.0
-beautifulsoup4==4.12.3
-dash==2.18.2
-dash_bootstrap_components==1.6.0
-pymongo==4.10.1
-Requests==2.32.3
-packaging==23.1  # Compatible avec mido
-urllib3==1.26.16  # Compatible avec pyppeteer
-pandas==1.5.3  # Compatible avec stweet

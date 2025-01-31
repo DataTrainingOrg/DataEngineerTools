@@ -1,0 +1,5 @@
+Flask==2.2.2
+Werkzeug==2.2.2
+pymongo==4.2.0
+elasticsearch==8.6.0
+dotenv==0.19.0  # Pour la gestion des variables d'environnement
