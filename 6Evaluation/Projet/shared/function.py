@@ -1,5 +1,7 @@
 import re
 
+import re
+
 def is_url(input_value):
     """
     Vérifie si l'entrée utilisateur est un lien valide (autre qu'Amazon).
@@ -8,12 +10,22 @@ def is_url(input_value):
         input_value (str): La valeur entrée par l'utilisateur.
 
     Returns:
-        bool: True si c'est un lien valide, False sinon.
+        bool: True si c'est un lien valide et non un lien Amazon, False sinon.
     """
     url_regex = re.compile(
-        r'^(https?:\/\/)?(www\.)?[a-z0-9\-]+\.[a-z]{2,3}(/.*)?$'  # Lien générique
+        r'^(https?:\/\/)?'  # Protocole (http ou https) facultatif
+        r'([a-z0-9.-]+\.)?[a-z0-9.-]+\.[a-z]{2,10}'  # Domaine (ex: example.com, sub.example.co.uk)
+        r'(:\d+)?'  # Port facultatif (ex: :8080)
+        r'(\/[^\s]*)?$',  # Chemin facultatif après le domaine
+        re.IGNORECASE  # Insensible à la casse
     )
-    return bool(url_regex.match(input_value))
+
+    if not input_value or not url_regex.match(input_value):
+        return False
+
+   
+
+    return True
 
 
 

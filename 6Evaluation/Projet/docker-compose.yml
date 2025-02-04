@@ -60,14 +60,18 @@ services:
     entrypoint: ["bash", "-c", "python -m venv /venv && /venv/bin/pip install pymongo elasticsearch && /venv/bin/python /tracker.py"]
     networks:
       - mongo-cluster
-# Application Flask
+
+  # Application Flask
   flask-app:
+    
     image: python:3.9
     container_name: flask-app
     build:
       context: ./interface
     volumes:
       - ./interface:/app
+      - ./shared:/shared
+      - ./scrapping:/scrapping
     ports:
       - "5000:5000"
     depends_on:
@@ -79,6 +83,7 @@ services:
       - FLASK_ENV=development
       - ELASTIC_HOST=elasticsearch 
       - ELASTIC_PORT=9200  
+
 volumes:
   mongo-data:
   elastic-data:

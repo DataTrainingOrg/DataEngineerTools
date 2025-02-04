@@ -6,57 +6,119 @@
     <title>Suivi des Liens</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            background-color: #232f3e;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #232f3e;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #ff9900;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e68a00;
-        }
-        .message {
-            color: green;
-            margin: 10px 0;
-        }
+    font-family: Arial, sans-serif;
+    background-color: #f3f3f3;
+    margin: 0;
+    padding: 0;
+}
+.navbar {
+    background-color: #232f3e;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h1 {
+    color: #232f3e;
+}
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+button {
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #e68a00;
+}
+.delete-btn {
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 1.2em;
+}
+.delete-btn:hover {
+    color: red;
+}
+.message {
+    color: green;
+    margin: 10px 0;
+}
+.hidden {
+    display: none;
+}
+.time-selector {
+    margin-top: 10px;
+}
+select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+.result {
+    margin-top: 20px;
+}
+.result img {
+    max-width: 100px;
+    margin-right: 10px;
+}
+.result-info {
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+}
+
+/* Styles pour centrer les éléments du tableau et rendre le tableau invisible */
+.result-table {
+    width: 100%;
+    border-collapse: collapse; /* Assure que les éléments se touchent sans espace */
+    text-align: center; /* Centre les éléments dans les cellules */
+    background-color: transparent; /* Rend le fond du tableau transparent */
+    border: none; /* Enlève les bordures du tableau */
+}
+
+.result-table th, .result-table td {
+    padding: 10px;
+    text-align: center; /* Centre le contenu des cellules */
+    border: none; /* Enlève les bordures des cellules */
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff9900;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+    display: none;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
     </style>
 </head>
 <body>
@@ -66,13 +128,107 @@
     </div>
     <div class="container">
         <h1>Suivi des Liens</h1>
-        <form method="POST">
+        
+        <!-- Formulaire de recherche -->
+        <form id="searchForm" method="POST">
             <input type="text" name="link" placeholder="Entrez un lien à suivre" required>
-            <button type="submit">Ajouter le lien</button>
+            <button type="submit" name="action" value="search" id="searchButton">Rechercher</button>
         </form>
+
+        <!-- Loader (spinner) -->
+        <div id="loading" class="loader"></div>
+
         {% if message %}
             <p class="message">{{ message }}</p>
         {% endif %}
+        {% if users %}
+    <div id="searchResultContent" class="{{ 'hidden' if not show_track_button else '' }}">
+        
+        <!-- Entête du tableau avec les titres de colonnes -->
+        <table class="result-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Liste des produits -->
+                {% for user in users %}
+                    <tr class="result" data-asin="{{ user.asin }}">
+                        <td>
+                            <img src="{{ user.image_url }}" alt="Image du produit">
+                        </td>
+                        <td>
+                            <h3>{{ user.name }}</h3>
+                        </td>
+                        <td>
+                            <h2>{{ user.price }}</h2>
+                        </td>
+                        <td>
+                            <span class="delete-btn" onclick="deleteProduct(this)">🗑</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Sélecteur de temps sous la barre de recherche -->
+        <div id="timeSelector" class="{{ 'hidden' if not show_track_button else '' }}">
+            <label for="time">Faire un tracking toutes les </label>
+            <select id="time">
+                {% for i in range(1, 25) %}
+                    <option value="{{ i }}" {% if i == 24 %}selected{% endif %}>{{ i }}</option>
+                {% endfor %}
+            </select>
+            <label for="time"> heures.</label>
+        </div>
+        
+        <!-- Formulaire de tracking -->
+        <form id="trackForm" method="POST">
+            <button type="submit" id="trackButton" name="action" value="track">Traquer</button>
+        </form>
     </div>
+{% endif %}
+
+    </div>
+
+    <script>
+        document.getElementById("searchForm").addEventListener("submit", function() {
+            document.getElementById("searchButton").style.display = "none";  // Cacher le bouton
+            document.getElementById("loading").style.display = "block";  // Afficher le loader
+        });
+
+        // Fonction pour la gestion du bouton "Traquer"
+        
+        function deleteProduct(element) {
+            // Trouver l'élément parent et récupérer l'ASIN du produit
+            let productDiv = element.closest('.result');
+            let asin = productDiv.getAttribute('data-asin');  // Assurez-vous d'ajouter un attribut 'data-asin' à chaque produit
+
+            if (productDiv) {
+                // Envoi de l'ASIN au serveur via AJAX
+                fetch('/delete_product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ asin: asin })  // On envoie l'ASIN dans le corps de la requête
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        productDiv.remove();  // Si la suppression a réussi, on retire l'élément du DOM
+                    }
+                })
+                .catch(error => console.error('Erreur de suppression:', error));
+            }
+        }
+
+
+
+    </script>
 </body>
 </html>
