@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../shar
 from function import is_url, is_amazon_url, clean_text
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../scrapping')))
 
-from scrapping_script import scrape_product_details_with_image
+from scrapping_script import scrape_product_details_with_image,scrape_products_info
 
 
 app = Flask(__name__)
@@ -87,35 +87,39 @@ def home():
 # Route pour le suivi des liens
 @app.route('/track', methods=['GET', 'POST'])
 def track():
-    # Vérification du formulaire
+    global datas  # Ajoute cette ligne
     if request.method == 'POST':
         action = request.form.get('action')
         
         if action == 'search':
             link = request.form.get('link')
-            message=validate_link(link)
-        
-        # Vérification du lien côté Python (fonction de validation)
+            message = validate_link(link)
+
             if message == 'amazon':
                 data = scrape_product_details_with_image(link)
                 
-                # Vérifier si le produit a un ASIN et s'il n'est pas déjà dans la liste
                 if data.get('asin') and not any(d['asin'] == data['asin'] for d in datas):
                     datas.append(data)
                     return render_template('track.html', users=datas, show_track_button=True)
                 else: 
-                    return render_template('track.html',users=datas, message="Produit déjà ajouté", show_track_button=False)
-                
-            elif message=='theme':
-                return render_template('track.html',users=datas, message="Theme trouvé", show_track_button=True)
-            elif message=='link':
-                return render_template('track.html',users=datas, message="Lien amazon non reconnu", show_track_button=False)
+                    return render_template('track.html', users=datas, message="Produit déjà ajouté", show_track_button=False)
+
+            elif message == 'theme':
+                result = scrape_products_info(clean_text(link))
+                nb = result['count']
+                datas = list(result['products'])  # Assurez-vous que datas est bien initialisé ici
+                return render_template('track.html', users=datas, message=str(nb)+" produits trouvés ", show_track_button=True)
+
+            elif message == 'link':
+                return render_template('track.html', users=datas, message="Lien amazon non reconnu", show_track_button=False)
             else:
-                return render_template('track.html',users=datas, message="Erreur", show_track_button=False)
+                return render_template('track.html', users=datas, message="Erreur", show_track_button=False)
+
         if action == 'track':
-            list_data=datas.copy()
+            list_data = datas.copy()
             datas.clear()   
-            return render_template('track.html', message="track : "+str(list_data), show_track_button=True)
+            return render_template('track.html', message="track : " + str(list_data), show_track_button=True)
+
     return render_template('track.html', show_track_button=False)
 
 @app.route('/delete_product', methods=['POST'])

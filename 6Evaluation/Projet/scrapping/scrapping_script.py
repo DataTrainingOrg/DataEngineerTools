@@ -190,3 +190,71 @@ def scrape_product_details_with_image(url):
         print(f"Échec de la récupération de la page pour l'url {url}. Code d'état : {response.status_code}.")
         return None
 
+
+# Fonction pour obtenir un User-Agent aléatoire
+def get_random_user_agent():
+    user_agents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    ]
+    return random.choice(user_agents)
+
+# Fonction pour ajouter un délai aléatoire
+def random_delay():
+    time.sleep(random.uniform(1, 3))
+
+# Fonction fusionnée pour récupérer le nombre de produits et la liste des produits avec image
+def scrape_products_info(product_name):
+    url = f"https://www.amazon.fr/s?k={product_name}"  # Construire l'URL de recherche
+    headers = {"User-Agent": get_random_user_agent()}
+
+    random_delay()  # Ajouter un délai aléatoire entre les requêtes
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        print(f"Page fetch réussie pour {product_name} avec User-Agent: {headers['User-Agent']}")
+
+        # Parser le contenu HTML avec BeautifulSoup
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Trouver les conteneurs de produits
+        product_containers = soup.find_all("div", {"data-component-type": "s-search-result"})
+        
+        # Initialiser la liste des résultats
+        results = []
+        
+        for product in product_containers:
+            # Extraire le titre du produit
+            title_element = product.find("a", class_="a-link-normal s-no-outline")
+            title = title_element.find("img")["alt"] if title_element and title_element.find("img") else "Titre non trouvé"
+
+            # Extraire le prix
+            price_whole = product.find("span", class_="a-price-whole")
+            price_fraction = product.find("span", class_="a-price-fraction")
+            price = f"{price_whole.text.strip()}{price_fraction.text.strip()} €" if price_whole and price_fraction else "Prix non trouvé"
+
+            # Extraire l'ASIN
+            asin = product["data-asin"] if "data-asin" in product.attrs else "ASIN non trouvé"
+
+            # Extraire l'image
+            image_element = product.find("img", class_="s-image")
+            image_url = image_element["src"] if image_element else "Image non trouvée"
+
+            # Ajouter les détails du produit à la liste des résultats
+            results.append({
+                "name": title,
+                "price": price,
+                "asin": asin,
+                "image_url": image_url
+                
+            })
+
+        # Retourner le nombre de produits et la liste des produits
+        return {"count": len(product_containers), "products": results}
+    
+    else:
+        print(f"Échec de la récupération de la page pour {product_name}. Code d'état : {response.status_code}.")
+        return {"count": 0, "products": []}
+
+
