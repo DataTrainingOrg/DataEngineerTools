@@ -1,7 +1,5 @@
 import re
 
-import re
-
 def is_url(input_value):
     """
     Vérifie si l'entrée utilisateur est un lien valide (autre qu'Amazon).
@@ -79,3 +77,31 @@ def clean_text(text):
     
     return cleaned_text, invalid_chars_str
 
+def del_sponsor(products):
+    """
+    Supprime les éléments de la liste dont le contenu est sponsorisé.
+    Recherche des produits contenant l'un des mots-clés dans leur nom.
+    
+    :param products: Liste des produits à filtrer
+    :return: La liste filtrée et le nombre d'éléments supprimés
+    """
+    # Liste de mots-clés à rechercher dans les noms des produits
+    keywords = ["publicité sponsorisée", "promotion spéciale", "sponsorisée", "contenu sponsorisé", "offre sponsorisée", "pub", "publicité", "sponsorship"]
+    
+    count = 0
+    print("Avant :", products)
+
+    # Filtrer les produits en excluant ceux qui contiennent l'un des mots-clés
+    filtered_products = [
+        product for product in products 
+        if not any(keyword in product.get("name", "").strip().lower() for keyword in keywords)
+    ]
+    
+    # Calculer le nombre d'éléments supprimés
+    count = len(products) - len(filtered_products)
+    
+    # Retourner la nouvelle liste et le nombre d'éléments supprimés
+    print("Après suppression, nombre d'éléments supprimés :", count)
+    print(filtered_products)
+    
+    return filtered_products, count

@@ -4,13 +4,18 @@ from elasticsearch import Elasticsearch
 import time
 from bson import ObjectId
 
+from dotenv import load_dotenv
+import os
+
 print("Démarrage de mongo-tracker...", flush=True)
 
+load_dotenv()
 # Chargement des variables d'environnement
 MONGO_HOST = os.getenv("MONGO_HOST", "mongo1")
 MONGO_PORT = os.getenv("MONGO_PORT", "27017")
 MONGO_REPLICA_SET = os.getenv("MONGO_REPLICA_SET", "rs0")
 MONGO_DB = os.getenv("MONGO_DB", "test")
+MONGO_DB_TABLE = os.getenv("MONGO_DB_TABLE", "products")
 
 ELASTIC_HOST = os.getenv("ELASTIC_HOST", "elasticsearch")
 ELASTIC_PORT = os.getenv("ELASTIC_PORT", "9200")
@@ -41,6 +46,7 @@ while True:
         time.sleep(5)  # Réessaie toutes les 5 secondes
 
 # Connexion à la base MongoDB
+print(MONGO_DB, flush=True)
 db = client[MONGO_DB]
 
 # Fonction pour convertir les ObjectId en chaînes
@@ -55,7 +61,15 @@ def convert_objectid(obj):
         return obj
 
 # Pipeline pour écouter tous les changements
-pipeline = [{'$match': {'operationType': {'$in': ['insert', 'update', 'delete']}}}]
+
+pipeline = [
+    {
+        "$match": {
+            "operationType": {"$in": ["insert", "update", "delete"]},  # Filtrer pour insert, update, delete
+            "ns.coll": MONGO_DB_TABLE  # Filtrer pour la collection spécifique
+        }
+    }
+]
 
 print("Avant db.watch()", flush=True)
 
@@ -71,14 +85,15 @@ with db.watch(pipeline) as stream:
 
         index_name = f"mongo-{collection_name}"  # Crée un index basé sur la collection
 
+        # Cas d'une insertion (création d'un nouveau document)
         if operation == "insert":
             document = change["fullDocument"]
             document = convert_objectid(document)  # Convertir les ObjectId en chaîne
-            # Retirer le champ _id du document, il sera passé dans les paramètres
-            document.pop('_id', None)
+            document.pop('_id', None)  # Retirer _id, car il est déjà utilisé pour l'indexation
             es.index(index=index_name, id=str(document_id), document=document)
             print(f"✅ INSERT: Document ajouté à Elasticsearch ({index_name}/{document_id})", flush=True)
 
+        # Cas d'une mise à jour (modification d'un document existant)
         elif operation == "update":
             update_fields = change.get("updateDescription", {}).get("updatedFields", {})
             if update_fields:
@@ -86,6 +101,7 @@ with db.watch(pipeline) as stream:
                 es.update(index=index_name, id=str(document_id), body={"doc": update_fields})
                 print(f"✅ UPDATE: Document mis à jour dans Elasticsearch ({index_name}/{document_id})", flush=True)
 
+        # Cas d'une suppression (suppression d'un document existant)
         elif operation == "delete":
             es.delete(index=index_name, id=str(document_id), ignore=[404])
             print(f"✅ DELETE: Document supprimé de Elasticsearch ({index_name}/{document_id})", flush=True)

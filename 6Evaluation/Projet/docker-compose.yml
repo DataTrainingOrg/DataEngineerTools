@@ -8,6 +8,7 @@ services:
       - "${MONGO_PORT}:${MONGO_PORT}"
     volumes:
       - mongo-data:/data/db
+      
     networks:
       - mongo-cluster
 
@@ -72,6 +73,7 @@ services:
       - ./interface:/app
       - ./shared:/shared
       - ./scrapping:/scrapping
+      - ./mongo_requests:/mongo_requests
     ports:
       - "5000:5000"
     depends_on:
@@ -86,6 +88,7 @@ services:
 
 volumes:
   mongo-data:
+    driver: local
   elastic-data:
 
 networks:
