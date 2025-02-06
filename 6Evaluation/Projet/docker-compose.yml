@@ -70,7 +70,6 @@ services:
     build:
       context: ./interface
     volumes:
-      - ./interface:/app
       - ./shared:/shared
       - ./scrapping:/scrapping
       - ./mongo_requests:/mongo_requests
@@ -80,12 +79,27 @@ services:
       - mongo1
     networks:
       - mongo-cluster
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=development
-      - ELASTIC_HOST=elasticsearch 
-      - ELASTIC_PORT=9200  
+      
+  #Task executer
+  task-executer:
+    image: python:3.9
+    container_name: ${TASK_EXECUTER_CONTAINER}
+    volumes:
+      - ./task-executer:/task-executer
+      - ./scrapping:/scrapping
+      - ./shared:/shared
+      - ./mongo_requests:/mongo_requests
+    depends_on:
+      - mongo1
+      - elasticsearch
+    env_file:
+      - .env
+    entrypoint: ["bash", "-c", "python -m venv /venv && /venv/bin/pip install -r /task-executer/requirements.txt && ls -l / && /venv/bin/python /task-executer/task_executer.py"]
+    networks:
+      - mongo-cluster
 
+
+  
 volumes:
   mongo-data:
     driver: local

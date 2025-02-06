@@ -1,9 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# Ajouter ou mettre à jour un produit par URL
-from datetime import datetime
 
-def add_or_update_products(collection, products, theme=None):
+def add_or_update_products(collection, products, URL, theme=None):
     """
     Ajoute ou met à jour un ou plusieurs produits dans la base de données.
     
@@ -17,12 +15,16 @@ def add_or_update_products(collection, products, theme=None):
     """
     if not isinstance(products, list):
         products = [products]  # Permet d'accepter un seul produit sous forme de dict
-
+    print("URL",URL,flush=True)
+    print("theme",theme,flush=True)
     for product in products:
         # Récupération des valeurs avec None par défaut si elles ne sont pas fournies
         asin = product.get("asin")
         name = product.get("name", None)
-        url = product.get("url", None)
+        if theme == None:
+            url = URL
+        else:
+            url = product.get("url", None)
         price = product.get("price", None)
         image_url = product.get("image_url", None)
 
@@ -63,3 +65,87 @@ def get_product_preview_by_theme(collection, theme):
         {"_id": 0, "theme": 1, "products.name": 1, "products.image_url": 1, "products.price": 1, "products.price_history": 1}
     )
     return theme_data if theme_data else {"error": "Thème non trouvé"}
+
+
+def delete_product(collection, asin):
+    """
+    Supprime un produit de la base de données par son ASIN.
+
+    Args:
+        collection: Collection MongoDB contenant les produits.
+        asin (str): ASIN du produit à supprimer.
+
+    Returns:
+        dict: Indique si l'opération a réussi.
+    """
+    result = collection.delete_one({"asin": asin})
+    if result.deleted_count:
+        return {"success": True}
+    else:
+        return {"success": False, "message": "Produit non trouvé"}
+    
+
+def delete_theme(collection, theme):
+    """
+    Supprime un thème et tous les produits associés de la base de données.
+
+    Args:
+        collection: Collection MongoDB contenant les produits.
+        theme (str): Thème à supprimer.
+
+    Returns:
+        dict: Indique si l'opération a réussi.
+    """
+    result = collection.delete_many({"theme": theme})
+    if result.deleted_count:
+        return {"success": True}
+    else:
+        return {"success": False, "message": "Thème non trouvé"}
+
+def get_all_themes(collection):
+    """
+    Récupère la liste de tous les thèmes présents dans la base de données.
+
+    Args:
+        collection: Collection MongoDB contenant les produits.
+
+    Returns:
+        list: Liste des thèmes.
+    """
+    themes = collection.distinct("theme")
+    return themes
+
+
+def add_new_track_to_db(collection, theme, URL, delay):
+    """
+    Ajoute un nouveau tracking dans la collection MongoDB.
+
+    Args:
+        collection: Collection MongoDB contenant les trackings.
+        theme (str): Thème du tracking.
+        URL (str): URL du tracking.
+        delay (int): temps entre 2 scrap en heure.
+
+    Returns:
+        dict: Résultat de l'opération, incluant l'identifiant du document inséré.
+    """
+    print("Ajout d'un nouveau tracking dans la base de données",flush=True)
+    print("theme",theme,flush=True)
+    print("URL",URL,flush=True)
+    print("delay",delay,flush=True)
+
+    # Construction du document à insérer
+    tracking_document = {
+        "theme": theme,
+        "URL": URL,
+        "interval_hours": delay,
+        "created_at": datetime.utcnow(),  # Date et heure de création
+        "last_executed": datetime.utcnow()  # Dernière mise à jour
+    }
+
+    # Insertion dans la base de données
+    result = collection.insert_one(tracking_document)
+    
+    return {"success": True, "inserted_id": str(result.inserted_id)}
+
+

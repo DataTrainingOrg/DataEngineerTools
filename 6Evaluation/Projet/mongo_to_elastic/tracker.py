@@ -4,12 +4,10 @@ from elasticsearch import Elasticsearch
 import time
 from bson import ObjectId
 
-from dotenv import load_dotenv
 import os
 
 print("Démarrage de mongo-tracker...", flush=True)
 
-load_dotenv()
 # Chargement des variables d'environnement
 MONGO_HOST = os.getenv("MONGO_HOST", "mongo1")
 MONGO_PORT = os.getenv("MONGO_PORT", "27017")
@@ -69,7 +67,7 @@ pipeline = [
             "ns.coll": MONGO_DB_TABLE  # Filtrer pour la collection spécifique
         }
     }
-]
+]   
 
 print("Avant db.watch()", flush=True)
 

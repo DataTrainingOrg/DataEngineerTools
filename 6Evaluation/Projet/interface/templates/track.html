@@ -174,22 +174,20 @@ select {
                 {% endfor %}
             </tbody>
         </table>
-
-        <!-- Sélecteur de temps sous la barre de recherche -->
-        <div id="timeSelector" class="{{ 'hidden' if not show_track_button else '' }}">
-            <label for="time">Faire un tracking toutes les </label>
-            <select id="time">
-                {% for i in range(1, 25) %}
-                    <option value="{{ i }}" {% if i == 24 %}selected{% endif %}>{{ i }}</option>
-                {% endfor %}
-            </select>
-            <label for="time"> heures.</label>
-        </div>
-        
         <!-- Formulaire de tracking -->
         <form id="trackForm" method="POST">
+            <div id="timeSelector" name="delay" class="{{ 'hidden' if not show_track_button else '' }}">
+                <label for="time">Faire un tracking toutes les </label>
+                <select id="time" name="delay"> <!-- Assurez-vous que 'name' est bien 'delay' -->
+                    {% for i in range(1, 50) %}
+                        <option value="{{ i }}" {% if i == 24 %}selected{% endif %}>{{ i }}</option>
+                    {% endfor %}
+                </select>
+                <label for="time"> heures.</label>
+            </div>
             <button type="submit" id="trackButton" name="action" value="track">Traquer</button>
         </form>
+        
     </div>
 {% endif %}
 

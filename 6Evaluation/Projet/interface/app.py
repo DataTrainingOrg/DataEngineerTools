@@ -4,7 +4,6 @@ import pymongo
 from elasticsearch import Elasticsearch
 from bson import ObjectId
 import time
-from dotenv import load_dotenv
 import sys
 import os
 
@@ -16,13 +15,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../scra
 from scrapping_script import scrape_product_details_with_image,scrape_products_info
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../mongo_requests')))
-from mongo import add_or_update_products,get_product_preview_by_url,get_product_preview_by_theme
+from mongo import add_or_update_products,add_new_track_to_db
 
 
 app = Flask(__name__)
 
 # Charger les variables d'environnement depuis le fichier .env
-load_dotenv()  # Cela charge les variables d'environnement à partir de .env
 
 # Chargement des variables d'environnement
 MONGO_HOST = os.getenv("MONGO_HOST", "mongo1")
@@ -30,6 +28,7 @@ MONGO_PORT = os.getenv("MONGO_PORT", "27017")
 MONGO_REPLICA_SET = os.getenv("MONGO_REPLICA_SET", "rs0")
 MONGO_DB = os.getenv("MONGO_DB", "amazon_web_scraper")
 MONGO_DB_TABLE = os.getenv("MONGO_DB_TABLE", "products")
+MONGO_DB_TABLE_TRACKER = os.getenv("MONGO_DB_TABLE_TRACKER", "track_list")
 
 ELASTIC_HOST = os.getenv("ELASTIC_HOST", "elasticsearch")
 ELASTIC_PORT = os.getenv("ELASTIC_PORT", "9200")
@@ -66,6 +65,7 @@ while True:
 # Connexion à la base MongoDB
 db = client[MONGO_DB]
 links_collection = db[MONGO_DB_TABLE]
+track_collection = db[MONGO_DB_TABLE_TRACKER]
 
 # Fonction pour convertir les ObjectId en chaînes
 def convert_objectid(obj):
@@ -82,6 +82,7 @@ app = Flask(__name__)
 
 datas=[]
 themeName = None
+URL = None
 # Route pour la page d'accueil (suivi des liens)
 @app.route('/')
 def home():
@@ -93,16 +94,18 @@ def home():
 def track():
     global datas
     global themeName
+    global URL
     if request.method == 'POST':
         action = request.form.get('action')
         
+        link = request.form.get('link')
         if action == 'search':
-            link = request.form.get('link')
             message = validate_link(link)
-
+            print(link,flush=True)
             if message == 'amazon':
                 data = scrape_product_details_with_image(link)
                 themeName=None
+                URL = link
                 if data.get('asin') and not any(d['asin'] == data['asin'] for d in datas):
                     datas.append(data)
                     return render_template('track.html', users=datas, show_track_button=True)
@@ -110,6 +113,7 @@ def track():
                     return render_template('track.html', users=datas, message="Produit déjà ajouté", show_track_button=False)
 
             elif message == 'theme':
+                URL = None
                 result = scrape_products_info(clean_text(link))
                 
                 nb = result['count']
@@ -128,8 +132,11 @@ def track():
         if action == 'track':
             list_data = datas.copy()
             datas.clear()   
-            add_or_update_products(links_collection, list_data, theme=themeName)
-            return render_template('track.html', message=themeName, show_track_button=True)
+            add_or_update_products(links_collection, list_data,URL, theme=themeName)
+            delay = request.form.get('delay')
+            print(delay,flush=True)
+            add_new_track_to_db(track_collection, themeName, URL, int(delay))
+            return render_template('track.html', message='Lancement du tracking effectué !', show_track_button=True)
 
     return render_template('track.html', show_track_button=False)
 
