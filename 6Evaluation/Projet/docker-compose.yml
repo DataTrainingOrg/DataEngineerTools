@@ -49,18 +49,20 @@ services:
 
   # Service pour exécuter le script Python
   mongo-tracker:
-    image: python:3.9
+    build: ./mongo_to_elastic
     container_name: ${MONGO_TRACKER_CONTAINER}
     volumes:
       - ./mongo_to_elastic/tracker.py:/tracker.py
+
     depends_on:
       - mongo1
       - elasticsearch
     env_file:
       - .env
-    entrypoint: ["bash", "-c", "python -m venv /venv && /venv/bin/pip install pymongo elasticsearch && /venv/bin/python /tracker.py"]
     networks:
       - mongo-cluster
+    restart: always
+
 
   # Application Flask
   flask-app:
@@ -77,6 +79,7 @@ services:
       - "5000:5000"
     depends_on:
       - mongo1
+      - mongo-tracker
     networks:
       - mongo-cluster
       

@@ -1,0 +1,19 @@
+FROM python:3.9
+
+# Installer les dépendances système
+RUN apt-get update && apt-get install -y \
+    && apt-get clean
+
+# Créer un environnement virtuel
+RUN python -m venv /venv
+ENV PATH="/venv/bin:$PATH"
+
+# Installer les bibliothèques nécessaires
+COPY requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# Copier le script de suivi dans le conteneur
+COPY ./tracker.py /tracker.py
+
+# Lancer le script
+CMD ["python", "/tracker.py"]

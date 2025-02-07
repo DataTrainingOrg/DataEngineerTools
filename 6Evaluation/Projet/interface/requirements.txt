@@ -6,3 +6,5 @@ requests==2.31.0
 beautifulsoup4==4.12.2
 lxml==5.3.0
 datetime==5.5.0
+sentence_transformers==3.4.1
+flask-cors

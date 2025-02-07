@@ -19,15 +19,17 @@ ELASTIC_HOST = os.getenv("ELASTIC_HOST", "elasticsearch")
 ELASTIC_PORT = os.getenv("ELASTIC_PORT", "9200")
 
 # Connexion à MongoDB
-try:
-    print("Connexion à MongoDB...", flush=True)
-    mongo_uri = f"mongodb://{MONGO_HOST}:{MONGO_PORT}/?directConnection=true&serverSelectionTimeoutMS=2000&replicaSet={MONGO_REPLICA_SET}"
-    client = pymongo.MongoClient(mongo_uri)
-    client.admin.command('ping')  # Test de la connexion
-    print("Connexion à MongoDB réussie!", flush=True)
-except pymongo.errors.ConnectionFailure as e:
-    print("Erreur de connexion à MongoDB:", e, flush=True)
-    exit(1)
+while True:
+    try:
+        print("Connexion à MongoDB...", flush=True)
+        mongo_uri = f"mongodb://{MONGO_HOST}:{MONGO_PORT}/?directConnection=true&serverSelectionTimeoutMS=2000&replicaSet={MONGO_REPLICA_SET}"
+        client = pymongo.MongoClient(mongo_uri)
+        client.admin.command('ping')  # Test de la connexion
+        print("Connexion à MongoDB réussie!", flush=True)
+        break
+    except pymongo.errors.ConnectionFailure as e:
+        print("Erreur de connexion à MongoDB:", e, flush=True)
+        exit(1)
 
 # Connexion à Elasticsearch
 while True:
@@ -59,7 +61,6 @@ def convert_objectid(obj):
         return obj
 
 # Pipeline pour écouter tous les changements
-
 pipeline = [
     {
         "$match": {
@@ -88,6 +89,15 @@ with db.watch(pipeline) as stream:
             document = change["fullDocument"]
             document = convert_objectid(document)  # Convertir les ObjectId en chaîne
             document.pop('_id', None)  # Retirer _id, car il est déjà utilisé pour l'indexation
+
+            # Ajout du champ name_suggest pour autocomplétion
+            if "name" in document:
+                document["name_suggest"] = {
+                    "input": [document["name"], document["name"].lower()],
+                    "weight": 1  # Optionnel: pour prioriser les résultats
+                }
+
+            # Indexation dans Elasticsearch
             es.index(index=index_name, id=str(document_id), document=document)
             print(f"✅ INSERT: Document ajouté à Elasticsearch ({index_name}/{document_id})", flush=True)
 
@@ -96,6 +106,14 @@ with db.watch(pipeline) as stream:
             update_fields = change.get("updateDescription", {}).get("updatedFields", {})
             if update_fields:
                 update_fields = convert_objectid(update_fields)  # Convertir les ObjectId en chaîne
+
+                # Vérifier si le champ "name" a été mis à jour et ajouter ou modifier le champ "name_suggest"
+                if "name" in update_fields:
+                    update_fields["name_suggest"] = {
+                        "input": [update_fields["name"], update_fields["name"].lower()],
+                        "weight": 1
+                    }
+
                 es.update(index=index_name, id=str(document_id), body={"doc": update_fields})
                 print(f"✅ UPDATE: Document mis à jour dans Elasticsearch ({index_name}/{document_id})", flush=True)
 
