@@ -5,94 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recherche de produits</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-            margin: 0;
-            padding: 0;
-        }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
 
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #232f3e;
-            text-align: center;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        #results {
-            margin-top: 20px;
-        }
-
-        .product-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            cursor: pointer;
-            background: white;
-            transition: background 0.2s ease-in-out;
-        }
-
-        .product-item:hover {
-            background-color: #f1f1f1;
-        }
-
-        .product-info {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            overflow: hidden;
-        }
-
-        .product-item img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-            flex-shrink: 0;
-            border-radius: 5px;
-        }
-
-        .product-name {
-            font-size: 14px;
-            font-weight: normal;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 500px;
-        }
-
-        .product-price {
-            font-weight: bold;
-            font-size: 16px;
-            margin-left: 10px;
-            flex-shrink: 0;
-        }
-
-        .no-results {
-            text-align: center;
-            color: #888;
-            font-style: italic;
-            margin-top: 20px;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -101,46 +16,16 @@
         <div id="results"></div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            var timeout = null;
+    <div id="product-popup">
+        <div class="popup-content">
+            <span id="popup-close" class="popup-close">&times;</span>
+            <h2 id="popup-name"></h2>
+            <img id="popup-image" alt="Product Image" />
+            <div id="popup-price"></div>
+            <canvas id="price-history-chart"></canvas>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 
-            $('#search-input').on('input', function() {
-                var query = $(this).val();
-
-                clearTimeout(timeout);
-
-                timeout = setTimeout(function() {
-                    if (query.length > 0) {
-                        $.get('/autocomplete', { q: query }, function(data) {
-                            $('#results').empty();
-
-                            if (data.length > 0) {
-                                data.forEach(function(product) {
-                                    $('#results').append(`
-                                        <div class="product-item" data-url="/product/${product.id}">
-                                            <div class="product-info">
-                                                <img src="${product.image_url}" alt="${product.name}">
-                                                <span class="product-name">${product.name}</span>
-                                            </div>
-                                            <span class="product-price">${product.price}</span>
-                                        </div>
-                                    `);
-                                });
-
-                                $('.product-item').on('click', function() {
-                                    window.location.href = $(this).data('url');
-                                });
-                            } else {
-                                $('#results').append('<div class="no-results">Aucun produit trouvé</div>');
-                            }
-                        });
-                    } else {
-                        $('#results').empty();
-                    }
-                }, 300);
-            });
-        });
-    </script>
 </body>
 </html>

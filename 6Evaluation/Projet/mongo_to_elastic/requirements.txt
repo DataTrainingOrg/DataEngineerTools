@@ -1,4 +1,2 @@
 pymongo
 elasticsearch
-transformers
-# torch

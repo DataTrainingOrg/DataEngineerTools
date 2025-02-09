@@ -76,7 +76,7 @@ print("Avant db.watch()", flush=True)
 with db.watch(pipeline) as stream:
     for change in stream:
         print("Changement détecté:", change, flush=True)
-
+        
         # Extraire les informations du changement
         operation = change["operationType"]
         collection_name = change["ns"]["coll"]
