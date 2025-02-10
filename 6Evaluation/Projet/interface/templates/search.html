@@ -1,147 +1,24 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recherche des Produits</title>
-    <style>
-        /* Styles pour la barre de recherche et les suggestions */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            background-color: #232f3e;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #232f3e;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #ff9900;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e68a00;
-        }
-        .results {
-            margin-top: 20px;
-        }
-        .results ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .results li {
-            background-color: #f9f9f9;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        /* Style pour la liste des suggestions */
-        .autocomplete-suggestions {
-            border: 1px solid #ccc;
-            background-color: white;
-            max-height: 200px;
-            overflow-y: auto;
-            position: absolute;
-            width: 100%;
-            z-index: 10;
-        }
-        .autocomplete-suggestion {
-            padding: 10px;
-            cursor: pointer;
-        }
-        .autocomplete-suggestion:hover {
-            background-color: #ddd;
-        }
-    </style>
-</head>
-<body>
-    <div class="navbar">
-        <a href="/index_product">Index des Produits</a>
-        <a href="/search">Recherche des Produits</a>
+{% extends "base.html" %}
+
+{% block title %}Suivi des produits{% endblock %}
+
+{% block content %}
+    <h1>Suivi des produits</h1>
+    <input type="text" id="search-input" placeholder="Recherchez un produit traqué" autocomplete="off">
+    <div id="results"></div>
+   
+
+    <div id="product-popup">
+        <div class="popup-content">
+            <span id="popup-close" class="popup-close">&times;</span>
+            <h2 id="popup-name"></h2>
+            <img id="popup-image" alt="Product Image" />
+            <div id="popup-price"></div>
+            <canvas id="price-history-chart"></canvas>
+        </div>
     </div>
-    <div class="container">
-        <h1>Recherche des Produits</h1>
-        <form method="POST">
-            <input type="text" id="searchQuery" name="query" placeholder="Rechercher un produit" autocomplete="off">
-            <div id="autocomplete-results" class="autocomplete-suggestions"></div>
-            <button type="submit">Rechercher</button>
-        </form>
-    </div>
+{% endblock %}
 
-    <script>
-        // Fonction pour gérer l'autocomplétion en temps réel
-        document.getElementById('searchQuery').addEventListener('input', function() {
-            const query = this.value;
-            const resultsContainer = document.getElementById('autocomplete-results');
-            
-            // Si la requête a moins de 2 caractères, on ne fait rien
-            if (query.length < 2) {
-                resultsContainer.innerHTML = '';
-                return;
-            }
-
-            // Envoi de la requête AJAX à Flask pour l'autocomplétion
-            fetch(`/autocomplete?q=${query}`)
-                .then(response => response.json())
-                .then(suggestions => {
-                    resultsContainer.innerHTML = '';  // Clear previous results
-
-                    if (suggestions.length > 0) {
-                        // Afficher les suggestions sous la barre de recherche
-                        suggestions.forEach(suggestion => {
-                            const div = document.createElement('div');
-                            div.classList.add('autocomplete-suggestion');
-                            div.textContent = suggestion;
-
-                            // Ajouter un événement pour remplir la barre de recherche avec la suggestion
-                            div.addEventListener('click', function() {
-                                document.getElementById('searchQuery').value = suggestion;
-                                resultsContainer.innerHTML = '';  // Clear suggestions
-                            });
-
-                            resultsContainer.appendChild(div);
-                        });
-                    } else {
-                        resultsContainer.innerHTML = '<div>Aucune suggestion</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur d\'autocomplétion:', error);
-                });
-        });
-    </script>
-</body>
-</html>
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

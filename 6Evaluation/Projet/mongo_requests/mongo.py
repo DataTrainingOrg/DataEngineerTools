@@ -25,7 +25,7 @@ def add_or_update_products(collection, products, URL, theme=None):
             url = URL
         else:
             url = product.get("url", None)
-        price = product.get("price", None)
+        price = product.get("price", None) or "Prix non trouvé"
         image_url = product.get("image_url", None)
 
         # Création du document produit
