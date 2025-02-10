@@ -1,57 +1,112 @@
+.header-container {
+    background-color: #232f3e;  /* Applique la couleur à la bannière + navbar */
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f3f3f3;
+    font-family: 'Arial', sans-serif;
+    background-color: #f3f3f3;  /* Gris clair Amazon pour le reste de la page */
     margin: 0;
     padding: 0;
+    color: #333;  /* Texte en gris foncé pour le confort de lecture */
 }
 
-.container {
-    max-width: 800px;
-    margin: 50px auto;
+
+header {
+    background-color: #232f3e;  /* Bleu foncé Amazon pour la partie supérieure */
     padding: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-    color: #232f3e;
-    text-align: center;
+.img-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;  /* Pour prendre toute la hauteur de la page */
 }
 
-/* Barre de navigation */
+img {
+    width: 50%;  /* L'image occupe 50% de la largeur */
+    height: auto;  /* Pour garder les proportions de l'image */
+    object-fit: cover;  /* L'image est ajustée à la taille sans déformation */
+}
+
+.img-container::after {
+    content: '';
+    background-color: #146eb4;  /* Couleur de fond pour la partie restante */
+    flex-grow: 1;  /* Cette partie prend tout l'espace restant */
+    height: 100%;  /* Remplir toute la hauteur */
+}
+
 .navbar {
-    background-color: #232f3e;
+    background-color: #304053;  /* Bleu foncé pour la navbar */
     color: white;
-    padding: 10px 20px;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 2px solid #ff9900;  /* Bordure pour séparer */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .navbar a {
     color: white;
     text-decoration: none;
-    margin: 0 10px;
+    margin: 0 15px;
+    font-size: 18px;
+    font-weight: 600;  /* Un peu plus épais pour la lisibilité */
+    transition: color 0.3s ease, transform 0.3s ease;  /* Effet de survol */
 }
 
-/* Champs de texte et boutons */
+.navbar a:hover {
+    color: #ff9900;  /* Couleur orange au survol */
+    transform: scale(1.1);  /* Agrandissement léger */
+}
+
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);  /* Effet d'ombre au survol */
+}
+
+h1 {
+    color: #232f3e;
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
 input[type="text"] {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 12px;
+    margin: 15px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #ff9900;  /* Bordure orange au focus */
+    outline: none;
 }
 
 button {
     background-color: #ff9900;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -83,9 +138,10 @@ button:hover {
 }
 
 select {
-    padding: 5px;
+    padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+    font-size: 16px;
 }
 
 /* Résultats */
@@ -101,11 +157,12 @@ select {
     border-bottom: 1px solid #ddd;
     cursor: pointer;
     background: white;
-    transition: background 0.2s ease-in-out;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .product-item:hover {
     background-color: #f1f1f1;
+    transform: scale(1.02);
 }
 
 .product-info {
@@ -124,7 +181,7 @@ select {
 }
 
 .product-name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: normal;
     white-space: nowrap;
     overflow: hidden;
@@ -134,7 +191,7 @@ select {
 
 .product-price {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 18px;
     margin-left: 10px;
     flex-shrink: 0;
 }
@@ -240,7 +297,7 @@ select {
 }
 
 .result-table th, .result-table td {
-    padding: 10px;
+    padding: 12px;
     text-align: center;
     border: none;
 }

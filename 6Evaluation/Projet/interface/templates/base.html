@@ -11,11 +11,16 @@
 
 </head>
 <body>
-    <div class="navbar">
-        <a href="/track">Traquer un produit</a>
-        <a href="/search">Suivi des produits</a>
+    <!-- Container du header avec l'image -->
+    <div class="header-container">
+        <img src="{{ url_for('static', filename='img/image.jpg') }}" alt="">
+        <div class="navbar">
+            <a href="/track">Traquer un produit</a>
+            <a href="/search">Suivi des produits</a>
+        </div>
     </div>
     
+    <!-- Contenu principal de la page -->
     <div class="container">
         {% block content %}{% endblock %}
     </div>
