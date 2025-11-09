@@ -15,5 +15,6 @@ dependencies = [
     "pymongo==4.9.1",
     "elasticsearch==8.15.1",
     "redis==5.0.8",
+    "ipykernel>=7.1.0",
 ]
 

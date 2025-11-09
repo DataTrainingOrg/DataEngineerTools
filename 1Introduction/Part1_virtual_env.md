@@ -132,6 +132,37 @@ Celui-ci sera alors automatiquement ajouté au fichier pyproject.toml et install
 Lorsque vous travaillez sur le projet faites bien attention à avoir votre environnement virtuel d'activé afin d'éviter les
 problèmes de dépendances !
 
+## Utilisation avec Jupyter Notebook
+
+⚠️ **Important** : Lorsque vous travaillez avec des Jupyter Notebooks dans ce cours, vous devez :
+
+1. **Activer votre environnement virtuel** avant de lancer Jupyter :
+
+```bash
+source .venv/bin/activate  # Sur macOS/Linux
+# ou
+.venv\Scripts\activate     # Sur Windows
+```
+
+Ou utiliser directement :
+
+```bash
+uv run jupyter notebook
+```
+
+2. **Sélectionner le bon kernel** dans le notebook :
+   - Une fois le notebook ouvert, regardez en haut à droite de la page
+   - Vous devriez voir le nom du kernel Python utilisé (exemple : "Python 3.12")
+   - Cliquez dessus pour vérifier ou changer le kernel
+   - Assurez-vous de sélectionner le kernel correspondant à votre environnement virtuel `.venv` ou le nom du notebook
+
+Si vous ne voyez pas votre environnement virtuel dans la liste des kernels disponibles, vous pouvez l'ajouter avec :
+
+```bash
+uv run python -m ipykernel install --user --name=dataengineer --display-name="Python (DataEngineer)"
+```
+
+Cette commande créera un kernel nommé "Python (DataEngineer)" que vous pourrez sélectionner dans vos notebooks.
 
 ## Suite
 Lorsque tout est bon du côté des environnements, vous pouvez passer à la suite en ouvrant le notebook `Part2_Git.ipynb`
