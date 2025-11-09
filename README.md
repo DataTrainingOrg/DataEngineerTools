@@ -9,8 +9,7 @@ bases de données et leur exploitation sur l'interface d'une web app.
 Si vous ne disposez pas déjà d'un compte [Github](https://github.com), il faut en créer un.
 
 Forkez (avec le bouton `Fork` en haut à droite) ce projet. Il contient toutes les ressources nécessaires pour ce
-cours. Vous pourrez ajouter des notes, modifier le code, et pousser votre projet final directement pour que l'on puisse
-l'évaluer.
+cours. Vous pourrez ajouter des notes, modifier le code et avoir les updates si besoin
 
 Pour commencer à travailler il vous faut cloner le projet dans votre répertoire (local) de travail : 
 
@@ -20,22 +19,6 @@ $:~/<WORKDIR> > git clone https://github.com/DataTrainingOrg/DataEngineerTools.g
 $:~/<WORKDIR> > cd DataEngineerTools/
 ```
 
-Si au fil du temps j'ai besoin de modifier le contenu en temps réel vous pouvez garder votre projet à jour en ajoutant
-ces quelques commandes :
-
-```bash
-$:~/> cd <WORKDIR>
-$:~/<WORKDIR>cd DataEngineerTools/
-$:~/<WORKDIR>/DataEngineerTools> git remote add basestream https://github.com/DataTrainingOrg/DataEngineerTools
-$:~/<WORKDIR>/DataEngineerTools> git fetch basestream
-```
-
-Maintenant pour mettre à jour le projet :
-
-```bash
-$:~/<WORKDIR>/DataEngineerTools>git pull basestream master
-```
-
 ## Consignes
 
 L'unité est composée de 6 parties, les 5 premières sont des notebook guidés vous permettant d'acquérir les compétences
@@ -43,7 +26,7 @@ nécessaires à la bonne réalisation de votre projet de fin d'unité.
 
 L'ensemble des exercices présents dans les différents cours doivent être complétés directement dans les notebooks et mis à jours sur vos comptes Github respectifs. 
 
-Le projet doit être placé dans le dossier `Evaluation/Projet` avec la totalité du code de l'application. Vous devez aussi remplir les fichiers README.md correspondants, ce qui permet de faire une documentation élémentaire.
+Pour le projet final vous devrez créer un repository github qui contiendra le code de votre projet et vous permettra de collaborer en binôme
 
 Il est conseillé de travailler en local lors de chaque séance, puis de pusher son travail en fin de séance sur le repository Github.
 
