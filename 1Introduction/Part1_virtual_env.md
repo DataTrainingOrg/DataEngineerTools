@@ -41,11 +41,30 @@ Pour windows
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
+## Installation de Python 3.12
+
+Une fois `uv` installé, vous devez installer Python 3.12 pour ce projet. `uv` peut gérer l'installation de Python automatiquement :
+
+```bash
+uv python install 3.12
+```
+
+Cette commande va télécharger et installer Python 3.12 si vous ne l'avez pas déjà sur votre système. `uv` gère les versions de Python de manière isolée, ce qui permet d'avoir plusieurs versions de Python sur votre machine sans conflit.
+
+Pour vérifier que Python 3.12 est bien installé :
+
+```bash
+uv python list
+```
+
+Cette commande affiche toutes les versions de Python disponibles sur votre système.
+
 ## Installation des dépendances
 
-A la racine du projet, vous pouvez voir qu'il y a deux fichiers disponibles :
-- pyproject.toml
-- uv.lock
+A la racine du projet, vous pouvez voir qu'il y a trois fichiers disponibles :
+- `.python-version` : spécifie la version de Python à utiliser (3.12)
+- `pyproject.toml` : contient les métadonnées du projet et la liste des dépendances
+- `uv.lock` : fichier de verrouillage qui garantit que tout le monde utilise exactement les mêmes versions de packages
 
 Ces fichiers définissent les dépendances de notre projet et donc les packages que nous devons installer afin que celui tourne
 sans soucis.
@@ -57,6 +76,11 @@ Pour créer un environnement virtuel et installer les dépendances avec uv lance
 ```bash
 uv sync
 ```
+
+Cette commande va :
+1. Détecter la version de Python requise (3.12) grâce au fichier `.python-version`
+2. Créer automatiquement un environnement virtuel dans le dossier `.venv/`
+3. Installer toutes les dépendances listées dans `pyproject.toml`
 
 Grâce à cette commande et aux environnements virtuels, chaque élève qui suit ce cours a les packages nécessaires avec les
 bonnes versions !
