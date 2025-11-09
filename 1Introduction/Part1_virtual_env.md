@@ -36,10 +36,11 @@ Ou sur macOS avec Homebrew :
 brew install uv
 ```
 
-Pour windows
+Pour windows: ⚠️ lancez powershell en mode administrateur ou VS code en mode admin en fonction de ce que vous utilisez (VS code conseillé)
 ```bash
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
+Pour la suite de toute l'unité, si vous êtes sur windows, utilisez seulement powershell ou VS code en mode admin pour les installations 
 
 ## Installation de Python 3.12
 
@@ -94,6 +95,11 @@ source .venv/bin/activate
 ```
 
 Ou sur Windows :
+commencez par activer l'execution de script:
+```bash
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+ensuite activez le venv
 ```bash
 .venv\Scripts\activate
 ```
@@ -136,7 +142,7 @@ problèmes de dépendances !
 
 ⚠️ **Important** : Lorsque vous travaillez avec des Jupyter Notebooks dans ce cours, vous devez :
 
-1. **Activer votre environnement virtuel** avant de lancer Jupyter :
+1. **Activer votre environnement virtuel** avant de lancer Jupyter (normalement déjà fait avec les étapes précédentes) :
 
 ```bash
 source .venv/bin/activate  # Sur macOS/Linux
@@ -144,11 +150,15 @@ source .venv/bin/activate  # Sur macOS/Linux
 .venv\Scripts\activate     # Sur Windows
 ```
 
-Ou utiliser directement :
+Ou utilisez directement :
 
 ```bash
 uv run jupyter notebook
 ```
+
+Sur Windows il est vivement conseillé de faire tourner les notebook avec VS code
+
+Si vous lancer les notebook depuis powershell et que vous avez une erreur sur votte browser, copié coller le lien localhost que la commande vous a donné
 
 2. **Sélectionner le bon kernel** dans le notebook :
    - Une fois le notebook ouvert, regardez en haut à droite de la page
