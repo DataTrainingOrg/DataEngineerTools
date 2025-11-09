@@ -17,54 +17,91 @@ En résumé, un environnement virtuel vous permet de :
 1. Utiliser différentes versions de pacakge dans différents projets.
 2. Garder l'environnement global propre en installant les dépendances uniquement dans le projet en cours.
 
-# Utilisation de `pipenv` pour gérer les environnements virtuels
+# Utilisation de `uv` pour gérer les environnements virtuels
 
-`pipenv` est un outil pratique pour gérer les environnements virtuels et les dépendances des projets Python.
-Il combine les fonctionnalités de `pip` et de `virtualenv` dans un seul outil facile à utiliser.
+`uv` est un outil moderne et extrêmement rapide pour gérer les environnements virtuels et les dépendances des projets Python.
+Il est écrit en Rust et offre des performances bien supérieures aux outils traditionnels comme pip et pipenv.
 
-Pipenv est développé par @kennethreitz, un pilier dans la communauté de Python, vous pouvez accéder à la documentation
-de pipenv ici https://pipenv.pypa.io/en/latest/
+`uv` est développé par Astral, l'équipe derrière ruff, vous pouvez accéder à la documentation de uv ici https://docs.astral.sh/uv/
 
-## Installation de `pipenv`
-Pour installer `pipenv`, exécutez la commande suivante :
+## Installation de `uv`
+Pour installer `uv`, exécutez la commande suivante :
 
 ```bash
-pip install pipenv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+Ou sur macOS avec Homebrew :
+```bash
+brew install uv
+```
+
+Pour windows
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+## Installation de Python 3.12
+
+Une fois `uv` installé, vous devez installer Python 3.12 pour ce projet. `uv` peut gérer l'installation de Python automatiquement :
+
+```bash
+uv python install 3.12
+```
+
+Cette commande va télécharger et installer Python 3.12 si vous ne l'avez pas déjà sur votre système. `uv` gère les versions de Python de manière isolée, ce qui permet d'avoir plusieurs versions de Python sur votre machine sans conflit.
+
+Pour vérifier que Python 3.12 est bien installé :
+
+```bash
+uv python list
+```
+
+Cette commande affiche toutes les versions de Python disponibles sur votre système.
 
 ## Installation des dépendances
 
-A la racine du projet, ous pouvez voir qu'il y a deux fichiers disponibles :
-- Pipfile
-- Pipfile.lock
+A la racine du projet, vous pouvez voir qu'il y a trois fichiers disponibles :
+- `.python-version` : spécifie la version de Python à utiliser (3.12)
+- `pyproject.toml` : contient les métadonnées du projet et la liste des dépendances
+- `uv.lock` : fichier de verrouillage qui garantit que tout le monde utilise exactement les mêmes versions de packages
 
 Ces fichiers définissent les dépendances de notre projet et donc les packages que nous devons installer afin que celui tourne
-sans soucis
+sans soucis.
 
-Si vous ouvrez le fichier `PipFile` vous pouvez voir toutes ces dépendances ainsi que les versions requises.
+Si vous ouvrez le fichier `pyproject.toml` vous pouvez voir toutes ces dépendances ainsi que les versions requises dans la section `dependencies`.
 
-Pour créer un environnement virtuel et installer les dépendances avec Pipenv lancez la commande suivante à la racine du projet :
+Pour créer un environnement virtuel et installer les dépendances avec uv lancez la commande suivante à la racine du projet :
 
 ```bash
-pipenv install
+uv sync
 ```
+
+Cette commande va :
+1. Détecter la version de Python requise (3.12) grâce au fichier `.python-version`
+2. Créer automatiquement un environnement virtuel dans le dossier `.venv/`
+3. Installer toutes les dépendances listées dans `pyproject.toml`
 
 Grâce à cette commande et aux environnements virtuels, chaque élève qui suit ce cours a les packages nécessaires avec les
 bonnes versions !
 
-## Activation et désactivation de l’environnement virtuel
+## Activation et désactivation de l'environnement virtuel
 
-Vous devez activer l'environnement virtuel dans votre terminal afin d'utiliser l'éxecutable python de celui ci depuis 
-votre terminal
+Avec `uv`, vous pouvez activer l'environnement virtuel de manière traditionnelle :
 
 ```bash
-pipenv shell
+source .venv/bin/activate
+```
+
+Ou sur Windows :
+```bash
+.venv\Scripts\activate
 ```
 
 Selon votre OS, vous devriez voir que votre terminal a changé et affiche désormais le nom de l'environnement virtuel au
 début de la ligne
 ```bash
-(DataEngineerTools-2yTkhyK3) user>
+(.venv) user>
 ```
 
 Vous pouvez aussi vérifier que le chemin de l'éxecutable python est bien celui de l'environnement virtuel : 
@@ -74,22 +111,58 @@ which python
 
 Pour désactiver l'environnement : 
 ```bash
-exit
+deactivate
+```
+
+Alternativement, `uv` permet d'exécuter des commandes directement dans l'environnement virtuel sans activation :
+```bash
+uv run python mon_script.py
 ```
 
 ## Installer des packages dans votre environnement virtuel
 
-Au cours du projet, si vous avez besoin d'installer un package dans votre env, vous suffit de faire : 
+Au cours du projet, si vous avez besoin d'installer un package dans votre env, il vous suffit de faire : 
 ```bash
-pipenv install <nom_du_package>
+uv add <nom_du_package>
 ```
 
-Celui-ci sera alors automatiquement ajouté au fichier Pipfile
+Celui-ci sera alors automatiquement ajouté au fichier pyproject.toml et installé dans votre environnement
 
 
-Lorsque vous travaillez sur le projet faites bien attention à avoir votre environnement virtuel d'activer afin d'éviter les
+Lorsque vous travaillez sur le projet faites bien attention à avoir votre environnement virtuel d'activé afin d'éviter les
 problèmes de dépendances !
 
+## Utilisation avec Jupyter Notebook
+
+⚠️ **Important** : Lorsque vous travaillez avec des Jupyter Notebooks dans ce cours, vous devez :
+
+1. **Activer votre environnement virtuel** avant de lancer Jupyter :
+
+```bash
+source .venv/bin/activate  # Sur macOS/Linux
+# ou
+.venv\Scripts\activate     # Sur Windows
+```
+
+Ou utiliser directement :
+
+```bash
+uv run jupyter notebook
+```
+
+2. **Sélectionner le bon kernel** dans le notebook :
+   - Une fois le notebook ouvert, regardez en haut à droite de la page
+   - Vous devriez voir le nom du kernel Python utilisé (exemple : "Python 3.12")
+   - Cliquez dessus pour vérifier ou changer le kernel
+   - Assurez-vous de sélectionner le kernel correspondant à votre environnement virtuel `.venv` ou le nom du notebook
+
+Si vous ne voyez pas votre environnement virtuel dans la liste des kernels disponibles, vous pouvez l'ajouter avec :
+
+```bash
+uv run python -m ipykernel install --user --name=dataengineer --display-name="Python (DataEngineer)"
+```
+
+Cette commande créera un kernel nommé "Python (DataEngineer)" que vous pourrez sélectionner dans vos notebooks.
 
 ## Suite
 Lorsque tout est bon du côté des environnements, vous pouvez passer à la suite en ouvrant le notebook `Part2_Git.ipynb`

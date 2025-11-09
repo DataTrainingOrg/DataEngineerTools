@@ -11,17 +11,15 @@ Les projets sont à faire en binôme
 ## Consignes
 
 - Vous devrez scraper des données sur le site web de votre choix
-- Stocker les données dans une ou plusieurs BDD (mongo, redis, elastic, postgres, ...)
+- Stocker les données dans une ou plusieurs BDD (mongo, redis, postgres, ...)
 - Vous devez créer une application Web avec la techno python de votre choix (Flask, Dash, Streamlit, ...)
 - Votre application devra afficher les données de façon optimale. Exemple: graphiques, moteur de recherche, ...
 - Les services de votre projet devront tourner sur des containers Docker
 - Vous devrez créer une documentation technique et fonctionnelle (comment lancer, vos choix techniques, ...)
-- Votre projet doit être disponible sur un repository github (si repo privé ne pas oublier de nous inviter à collaborer)
+- Votre projet doit être disponible sur un repository github *public* afin que nous puissions y accèder
 
 ## Bonus
 
 - Scraping en temps réel au lancement du projet  
-
 - Utilisation de docker-compose
-
 - Moteur de recherche avec Elastic Search
